@@ -1,0 +1,4 @@
+/home/aoberai/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/213.5744.254/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/aoberai/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/213.5744.254/bin/ninja/linux/ninja -G Ninja /home/aoberai/programming/altoponix/s2-monitor
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/aoberai/programming/altoponix/s2-monitor/cmake-build-debug
