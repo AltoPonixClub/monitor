@@ -2,10 +2,12 @@
 #include <pangolin/display/view.h>
 #include <pangolin/handler/handler.h>
 #include <pangolin/gl/gldraw.h>
+#include <iostream>
 
 int main( int /*argc*/, char** /*argv*/ )
 {
-    pangolin::CreateWindowAndBind("Main",100,50);
+    std::cout<<"Yo Hello to the World"<<std::endl;
+    pangolin::CreateWindowAndBind("Main",480,360);
     glEnable(GL_DEPTH_TEST);
 
     // Define Projection and initial ModelView matrix
@@ -32,6 +34,5 @@ int main( int /*argc*/, char** /*argv*/ )
         // Swap frames and Process Events
         pangolin::FinishFrame();
     }
-
     return 0;
 }
