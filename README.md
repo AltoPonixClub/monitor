@@ -1,5 +1,9 @@
 # s2-unit-monitor
 
+This is the main codebase for our s2 system
+
+## [Instructions](./RUN.md)
+
 ## TODOs
 
 - [ ] 1. Aruco Marker Image UnDistortion

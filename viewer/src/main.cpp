@@ -8,7 +8,7 @@
 int main( int /*argc*/, char** /*argv*/ )
 {
     std::cout << "OpenCV Version: " << cv::getVersionString() << std::endl;
-    pangolin::CreateWindowAndBind("Main",640*2,480*2);
+    pangolin::CreateWindowAndBind("Main",640*1.5,480*1.5);
     glEnable(GL_DEPTH_TEST);
 
     // Define Projection and initial ModelView matrix

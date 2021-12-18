@@ -1,3 +1,0 @@
-/home/aoberai/programming/altoponix/s2-monitor/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/aoberai/programming/altoponix/s2-monitor/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/aoberai/programming/altoponix/s2-monitor/cmake-build-debug/CMakeFiles/monitor.dir
