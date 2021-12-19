@@ -5,6 +5,8 @@ img = cv2.imread('arucoBoard.png')
 #read in webcam
 cap = cv2.VideoCapture(0)
 
+aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
+parameters = cv2.aruco.DetectorParameters_create()
 
 #cycle through webcam
 while(True):
@@ -12,8 +14,6 @@ while(True):
     ret, frame = cap.read()
     # Our operations on the frame come here
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
-    parameters = cv2.aruco.DetectorParameters_create()
     corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
 
     k = np.load("calibration_matrix.npy")
