@@ -20,7 +20,7 @@ public class Main extends Application {
         stageAccess = stage;
         BorderPane root = (BorderPane) FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("segmentation-view.fxml")));
         root.setStyle("-fx-background-color: whitesmoke;");
-        Scene scene = new Scene(root, 1920, 1080);
+        Scene scene = new Scene(root, 1280, 720);
         stage.setTitle("Image Segmentation");
         stage.setScene(scene);
         stage.show();
