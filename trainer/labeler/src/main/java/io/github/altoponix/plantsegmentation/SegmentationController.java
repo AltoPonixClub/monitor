@@ -38,10 +38,15 @@ public class SegmentationController {
 
     private String filePath;
     private Mat image = new Mat();
+    private Mat oldImage = new Mat();
     private Mat mask = new Mat();
+    private Mat oldMask = new Mat();
     private Mat maskOut = new Mat();
+    private Mat oldMaskOut = new Mat();
     private List<MatOfPoint> contours = new ArrayList<>();
     private Mat hierarchy = new Mat();
+    private double fitScale;
+    private boolean fitSide;
 
     //imports a photo using JavaFX FileChooser
     @FXML
@@ -49,32 +54,40 @@ public class SegmentationController {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(Main.getStageAccess());
         if(file != null) {
-            filePath = file.toURI().toString().substring(5);
-            image = Imgcodecs.imread(filePath);
-            mask = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
-            maskOut = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
+            filePath = file.toURI().toString().substring(6);
+            oldImage = image = Imgcodecs.imread(filePath);
+            oldMask = mask = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
+            oldMaskOut = maskOut = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
+            fitSide = image.cols() >= image.rows();
+            if (fitSide) {
+                fitScale = image.cols() / 600.0;
+            } else {
+                fitScale = image.rows() / 600.0;
+            }
             update();
         }
     }
 
     //updates the image with filters
     public void updateStage() {
-        imageView.setImage(matToImage(image));
+        updateImage(imageView, image);
+        updateImage(maskView, mask);
+    }
+
+    private void updateImage(ImageView imageView, Mat mat) {
+        imageView.setImage(matToImage(mat));
         imageView.setPreserveRatio(true);
-        imageView.setFitWidth(400);
-
+        if (fitSide) {
+            imageView.setFitWidth(600);
+        } else {
+            imageView.setFitHeight(600);
+        }
         imageView.setPickOnBounds(true);
-        imageView.setOnMousePressed(e -> {
-            mouseEvent(e.getX(), e.getY());
+        imageView.setOnMouseClicked(e -> {
+            mouseEvent(e.getX()*fitScale, e.getY()*fitScale);
         });
-
-        maskView.setImage(matToImage(mask));
-        maskView.setPreserveRatio(true);
-        maskView.setFitWidth(400);
-
-        maskView.setPickOnBounds(true);
-        maskView.setOnMousePressed(e -> {
-            mouseEvent(e.getX(), e.getY());
+        imageView.setOnMouseDragged(e -> {
+            mouseEvent(e.getX()*fitScale, e.getY()*fitScale);
         });
     }
 
@@ -82,8 +95,19 @@ public class SegmentationController {
     public void save() {
         String filename = filePath.substring(0, filePath.length()-4);
         Imgcodecs.imwrite(filename + "_mask.png", maskOut);
+        System.out.println("Image saved");
     }
 
+    @FXML
+    public void undo() {
+        System.out.println("Undo");
+        image = oldImage;
+        mask = oldMask;
+        maskOut = oldMaskOut;
+        updateStage();
+    }
+
+    //eyedropper and drawing
     public void mouseEvent(double x, double y) {
         if (eyedropper.isSelected()) {
             double[] hsv = image.get((int)x, (int)y);
@@ -95,11 +119,14 @@ public class SegmentationController {
             smax.setText(String.valueOf(hsv[1] + bounds));
             vmax.setText(String.valueOf(hsv[2] + bounds));
         } else {
+            oldImage = image;
+            oldMask = mask;
+            oldMaskOut = maskOut;
             int v = 0;
 
-            Imgproc.circle(image, new Point(x, y), 3, new Scalar(0, 255, 0), Imgproc.FILLED);
-            Imgproc.circle(mask, new Point(x, y), 3, Scalar.all(255), Imgproc.FILLED);
-            Imgproc.circle(maskOut, new Point(x, y), 3, Scalar.all(255), Imgproc.FILLED);
+            Imgproc.circle(image, new Point(x, y), 5, new Scalar(0, 255, 0), Imgproc.FILLED);
+            Imgproc.circle(mask, new Point(x, y), 5, Scalar.all(255), Imgproc.FILLED);
+            Imgproc.circle(maskOut, new Point(x, y), 5, Scalar.all(255), Imgproc.FILLED);
 
             for (MatOfPoint contour:contours) {
                 v++;
@@ -115,13 +142,16 @@ public class SegmentationController {
                     }
                 }
             }
-
             updateStage();
         }
     }
 
+    //applies filters and draws contours
     @FXML
     private void update() {
+        oldImage = image;
+        oldMask = mask;
+        oldMaskOut = maskOut;
         Mat color = doColorFilter(Imgcodecs.imread(filePath));
         getContours(color);
         updateStage();
@@ -146,8 +176,7 @@ public class SegmentationController {
                 new Scalar(Double.parseDouble(hmin.getText()), Double.parseDouble(smin.getText()),Double.parseDouble(vmin.getText())),
                 new Scalar(Double.parseDouble(hmax.getText()), Double.parseDouble(smax.getText()),Double.parseDouble(vmax.getText())),
                 mask);
-        Core.add(hsvImage, Scalar.all(0), result);
-        mat.copyTo(result, mask);
+        Core.bitwise_and(mat, mat, result, mask);
         return result;
     }
 
@@ -156,8 +185,8 @@ public class SegmentationController {
         Mat gray = new Mat();
         Imgproc.cvtColor(mat, gray, Imgproc.COLOR_HSV2RGB);
         Imgproc.cvtColor(mat, gray, Imgproc.COLOR_RGB2GRAY);
-        Imgproc.findContours(gray, this.contours, this.hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.drawContours(image, contours, -1, new Scalar(0, 255, 0), 2);
-        Imgproc.drawContours(mask, contours, -1, Scalar.all(255), 2);
+        Imgproc.findContours(gray, this.contours, this.hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.drawContours(image, contours, -1, new Scalar(0, 255, 0), 5);
+        Imgproc.drawContours(mask, contours, -1, Scalar.all(255), 5);
     }
 }
