@@ -6,34 +6,27 @@
 #include <pangolin/handler/handler.h>
 #include <pangolin/gl/gldraw.h>
 #include "utils.h"
+#include "constants.h"
 
 using namespace std;
+using namespace constants;
 
 int main( int /*argc*/, char** /*argv*/ ) {
-    cv::VideoCapture cap(-1);
+    cv::VideoCapture cap(cameraId);
     if (!cap.isOpened()) {
         cout << "Broken Camera";
         return -1;
     }
-    cv::Size img_size = cv::Size(320, 240);
-    cv::Size display_size = cv::Size(2*320, 2*240);
     cap.set(cv::CAP_PROP_FPS, 60);
     cv::Ptr<cv::aruco::Dictionary> arucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
     cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
-    cv::FileStorage calibFile("/home/aoberai/programming/altoponix/monitor/unit/outputs.yml", cv::FileStorage::READ);
+    cv::FileStorage calibFile(calibPath, cv::FileStorage::READ);
     cout << calibFile.isOpened() << endl;
     auto cameraMatrix = calibFile.operator[]("K").mat(); // I think incorrect
     auto distCoeffs = calibFile.operator[]("D").mat(); // I think incorrect
 
     cout << cameraMatrix << endl;
     calibFile.~FileStorage();
-
-    vector<vector<vector<float>>> rawArucoPts = {{{0, 0, 0}, {0, 4.6, 0}, {4.6, 4.6, 0}, {4.6, 0, 0}},
-                                       {{16.1, 0, 0}, {16.1, 4.6, 0}, {20.7, 4.6, 0}, {20.7, 0, 0}},
-                                       {{0, 15.1, 0}, {0, 19.7, 0}, {4.6, 19.7, 0}, {4.6, 15.1, 0}},
-                                       {{16.1, 15.1, 0}, {16.1, 19.7, 0}, {20.7, 19.7, 0}, {20.7, 15.1, 0}}};
-
-    vector<cv::Point2f> target = {cv::Point2f(0, 0), cv::Point2f(19.8, 0), cv::Point2f(19.8, 20.8), cv::Point2f(0, 20.8)};
 
     vector<vector<cv::Point3f>> arucoPts; // convert to Point3f instead of vector for i j k
     vector<vector<cv::Point2f>> arucoPts2d;
@@ -48,8 +41,6 @@ int main( int /*argc*/, char** /*argv*/ ) {
         arucoPts.push_back(tmp);
         arucoPts2d.push_back(tmp2d);
     }
-
-    vector<int> arucoIds = {24, 42, 69, 48};
 
     cv::Ptr<cv::aruco::Board> board = cv::aruco::Board::create(arucoPts, arucoDictionary, arucoIds);
     vector<vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
@@ -116,7 +107,7 @@ int main( int /*argc*/, char** /*argv*/ ) {
             //TODO: is it bad to create objects constantly in loop instead of initializing outside?
             cv::Mat H = cv::findHomography(tmp_corners_src, tmp_corners_dst, cv::RANSAC, 5);
             // Apply perspective transformation to original image
-            cv::warpPerspective(frame, undistortedFrame, H.inv(), display_size, cv::INTER_LINEAR);
+            cv::warpPerspective(frame, undistortedFrame, H.inv(), displaySize, cv::INTER_LINEAR);
 
             tmp_corners.clear();
             tmp_corners_src.clear();
@@ -125,7 +116,7 @@ int main( int /*argc*/, char** /*argv*/ ) {
             // TODO: use rodrigues on rvec and tvec to turn into projection matrix
         }
 
-        cv::resize(displayFrame, displayFrame, display_size);
+        cv::resize(displayFrame, displayFrame, displaySize);
 
         // TODO: Display image on pangolin window
 //        cv::imshow("Raw", displayFrame);
