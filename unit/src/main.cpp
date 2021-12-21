@@ -18,6 +18,7 @@ int main( int /*argc*/, char** /*argv*/ ) {
         return -1;
     }
     cap.set(cv::CAP_PROP_FPS, 60);
+    cv::Size displaySize = cv::Size(imgWidth, imgHeight);
     cv::Ptr<cv::aruco::Dictionary> arucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
     cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
     cv::FileStorage calibFile(calibPath, cv::FileStorage::READ);
@@ -96,7 +97,9 @@ int main( int /*argc*/, char** /*argv*/ ) {
             }
             for (auto i : arucoPts2d) {
                 for (auto c : i) {
-                    tmp_corners_src.push_back(c*15); // Multiplier to make bigger in final image
+                    c.x = c.x * (float) imgWidth / 20.7;
+                    c.y = c.y * (float) imgHeight / 19.7;
+                    tmp_corners_src.push_back(c); // Multiplier to make bigger in final image
                 }
             }
 
