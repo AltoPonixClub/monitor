@@ -4,7 +4,6 @@
 
 #include <string>
 #include "utils.h"
-#include <iostream>
 
 template<typename T>
 std::string Utils::vec2str(std::vector<T> arr) {
@@ -14,6 +13,10 @@ std::string Utils::vec2str(std::vector<T> arr) {
     }
     ot += std::string("]");
     return ot;
+}
+
+bool Utils::pairSortComparator(std::pair<int, std::vector<cv::Point2f>> a, std::pair<int, std::vector<cv::Point2f>> b) {
+    return (a.first < b.first);
 }
 
 template std::string Utils::vec2str<int>(std::vector<int>);

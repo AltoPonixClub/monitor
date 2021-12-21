@@ -7,11 +7,13 @@
 
 
 #include <vector>
+#include <opencv2/opencv.hpp>
 
 class Utils {
 public:
     template<typename T>
     static std::string vec2str(std::vector<T> array);
+    static bool pairSortComparator(std::pair<int, std::vector<cv::Point2f>> a, std::pair<int, std::vector<cv::Point2f>> b);
 };
 
 
