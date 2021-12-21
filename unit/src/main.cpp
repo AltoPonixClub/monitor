@@ -7,6 +7,7 @@
 #include <pangolin/gl/gldraw.h>
 #include "utils.h"
 #include "constants.h"
+#include <pangolin/plot/plotter.h>
 
 using namespace std;
 using namespace constants;
@@ -31,6 +32,22 @@ int main( int /*argc*/, char** /*argv*/ ) {
 
     vector<vector<cv::Point3f>> arucoPts; // convert to Point3f instead of vector for i j k
     vector<vector<cv::Point2f>> arucoPts2d;
+
+    const float tinc = 0.01f;
+    pangolin::DataLog log;
+    pangolin::Plotter plotter(&log,0.0f,4.0f*(float)M_PI/tinc-2.0f,2.0f,(float)M_PI/(4.0f*tinc),0.5f);
+    plotter.SetBounds(0.0, 1.0, 0.0, 1.0);
+    plotter.Track("$i");
+    std::vector<std::string> labels;
+    labels.push_back(std::string("tvec x"));
+    labels.push_back(std::string("tvec y"));
+    labels.push_back(std::string("tvec z"));
+    labels.push_back(std::string("rvec x"));
+    labels.push_back(std::string("rvec y"));
+    labels.push_back(std::string("rvec z"));
+    log.SetLabels(labels);
+
+    pangolin::DisplayBase().AddDisplay(plotter);
 
     for (const auto& i : rawArucoPts) {
         vector<cv::Point3f> tmp;
@@ -85,6 +102,7 @@ int main( int /*argc*/, char** /*argv*/ ) {
         vector<cv::Point2f> tmp_corners_src, tmp_corners_dst;
         if (detectedArucoIds.size() == 4) {
             cv::aruco::estimatePoseBoard(detectedArucoCorners, detectedArucoIds, board, cameraMatrix, distCoeffs, rvec, tvec);
+            log.Log(tvec.val[0], tvec.val[1], tvec.val[2], rvec.val[0], rvec.val[1], rvec.val[2]);
             for (int i = 0; i < detectedArucoIds.size(); i++) {
                 tmp_corners.push_back(make_pair(detectedArucoIds[i], detectedArucoCorners[i]));
             }
@@ -127,8 +145,7 @@ int main( int /*argc*/, char** /*argv*/ ) {
         if ((char) cv::waitKey(1) == 27)
             break;
 
-        // Render OpenGL Cube
-        pangolin::glDrawColouredCube();
+
         // Swap frames and Process Events
         pangolin::FinishFrame();
     }
