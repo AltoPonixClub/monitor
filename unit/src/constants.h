@@ -7,8 +7,8 @@
 
 namespace constants {
     int cameraId = 4;
-    cv::Size imgSize = cv::Size(320, 240);
-    cv::Size displaySize = cv::Size(2 * 320, 2 * 240);
+    int imgWidth = 640;
+    int imgHeight = 480;
     std::string calibPath = "/home/luca/code/monitor/unit/outputs.yml";
     std::vector<std::vector<std::vector<float>>> rawArucoPts = {{{0, 0, 0}, {0, 4.6, 0}, {4.6, 4.6, 0}, {4.6, 0, 0}},
                                                  {{16.1, 0, 0}, {16.1, 4.6, 0}, {20.7, 4.6, 0}, {20.7, 0, 0}},
