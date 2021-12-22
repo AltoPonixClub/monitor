@@ -25,67 +25,82 @@ using namespace std;
 // TODO: refactor
 // TODO: put some stuff in constants
 
-inline void glDrawVertices(
-        size_t num_vertices, const GLfloat *const vertex_ptr, GLenum mode,
-        size_t elements_per_vertex = pangolin::GlFormatTraits<GLfloat>::components,
-        size_t vertex_stride_bytes = 0) {
-    if (num_vertices > 0) {
-        PANGO_ENSURE(vertex_ptr != nullptr);
-        PANGO_ENSURE(mode != GL_LINES || num_vertices % 2 == 0, "number of vertices (%) must be even in GL_LINES mode",
-                     num_vertices);
+//inline void glDrawVertices(
+//        size_t num_vertices, const GLfloat *const vertex_ptr, GLenum mode,
+//        size_t elements_per_vertex = pangolin::GlFormatTraits<GLfloat>::components,
+//        size_t vertex_stride_bytes = 0) {
+//    if (num_vertices > 0) {
+//        PANGO_ENSURE(vertex_ptr != nullptr);
+//        PANGO_ENSURE(mode != GL_LINES || num_vertices % 2 == 0, "number of vertices (%) must be even in GL_LINES mode",
+//                     num_vertices);
+//
+//        glVertexPointer(elements_per_vertex, pangolin::GlFormatTraits<GLfloat>::gltype, vertex_stride_bytes,
+//                        vertex_ptr);
+//        glEnableClientState(GL_VERTEX_ARRAY);
+//        glDrawArrays(mode, 0, num_vertices);
+//        glDisableClientState(GL_VERTEX_ARRAY);
+//    }
+//}
 
-        glVertexPointer(elements_per_vertex, pangolin::GlFormatTraits<GLfloat>::gltype, vertex_stride_bytes,
-                        vertex_ptr);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glDrawArrays(mode, 0, num_vertices);
-        glDisableClientState(GL_VERTEX_ARRAY);
-    }
+vector<Eigen::Matrix<float, 4, 1>> getFrustumVertices(float u0, float v0, float fu, float fv, int w, int h, float scale) {
+    const float xl = scale * u0;
+    const float xh = scale * (w * fu + u0);
+    const float yl = scale * v0;
+    const float yh = scale * (h * fv + v0);
+
+//    pangolin::glDrawLine(xl, yl, scale, xl, yh, scale);
+//    pangolin::glDrawLine(xh, yl, scale, xh, yh, scale);
+//    pangolin::glDrawLine(xl, yl, scale, xh, yl, scale);
+//    pangolin::glDrawLine(xl, yh, scale, xh, yh, scale);
+//    pangolin::glDrawLine(xl, yh, scale, 0, 0, 0);
+//    pangolin::glDrawLine(xh, yl, scale, 0, 0, 0);
+//    pangolin::glDrawLine(xl, yl, scale, 0, 0, 0);
+//    pangolin::glDrawLine(xh, yh, scale, 0, 0, 0);
+
+    vector<Eigen::Matrix<float, 4, 1>> homogVerts;
+    homogVerts.push_back((Eigen::Matrix<float, 4, 1>() << xl, yl, scale, 1).finished());
+    homogVerts.push_back((Eigen::Matrix<float, 4, 1>() << xh, yh, scale, 1).finished());
+    homogVerts.push_back((Eigen::Matrix<float, 4, 1>() << xl, yh, scale, 1).finished());
+    homogVerts.push_back((Eigen::Matrix<float, 4, 1>() << xh, yl, scale, 1).finished());
+    homogVerts.push_back((Eigen::Matrix<float, 4, 1>() << 0, 0, 0, 1).finished());
+    return homogVerts;
 }
 
-void goodGetFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, int h, GLfloat scale) {
-    const GLfloat xl = scale * u0;
-    const GLfloat xh = scale * (w * fu + u0);
-    const GLfloat yl = scale * v0;
-    const GLfloat yh = scale * (h * fv + v0);
-
-    const GLfloat verts[] = {
-            xl, yl, scale, xh, yl, scale,
-            xh, yh, scale, xl, yh, scale,
-            xl, yl, scale, 0, 0, 0,
-            xh, yl, scale, 0, 0, 0,
-            xl, yh, scale, 0, 0, 0,
-            xh, yh, scale
-    };
-
-    glDrawVertices(11, verts, GL_LINE_STRIP, 3);
+void drawFrustum(vector<Eigen::Matrix<float, 4, 1>> vertices) {
+    for (int i = 0; i < vertices.size(); i++) {
+        for (int j = i; j < vertices.size(); j++) {
+            pangolin::glDrawLine(vertices[i].data()[0], vertices[i].data()[1], vertices[i].data()[2], vertices[j].data()[0], vertices[j].data()[1], vertices[j].data()[2]);
+        }
+    }
 }
 // TODO: optimize this
 
-pair<vector<Eigen::Matrix<float, 4, 1>>, GLfloat *>
-getFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, int h, GLfloat scale) {
-
-    const GLfloat xl = scale * u0;
-    const GLfloat xh = scale * (w * fu + u0);
-    const GLfloat yl = scale * v0;
-    const GLfloat yh = scale * (h * fv + v0);
-    const int vertCount = 11;
-    GLfloat verts[] = {
-            xl, yl, scale, xh, yl, scale,
-            xh, yh, scale, xl, yh, scale,
-            xl, yl, scale, 0, 0, 0,
-            xh, yl, scale, 0, 0, 0,
-            xl, yh, scale, 0, 0, 0,
-            xh, yh, scale
-    };
-
-    vector<Eigen::Matrix<float, 4, 1>> homogVerts;
-    for (int i = 0; i < vertCount; i++) {
-        homogVerts.push_back(
-                (Eigen::Matrix<float, 4, 1>() << verts[3 * i], verts[3 * i + 1], verts[3 * i + 2], 1).finished());
-    }
-    return make_pair(homogVerts, verts);
+//pair<vector<Eigen::Matrix<float, 4, 1>>, GLfloat *>
+//getFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, int h, GLfloat scale) {
+//
+//    const GLfloat xl = scale * u0;
+//    const GLfloat xh = scale * (w * fu + u0);
+//    const GLfloat yl = scale * v0;
+//    const GLfloat yh = scale * (h * fv + v0);
+//    const int vertCount = 11;
+//    GLfloat verts[] = {
+//            xl, yl, scale, xh, yl, scale,
+//            xh, yh, scale, xl, yh, scale,
+//            xl, yl, scale, 0, 0, 0,
+//            xh, yl, scale, 0, 0, 0,
+//            xl, yh, scale, 0, 0, 0,
+//            xh, yh, scale
+//    };
+//
+//    vector<Eigen::Matrix<float, 4, 1>> homogVerts;
+//    for (int i = 0; i < vertCount; i++) {
+//        homogVerts.push_back(
+//                (Eigen::Matrix<float, 4, 1>() << verts[3 * i], verts[3 * i + 1], verts[3 * i + 2], 1).finished());
+//    }
+//    return make_pair(homogVerts, verts);
 //    glDrawVertices(vertCount, verts, GL_LINE_STRIP, 3);
-}
+//}
+
 
 int main(int /*argc*/, char ** /*argv*/ ) {
     cv::VideoCapture cap(constants::cameraId);
@@ -182,6 +197,7 @@ int main(int /*argc*/, char ** /*argv*/ ) {
                     transform_dst.push_back(pt);
             }
             // TODO: use rodrigues on rvec and tvec to turn into projection matrix
+            cout << "translation: " << tvec << endl;
         }
         try {
             /* Planar Rectification based on Aruco Markers */
@@ -196,28 +212,30 @@ int main(int /*argc*/, char ** /*argv*/ ) {
             cout << "Not Yet Found" << endl;
         }
 
-        // Render OpenGL Cube
-
+        // Draws Platform
         glColor4f(1, 1, 1, 1);
         pangolin::glDrawLine(0, 0, 0, constants::platformDim.width, 0, 0);
         pangolin::glDrawLine(0, 0, 0, 0, constants::platformDim.height, 0);
         pangolin::glDrawLine(constants::platformDim.width, 0, 0, constants::platformDim.width, constants::platformDim.height, 0);
         pangolin::glDrawLine(0, constants::platformDim.height, 0, constants::platformDim.width, constants::platformDim.height, 0);
 
+        // Draws Camera Frustum
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
         // TODO: this is working
-        goodGetFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
+        auto frustumVertices = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
+        drawFrustum(frustumVertices);
+
         // TODO: this is not working :(
 
-//        auto frustrum = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
+//        auto frustum = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
 //        pangolin::glDrawVertices()
-//        vector<Eigen::Matrix<float, 4, 1>> frustumVertices = frustrum.first;
+//        vector<Eigen::Matrix<float, 4, 1>> frustumVertices = frustum.first;
 //        for (auto v : frustumVertices) {
 //            cout << v << ", ";
 //        }
 //        cout << endl << endl << endl;
-//        glDrawVertices(11, frustrum.second, GL_LINE_STRIP, 3);
-//        pangolin::glDrawVertices(11, frustrum.second, GL_LINE_STRIP, 3);
+//        glDrawVertices(11, frustum.second, GL_LINE_STRIP, 3);
+//        pangolin::glDrawVertices(11, frustum.second, GL_LINE_STRIP, 3);
 
 /*
  * Translation Matrix
