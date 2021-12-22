@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
@@ -22,7 +24,7 @@ using namespace std;
 
 
 inline void glDrawVertices(
-        size_t num_vertices, const GLfloat* const vertex_ptr, GLenum mode,
+        size_t num_vertices, const GLfloat *const vertex_ptr, GLenum mode,
         size_t elements_per_vertex = pangolin::GlFormatTraits<GLfloat>::components,
         size_t vertex_stride_bytes = 0) {
     if (num_vertices > 0) {
@@ -38,20 +40,19 @@ inline void glDrawVertices(
     }
 }
 
-void goodGetFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, int h, GLfloat scale )
-{
+void goodGetFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, int h, GLfloat scale) {
     const GLfloat xl = scale * u0;
-    const GLfloat xh = scale * (w*fu + u0);
+    const GLfloat xh = scale * (w * fu + u0);
     const GLfloat yl = scale * v0;
-    const GLfloat yh = scale * (h*fv + v0);
+    const GLfloat yh = scale * (h * fv + v0);
 
     const GLfloat verts[] = {
-            xl,yl,scale,  xh,yl,scale,
-            xh,yh,scale,  xl,yh,scale,
-            xl,yl,scale,  0,0,0,
-            xh,yl,scale,  0,0,0,
-            xl,yh,scale,  0,0,0,
-            xh,yh,scale
+            xl, yl, scale, xh, yl, scale,
+            xh, yh, scale, xl, yh, scale,
+            xl, yl, scale, 0, 0, 0,
+            xh, yl, scale, 0, 0, 0,
+            xl, yh, scale, 0, 0, 0,
+            xh, yh, scale
     };
 
     glDrawVertices(11, verts, GL_LINE_STRIP, 3);
@@ -219,9 +220,9 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         glDrawVertices(11, frustrum.second, GL_LINE_STRIP, 3);
         Eigen::Matrix4f transformationMatrix;
         transformationMatrix << 0, 0, 0, 0,
-                                0, 0, 0, 0,
-                                0, 0, 0, 0,
-                                0, 0, 0, 0;
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0;
 
         for (auto vertex: frustumVertices) {
             vertex = transformationMatrix * vertex;
@@ -232,6 +233,37 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         // TODO: clean up how these images are stacked because very scuffed atm
         // TODO: fix this offset color how to switch just green and blue
         // TODO: Clean up dimensions between pangolin window, actual image, and display Image which is big time mess
+
+
+
+
+        // or extract them all
+
+        //TODO: clean up this atrocious code
+//        channels[1].data channels[0].data channels[2].data
+        vector<cv::Mat> channels(3);
+        cv::split(displayFrame, channels);
+        swap(channels[0], channels[1]);
+        cv::merge(channels, displayFrame);
+
+//        int index = 0;
+//        cout << sizeof(channels[1].data)/sizeof(channels[1].data[0]);
+//        int dataSize = constants::imgWidth * constants::imgHeight;
+//        for (int i = 0; i < 3*dataSize; i+=3) {
+//            pangoImageArray[index] = (unsigned char) channels[1].data[i];
+//            pangoImageArray[index+1] = (unsigned char) channels[0].data[i+1];
+//            pangoImageArray[index+2] = (unsigned char) channels[2].data[i+2];
+//            index += 3;
+//        }
+//        for (int i = 0; i < dataSize; i++) {
+//            pangoImageArray[index] = (unsigned char) channels[0].data[i];
+//            index += 1;
+//        }
+//        for (int i = 0; i < dataSize; i++) {
+//            pangoImageArray[index] = (unsigned char) channels[2].data[i];
+//            index += 1;
+//        }
+
         for (int i = 3 * constants::imgWidth * constants::imgHeight - 1; i >= 0; i--) {
             pangoImageArray[i] = (unsigned char) (displayFrame.data[3 * constants::imgWidth * constants::imgHeight - i +
                                                                     1]);
