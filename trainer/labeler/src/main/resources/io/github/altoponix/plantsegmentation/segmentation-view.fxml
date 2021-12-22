@@ -40,6 +40,8 @@
                 <CheckBox fx:id="eyedropper" />
                 <Label text="Bounds" />
                 <TextField fx:id="eyedropperBounds" text="30" />
+                <Label text="Brush Size" />
+                <TextField fx:id="brushSize" text="5" />
             </HBox>
         </VBox>
     </top>
