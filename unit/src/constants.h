@@ -10,6 +10,7 @@ namespace constants {
     const cv::Size dispSize = cv::Size(int(640*2), int(480*2));
     const cv::Size imgSize = cv::Size(int(640), int(480));
     const cv::Size imgDispSize = cv::Size(int(640), int(2 * 480));
+    const cv::Size platformDim = cv::Size(20.7, 19.7);
     const int fps = 60;
     const std::string calibPath = "/home/aoberai/programming/altoponix/monitor/unit/outputs.yml";
     const cv::Scalar aqua(255, 255, 0);
