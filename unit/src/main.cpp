@@ -94,23 +94,24 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         return -1;
     }
     cap.set(cv::CAP_PROP_FPS, constants::fps);
-    cv::Ptr<cv::aruco::Dictionary> arucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
-    cv::Ptr<cv::aruco::DetectorParameters> arucoParams = cv::aruco::DetectorParameters::create();
+    cv::Ptr <cv::aruco::Dictionary> arucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
+    cv::Ptr <cv::aruco::DetectorParameters> arucoParams = cv::aruco::DetectorParameters::create();
     cv::FileStorage calibFile(constants::calibPath, cv::FileStorage::READ);
     cout << calibFile.isOpened() << endl;
     auto cameraMatrix = calibFile.operator[]("K").mat(); // extrinsics
     auto distCoeffs = calibFile.operator[]("D").mat(); // intrinsics
     calibFile.~FileStorage();
 
-    cv::Ptr<cv::aruco::Board> board = cv::aruco::Board::create(constants::boardArucoPts, arucoDictionary,
-                                                               constants::arucoIds);
-    vector<vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
+    cv::Ptr <cv::aruco::Board> board = cv::aruco::Board::create(constants::boardArucoPts, arucoDictionary,
+                                                                constants::arucoIds);
+    vector <vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
     vector<int> detectedArucoIds;
-    vector<cv::Point2f> transform_src;
+    vector <cv::Point2f> transform_src;
     for (const auto &i: constants::boardArucoPts) {
         for (auto c: i) {
-            transform_src.push_back(cv::Point2f(c.x * constants::imgSize.width / 20.7, c.y * constants::imgSize.height /
-                                                                                       19.7)); // Multiplier to make bigger in final image
+            transform_src.push_back(cv::Point2f(c.x * constants::imgSize.width / constants::platformDim.width,
+                                                c.y * constants::imgSize.height /
+                                                constants::platformDim.height)); // Multiplier to make bigger in final image
         }
     }
 
@@ -122,7 +123,7 @@ int main(int /*argc*/, char ** /*argv*/ ) {
     // viewing state of virtual camera for rendering scene; intrinsics and extrinsics
     pangolin::OpenGlRenderState s_cam(
             pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 100),
-            pangolin::ModelViewLookAt(-2, 2, -2, 0, 0, 0, pangolin::AxisY)
+            pangolin::ModelViewLookAt(constants::platformDim.width/2, -15, 5, constants::platformDim.width/2, constants::platformDim.height/2, 0, pangolin::AxisZ)
     );
 
     // Create Interactive View in window
@@ -145,7 +146,7 @@ int main(int /*argc*/, char ** /*argv*/ ) {
                        (float) constants::imgDispSize.width / (float) constants::imgDispSize.height)
             .SetLock(pangolin::LockLeft, pangolin::LockTop);
     cv::Mat frame, displayFrame;
-    cv::Mat undistortedFrame(constants::imgSize.height, constants::imgSize.width, CV_8UC3, cv::Scalar(255, 255, 255));
+    cv::Mat undistortedFrame(constants::imgSize.height, constants::imgSize.width, CV_8UC3, cv::Scalar(100, 100, 100));
     pangolin::GlTexture imageTexture(constants::imgDispSize.width, constants::imgDispSize.height, GL_RGB, false, 0,
                                      GL_RGB,
                                      GL_UNSIGNED_BYTE);
@@ -167,9 +168,9 @@ int main(int /*argc*/, char ** /*argv*/ ) {
                 cv::circle(displayFrame, pt, constants::arucoCircRadius, constants::aqua, cv::FILLED);
             }
         }
-        vector<cv::Point2f> transform_dst;
+        vector <cv::Point2f> transform_dst;
         if (detectedArucoIds.size() == 4) {
-            vector<pair<int, vector<cv::Point2f>>> tmp_corners;
+            vector < pair < int, vector < cv::Point2f>>> tmp_corners;
             cv::aruco::estimatePoseBoard(detectedArucoCorners, detectedArucoIds, board, cameraMatrix, distCoeffs, rvec,
                                          tvec);
             // Sets up transform dst for findHomography
@@ -197,24 +198,41 @@ int main(int /*argc*/, char ** /*argv*/ ) {
 
         // Render OpenGL Cube
 
+        glColor4f(1, 1, 1, 1);
+        pangolin::glDrawLine(0, 0, 0, constants::platformDim.width, 0, 0);
+        pangolin::glDrawLine(0, 0, 0, 0, constants::platformDim.height, 0);
+        pangolin::glDrawLine(constants::platformDim.width, 0, 0, constants::platformDim.width, constants::platformDim.height, 0);
+        pangolin::glDrawLine(0, constants::platformDim.height, 0, constants::platformDim.width, constants::platformDim.height, 0);
+
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
         // TODO: this is working
         goodGetFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
         // TODO: this is not working :(
 
 //        auto frustrum = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
+//        pangolin::glDrawVertices()
 //        vector<Eigen::Matrix<float, 4, 1>> frustumVertices = frustrum.first;
 //        for (auto v : frustumVertices) {
 //            cout << v << ", ";
 //        }
 //        cout << endl << endl << endl;
 //        glDrawVertices(11, frustrum.second, GL_LINE_STRIP, 3);
-//        Eigen::Matrix4f transformationMatrix;
-//        transformationMatrix << 0, 0, 0, 0,
-//                0, 0, 0, 0,
-//                0, 0, 0, 0,
-//                0, 0, 0, 0;
-//
+//        pangolin::glDrawVertices(11, frustrum.second, GL_LINE_STRIP, 3);
+
+/*
+ * Translation Matrix
+ * [ 1 0 0 X ]
+ * [ 0 1 0 Y ]
+ * [ 0 0 1 Z ]
+ * [ 0 0 0 1 ]
+ *
+ */
+        Eigen::Matrix4f transformationMatrix;
+        transformationMatrix << 0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0;
+
 //        for (auto vertex: frustumVertices) {
 //            vertex = transformationMatrix * vertex;
 //        }
