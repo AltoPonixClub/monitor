@@ -8,12 +8,12 @@
 #include <pangolin/display/display.h>
 #include <pangolin/display/view.h>
 #include <pangolin/handler/handler.h>
-#include <pangolin/video/video_input.h>
 #include <pangolin/gl/gl.h>
 #include <pangolin/gl/glinclude.h>
 #include <pangolin/gl/glformattraits.h>
 #include <pangolin/display/opengl_render_state.h>
 #include <pangolin/gl/gldraw.h>
+#include <pangolin/video/video_input.h>
 
 #include <Eigen/Core>
 
@@ -145,12 +145,14 @@ int main(int /*argc*/, char ** /*argv*/ ) {
     // This view will take up no more than a third of the windows width or height, and it
     // will have a fixed aspect ratio to match the image that it will display. When fitting
     // within the specified bounds, push to the top-left (as specified by SetLock).
-    pangolin::View &d_image = pangolin::Display("image")
-            .SetBounds(2 / 3.0f, 1.0f, 0, 1 / 3.0f, 640.0 / 480)
-            .SetLock(pangolin::LockLeft, pangolin::LockTop);
+//    pangolin::View &d_image = pangolin::Display("image")
+//            .SetBounds(2 / 3.0f, 1.0f, 0, 1 / 3.0f, 640.0 / 480)
+//            .SetLock(pangolin::LockLeft, pangolin::LockTop);
 
+    pangolin::View &d_image = pangolin::Display("image")
+            .SetBounds(2/3, 1.0f, 0, 1 / 3.0f, (float) constants::imgWidth / (float) constants::imgHeight)
+            .SetLock(pangolin::LockLeft, pangolin::LockTop);
     cv::Mat frame, displayFrame, undistortedFrame;
-    unsigned char *pangoImageArray = new unsigned char[3 * constants::imgWidth * constants::imgHeight];
     pangolin::GlTexture imageTexture(constants::imgWidth, constants::imgHeight, GL_RGB, false, 0, GL_RGB,
                                      GL_UNSIGNED_BYTE);
     while (!pangolin::ShouldQuit()) {
@@ -175,6 +177,8 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         vector<pair<int, vector<cv::Point2f>>> tmp_corners;
         vector<cv::Point2f> tmp_corners_src, tmp_corners_dst;
         if (detectedArucoIds.size() == 4) {
+            tmp_corners_src.clear();
+            tmp_corners_dst.clear();
             cv::aruco::estimatePoseBoard(detectedArucoCorners, detectedArucoIds, board, cameraMatrix, distCoeffs, rvec,
                                          tvec);
             for (int i = 0; i < detectedArucoIds.size(); i++) {
@@ -187,6 +191,7 @@ int main(int /*argc*/, char ** /*argv*/ ) {
                     tmp_corners_dst.push_back(c);
                 }
             }
+            // TODO: move this out
             for (auto i: arucoPts2d) {
                 for (auto c: i) {
                     c.x = c.x * (float) constants::imgWidth / 20.7;
@@ -195,6 +200,11 @@ int main(int /*argc*/, char ** /*argv*/ ) {
                 }
             }
 
+            tmp_corners.clear();
+//            cout << " rvec: " << rvec << " tvec: " << tvec << endl;
+            // TODO: use rodrigues on rvec and tvec to turn into projection matrix
+        }
+        try {
             /* Planar Rectification based on Aruco Markers */
 
             // Maps real world coords of board to those in the image
@@ -202,13 +212,11 @@ int main(int /*argc*/, char ** /*argv*/ ) {
             cv::Mat H = cv::findHomography(tmp_corners_src, tmp_corners_dst, cv::RANSAC, 5);
             // Apply perspective transformation to original image
             cv::warpPerspective(displayFrame, undistortedFrame, H.inv(), displaySize, cv::INTER_LINEAR);
-
-            tmp_corners.clear();
-            tmp_corners_src.clear();
-            tmp_corners_dst.clear();
-//            cout << " rvec: " << rvec << " tvec: " << tvec << endl;
-            // TODO: use rodrigues on rvec and tvec to turn into projection matrix
         }
+        catch (...) {
+            cout << "Not Yet Found" << endl;
+        }
+
 
         // Render OpenGL Cube
 
@@ -216,27 +224,36 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         // TODO: this is working
         goodGetFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
         // TODO: this is not working :(
-
-        /**
+        // TODO: rename vertices
         auto frustrum = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
         vector<Eigen::Matrix<float, 4, 1>> frustumVertices = frustrum.first;
-        glDrawVertices(11, frustrum.second, GL_LINE_STRIP, 3);
-        Eigen::Matrix4f transformationMatrix;
-        transformationMatrix << 0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0;
-
-        for (auto vertex: frustumVertices) {
-            vertex = transformationMatrix * vertex;
+        for (auto v : frustumVertices) {
+            cout << v << ", ";
         }
-        */
+        cout << endl << endl << endl;
+//        glDrawVertices(11, frustrum.second, GL_LINE_STRIP, 3);
+//        Eigen::Matrix4f transformationMatrix;
+//        transformationMatrix << 0, 0, 0, 0,
+//                0, 0, 0, 0,
+//                0, 0, 0, 0,
+//                0, 0, 0, 0;
+//
+//        for (auto vertex: frustumVertices) {
+//            vertex = transformationMatrix * vertex;
+//        }
 
         cv::vconcat(displayFrame, undistortedFrame, displayFrame);
         cv::resize(displayFrame, displayFrame, displaySize);
         cv::flip(displayFrame, displayFrame, 0);
         // TODO: clean up how these images are stacked because very scuffed atm
         // TODO: Clean up dimensions between pangolin window, actual image, and display Image which is big time mess
+        // TODO: no squish camera
+        // TODO: plot tvec and rvec
+        // TODO: point clouds
+        // TODO: menu bar
+
+//        cv::imshow("Window", displayFrame);
+//        cv::waitKey(0);
 
         imageTexture.Upload(displayFrame.data, GL_BGR, GL_UNSIGNED_BYTE);
         d_image.Activate();

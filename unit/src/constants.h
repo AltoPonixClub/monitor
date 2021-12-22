@@ -8,7 +8,7 @@
 namespace constants {
     const int cameraId = 0;
     const int imgWidth = 640;
-    const int imgHeight = 480;
+    const int imgHeight = 2 * 480;
     const std::string calibPath = "/home/aoberai/programming/altoponix/monitor/unit/outputs.yml";
     const std::vector<std::vector<std::vector<float>>> rawArucoPts = {{{0, 0, 0}, {0, 4.6, 0}, {4.6, 4.6, 0}, {4.6, 0, 0}},
                                                  {{16.1, 0, 0}, {16.1, 4.6, 0}, {20.7, 4.6, 0}, {20.7, 0, 0}},
