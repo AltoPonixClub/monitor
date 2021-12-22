@@ -8,11 +8,51 @@
 #include <pangolin/gl/gldraw.h>
 #include <pangolin/video/video_input.h>
 #include <pangolin/gl/gl.h>
+#include <pangolin/gl/glinclude.h>
+#include <pangolin/gl/glformattraits.h>
+#include <pangolin/display/opengl_render_state.h>
 
 #include "utils.h"
 #include "constants.h"
 
 using namespace std;
+
+template<typename T>
+inline void glDrawVertices(
+        size_t num_vertices, const T* const vertex_ptr, GLenum mode,
+        size_t elements_per_vertex = pangolin::GlFormatTraits<T>::components,
+        size_t vertex_stride_bytes = 0 )
+{
+    if(num_vertices > 0)
+    {
+        PANGO_ENSURE(vertex_ptr != nullptr);
+        PANGO_ENSURE(mode != GL_LINES || num_vertices % 2 == 0, "number of vertices (%) must be even in GL_LINES mode", num_vertices );
+
+        glVertexPointer(elements_per_vertex, pangolin::GlFormatTraits<T>::gltype, vertex_stride_bytes, vertex_ptr);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glDrawArrays(mode, 0, num_vertices);
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
+}
+
+void getFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, int h, GLfloat scale )
+{
+    const GLfloat xl = scale * u0;
+    const GLfloat xh = scale * (w*fu + u0);
+    const GLfloat yl = scale * v0;
+    const GLfloat yh = scale * (h*fv + v0);
+
+    const GLfloat verts[] = {
+            xl,yl,scale,  xh,yl,scale,
+            xh,yh,scale,  xl,yh,scale,
+            xl,yl,scale,  0,0,0,
+            xh,yl,scale,  0,0,0,
+            xl,yh,scale,  0,0,0,
+            xh,yh,scale
+    };
+
+    glDrawVertices(11, verts, GL_LINE_STRIP, 3);
+}
 
 int main(int /*argc*/, char ** /*argv*/ ) {
     cv::VideoCapture cap(constants::cameraId);
@@ -52,10 +92,10 @@ int main(int /*argc*/, char ** /*argv*/ ) {
 
     cv::Vec3d rvec, tvec;
 
-    pangolin::CreateWindowAndBind("Main", 640 * 1.5, 480 * 1.5);
+    pangolin::CreateWindowAndBind("Main", int(640 * 1.5), int(480 * 1.5));
     glEnable(GL_DEPTH_TEST);
 
-    // Define Projection and initial ModelView matrix
+    // viewing state of virtual camera for rendering scene; intrinsics and extrinsics
     pangolin::OpenGlRenderState s_cam(
             pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 100),
             pangolin::ModelViewLookAt(-2, 2, -2, 0, 0, 0, pangolin::AxisY)
@@ -63,6 +103,8 @@ int main(int /*argc*/, char ** /*argv*/ ) {
 
     // Create Interactive View in window
     pangolin::Handler3D handler(s_cam);
+
+    // Display area for the camera
     pangolin::View &d_cam = pangolin::CreateDisplay()
             .SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f)
             .SetHandler(&handler);
@@ -136,25 +178,28 @@ int main(int /*argc*/, char ** /*argv*/ ) {
             // TODO: use rodrigues on rvec and tvec to turn into projection matrix
         }
 
-//        cv::imshow("Undistorted", undistortedFrame);
-//        if ((char) cv::waitKey(1) == 27)
-//            break;
-
         // Render OpenGL Cube
-        pangolin::glDrawColouredCube();
+
+//        pangolin::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 1);
+        glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+        getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
 
         cv::vconcat(displayFrame, undistortedFrame, displayFrame);
         cv::resize(displayFrame, displayFrame, displaySize);
         // TODO: clean up how these images are stacked because very scuffed atm
-        //TODO: fix this offset color how to switch just green and blue
-        //TODO: Clean up dimensions between pangolin window, actual image, and display Image which is big time mess
-        for(int i = 3 * constants::imgWidth * constants::imgHeight - 1; i >= 0; i--) {
-            pangoImageArray[i] = (unsigned char)(displayFrame.data[3 * constants::imgWidth * constants::imgHeight-i+1]);
+        // TODO: fix this offset color how to switch just green and blue
+        // TODO: Clean up dimensions between pangolin window, actual image, and display Image which is big time mess
+        for (int i = 3 * constants::imgWidth * constants::imgHeight - 1; i >= 0; i--) {
+            pangoImageArray[i] = (unsigned char) (displayFrame.data[3 * constants::imgWidth * constants::imgHeight - i +
+                                                                    1]);
         }
         imageTexture.Upload(pangoImageArray, GL_BGR, GL_UNSIGNED_BYTE);
         d_image.Activate();
         glColor3f(1, 1, 1);
         imageTexture.RenderToViewport();
+
+        imageTexture.RenderToViewport();
+
         // Swap frames and Process Events
         pangolin::FinishFrame();
     }
