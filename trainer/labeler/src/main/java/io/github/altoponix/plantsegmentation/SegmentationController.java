@@ -34,7 +34,9 @@ public class SegmentationController {
     @FXML
     private CheckBox eyedropper;
     @FXML
-    TextField eyedropperBounds;
+    private TextField eyedropperBounds;
+    @FXML
+    private TextField brushSize;
 
     private String filePath;
     private Mat image = new Mat();
@@ -55,9 +57,9 @@ public class SegmentationController {
         File file = fileChooser.showOpenDialog(Main.getStageAccess());
         if(file != null) {
             filePath = file.toURI().toString().substring(6);
-            oldImage = image = Imgcodecs.imread(filePath);
-            oldMask = mask = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
-            oldMaskOut = maskOut = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
+            image = Imgcodecs.imread(filePath);
+            mask = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
+            maskOut = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
             fitSide = image.cols() >= image.rows();
             if (fitSide) {
                 fitScale = image.cols() / 600.0;
@@ -93,7 +95,7 @@ public class SegmentationController {
 
     @FXML
     public void save() {
-        String filename = filePath.substring(0, filePath.length()-4);
+        String filename = filePath.substring(0, filePath.indexOf("."));
         Imgcodecs.imwrite(filename + "_mask.png", maskOut);
         System.out.println("Image saved");
     }
@@ -101,9 +103,9 @@ public class SegmentationController {
     @FXML
     public void undo() {
         System.out.println("Undo");
-        image = oldImage;
-        mask = oldMask;
-        maskOut = oldMaskOut;
+        image = oldImage.clone();
+        mask = oldMask.clone();
+        maskOut = oldMaskOut.clone();
         updateStage();
     }
 
@@ -119,26 +121,29 @@ public class SegmentationController {
             smax.setText(String.valueOf(hsv[1] + bounds));
             vmax.setText(String.valueOf(hsv[2] + bounds));
         } else {
-            oldImage = image;
-            oldMask = mask;
-            oldMaskOut = maskOut;
+            oldImage = image.clone();
+            oldMask = mask.clone();
+            oldMaskOut = maskOut.clone();
+            int size = Integer.parseInt(brushSize.getText());
             int v = 0;
 
-            Imgproc.circle(image, new Point(x, y), 5, new Scalar(0, 255, 0), Imgproc.FILLED);
-            Imgproc.circle(mask, new Point(x, y), 5, Scalar.all(255), Imgproc.FILLED);
-            Imgproc.circle(maskOut, new Point(x, y), 5, Scalar.all(255), Imgproc.FILLED);
+            Imgproc.circle(image, new Point(x, y), size, new Scalar(0, 255, 0), Imgproc.FILLED);
+            Imgproc.circle(mask, new Point(x, y), size, Scalar.all(255), Imgproc.FILLED);
+            Imgproc.circle(maskOut, new Point(x, y), size, Scalar.all(255), Imgproc.FILLED);
 
             for (MatOfPoint contour:contours) {
                 v++;
                 for (int i = 0; i < v; i++) {
-                    MatOfPoint2f convertedContour = new MatOfPoint2f(contour.toArray());
+                    MatOfPoint2f convertedContour = new MatOfPoint2f(contours.get(i).toArray());
                     double r = Imgproc.pointPolygonTest(convertedContour, new Point(x, y), false);
                     if (r == 1) {
-                        Imgproc.fillPoly(image, contours, new Scalar(0, 255, 0));
-                        Imgproc.fillPoly(mask, contours, Scalar.all(255));
-                        Imgproc.fillPoly(maskOut, contours, Scalar.all(255));
-                        Imgproc.polylines(mask, contours, true, Scalar.all(255), 2);
-                        Imgproc.polylines(maskOut, contours, true, Scalar.all(255), 2);
+                        List<MatOfPoint> contourArray = new ArrayList<MatOfPoint>();
+                        contourArray.add( new MatOfPoint(contours.get(i).toArray()));
+                        Imgproc.fillPoly(image, contourArray, new Scalar(0, 255, 0));
+                        Imgproc.fillPoly(mask, contourArray, Scalar.all(255));
+                        Imgproc.fillPoly(maskOut, contourArray, Scalar.all(255));
+                        Imgproc.polylines(mask, contourArray, true, Scalar.all(255), 2);
+                        Imgproc.polylines(maskOut, contourArray, true, Scalar.all(255), 2);
                     }
                 }
             }
@@ -149,9 +154,10 @@ public class SegmentationController {
     //applies filters and draws contours
     @FXML
     private void update() {
-        oldImage = image;
-        oldMask = mask;
-        oldMaskOut = maskOut;
+        oldImage = image.clone();
+        oldMask = mask.clone();
+        oldMaskOut = maskOut.clone();
+        contours = new ArrayList<>();
         Mat color = doColorFilter(Imgcodecs.imread(filePath));
         getContours(color);
         updateStage();
