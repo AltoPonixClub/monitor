@@ -93,39 +93,30 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         cout << "Broken Camera";
         return -1;
     }
-    cap.set(cv::CAP_PROP_FPS, 60);
-    cv::Size displaySize = cv::Size(constants::imgWidth, constants::imgHeight);
+    cap.set(cv::CAP_PROP_FPS, constants::fps);
     cv::Ptr<cv::aruco::Dictionary> arucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
-    cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
+    cv::Ptr<cv::aruco::DetectorParameters> arucoParams = cv::aruco::DetectorParameters::create();
     cv::FileStorage calibFile(constants::calibPath, cv::FileStorage::READ);
     cout << calibFile.isOpened() << endl;
-    auto cameraMatrix = calibFile.operator[]("K").mat(); // I think incorrect
-    auto distCoeffs = calibFile.operator[]("D").mat(); // I think incorrect
-
-    cout << cameraMatrix << endl;
+    auto cameraMatrix = calibFile.operator[]("K").mat(); // extrinsics
+    auto distCoeffs = calibFile.operator[]("D").mat(); // intrinsics
     calibFile.~FileStorage();
 
-    vector<vector<cv::Point3f>> arucoPts; // convert to Point3f instead of vector for i j k
-    vector<vector<cv::Point2f>> arucoPts2d;
-
-    for (const auto &i: constants::rawArucoPts) {
-        vector<cv::Point3f> tmp;
-        vector<cv::Point2f> tmp2d;
-        for (auto j: i) {
-            tmp.push_back(cv::Point3f(j[0], j[1], j[2]));
-            tmp2d.push_back(cv::Point2f(j[0], j[1]));
-        }
-        arucoPts.push_back(tmp);
-        arucoPts2d.push_back(tmp2d);
-    }
-
-    cv::Ptr<cv::aruco::Board> board = cv::aruco::Board::create(arucoPts, arucoDictionary, constants::arucoIds);
+    cv::Ptr<cv::aruco::Board> board = cv::aruco::Board::create(constants::boardArucoPts, arucoDictionary,
+                                                               constants::arucoIds);
     vector<vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
     vector<int> detectedArucoIds;
+    vector<cv::Point2f> transform_src;
+    for (const auto &i: constants::boardArucoPts) {
+        for (auto c: i) {
+            transform_src.push_back(cv::Point2f(c.x * constants::imgSize.width / 20.7, c.y * constants::imgSize.height /
+                                                                                       19.7)); // Multiplier to make bigger in final image
+        }
+    }
 
     cv::Vec3d rvec, tvec;
 
-    pangolin::CreateWindowAndBind("Main", int(640 * 1.5), int(480 * 1.5));
+    pangolin::CreateWindowAndBind("Main", constants::dispSize.width, constants::dispSize.height);
     glEnable(GL_DEPTH_TEST);
 
     // viewing state of virtual camera for rendering scene; intrinsics and extrinsics
@@ -150,10 +141,13 @@ int main(int /*argc*/, char ** /*argv*/ ) {
 //            .SetLock(pangolin::LockLeft, pangolin::LockTop);
 
     pangolin::View &d_image = pangolin::Display("image")
-            .SetBounds(2/3, 1.0f, 0, 1 / 3.0f, (float) constants::imgWidth / (float) constants::imgHeight)
+            .SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
+                       (float) constants::imgDispSize.width / (float) constants::imgDispSize.height)
             .SetLock(pangolin::LockLeft, pangolin::LockTop);
-    cv::Mat frame, displayFrame, undistortedFrame;
-    pangolin::GlTexture imageTexture(constants::imgWidth, constants::imgHeight, GL_RGB, false, 0, GL_RGB,
+    cv::Mat frame, displayFrame;
+    cv::Mat undistortedFrame(constants::imgSize.height, constants::imgSize.width, CV_8UC3, cv::Scalar(255, 255, 255));
+    pangolin::GlTexture imageTexture(constants::imgDispSize.width, constants::imgDispSize.height, GL_RGB, false, 0,
+                                     GL_RGB,
                                      GL_UNSIGNED_BYTE);
     while (!pangolin::ShouldQuit()) {
         // Clear screen and activate view to render into
@@ -161,62 +155,45 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         d_cam.Activate(s_cam);
 
         cap >> frame;
-//        cvtColor(frame, frame, cv::RGB2BGR);
+        cv::resize(frame, frame, constants::imgSize);
         displayFrame = frame.clone();
-        undistortedFrame = frame.clone();
 
-        cv::aruco::detectMarkers(frame, arucoDictionary, detectedArucoCorners, detectedArucoIds, parameters,
+        cv::aruco::detectMarkers(frame, arucoDictionary, detectedArucoCorners, detectedArucoIds, arucoParams,
                                  rejectedArucoCorners);
         cv::aruco::refineDetectedMarkers(frame, board, detectedArucoCorners, detectedArucoIds, rejectedArucoCorners,
                                          cameraMatrix, distCoeffs);
-        for (auto corner: detectedArucoCorners) {
+        for (const auto &corner: detectedArucoCorners) {
             for (auto pt: corner) {
-                cv::circle(displayFrame, pt, 10, cv::Scalar(255, 255, 0), cv::FILLED);
+                cv::circle(displayFrame, pt, constants::arucoCircRadius, constants::aqua, cv::FILLED);
             }
         }
-        vector<pair<int, vector<cv::Point2f>>> tmp_corners;
-        vector<cv::Point2f> tmp_corners_src, tmp_corners_dst;
+        vector<cv::Point2f> transform_dst;
         if (detectedArucoIds.size() == 4) {
-            tmp_corners_src.clear();
-            tmp_corners_dst.clear();
+            vector<pair<int, vector<cv::Point2f>>> tmp_corners;
             cv::aruco::estimatePoseBoard(detectedArucoCorners, detectedArucoIds, board, cameraMatrix, distCoeffs, rvec,
                                          tvec);
-            for (int i = 0; i < detectedArucoIds.size(); i++) {
-                tmp_corners.push_back(make_pair(detectedArucoIds[i], detectedArucoCorners[i]));
-            }
+            // Sets up transform dst for findHomography
+            for (int i = 0; i < detectedArucoIds.size(); i++)
+                tmp_corners.emplace_back(detectedArucoIds[i], detectedArucoCorners[i]);
             sort(tmp_corners.begin(), tmp_corners.end(), Utils::pairSortComparator);
-
-            for (auto i: tmp_corners) {
-                for (auto c: i.second) {
-                    tmp_corners_dst.push_back(c);
-                }
+            for (const auto &corner: tmp_corners) {
+                for (auto pt: corner.second)
+                    transform_dst.push_back(pt);
             }
-            // TODO: move this out
-            for (auto i: arucoPts2d) {
-                for (auto c: i) {
-                    c.x = c.x * (float) constants::imgWidth / 20.7;
-                    c.y = c.y * (float) constants::imgHeight / 19.7;
-                    tmp_corners_src.push_back(c); // Multiplier to make bigger in final image
-                }
-            }
-
-            tmp_corners.clear();
-//            cout << " rvec: " << rvec << " tvec: " << tvec << endl;
             // TODO: use rodrigues on rvec and tvec to turn into projection matrix
         }
         try {
             /* Planar Rectification based on Aruco Markers */
 
             // Maps real world coords of board to those in the image
-            //TODO: is it bad to create objects constantly in loop instead of initializing outside?
-            cv::Mat H = cv::findHomography(tmp_corners_src, tmp_corners_dst, cv::RANSAC, 5);
+            cv::Mat H = cv::findHomography(transform_src, transform_dst, cv::RANSAC, 5);
             // Apply perspective transformation to original image
-            cv::warpPerspective(displayFrame, undistortedFrame, H.inv(), displaySize, cv::INTER_LINEAR);
+            cv::warpPerspective(displayFrame, undistortedFrame, H.inv(), constants::imgDispSize, cv::INTER_LINEAR);
+            undistortedFrame = undistortedFrame(cv::Rect(0, 0, constants::imgSize.width, constants::imgSize.height));
         }
         catch (...) {
             cout << "Not Yet Found" << endl;
         }
-
 
         // Render OpenGL Cube
 
@@ -224,13 +201,13 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         // TODO: this is working
         goodGetFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
         // TODO: this is not working :(
-        // TODO: rename vertices
-        auto frustrum = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
-        vector<Eigen::Matrix<float, 4, 1>> frustumVertices = frustrum.first;
-        for (auto v : frustumVertices) {
-            cout << v << ", ";
-        }
-        cout << endl << endl << endl;
+
+//        auto frustrum = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
+//        vector<Eigen::Matrix<float, 4, 1>> frustumVertices = frustrum.first;
+//        for (auto v : frustumVertices) {
+//            cout << v << ", ";
+//        }
+//        cout << endl << endl << endl;
 //        glDrawVertices(11, frustrum.second, GL_LINE_STRIP, 3);
 //        Eigen::Matrix4f transformationMatrix;
 //        transformationMatrix << 0, 0, 0, 0,
@@ -243,17 +220,11 @@ int main(int /*argc*/, char ** /*argv*/ ) {
 //        }
 
         cv::vconcat(displayFrame, undistortedFrame, displayFrame);
-        cv::resize(displayFrame, displayFrame, displaySize);
         cv::flip(displayFrame, displayFrame, 0);
-        // TODO: clean up how these images are stacked because very scuffed atm
-        // TODO: Clean up dimensions between pangolin window, actual image, and display Image which is big time mess
-        // TODO: no squish camera
+        cv::resize(displayFrame, displayFrame, constants::imgDispSize);
         // TODO: plot tvec and rvec
         // TODO: point clouds
         // TODO: menu bar
-
-//        cv::imshow("Window", displayFrame);
-//        cv::waitKey(0);
 
         imageTexture.Upload(displayFrame.data, GL_BGR, GL_UNSIGNED_BYTE);
         d_image.Activate();
