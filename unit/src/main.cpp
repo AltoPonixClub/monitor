@@ -1,41 +1,44 @@
 #include <iostream>
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
 
 #include <pangolin/display/display.h>
 #include <pangolin/display/view.h>
 #include <pangolin/handler/handler.h>
-#include <pangolin/gl/gldraw.h>
 #include <pangolin/video/video_input.h>
 #include <pangolin/gl/gl.h>
 #include <pangolin/gl/glinclude.h>
 #include <pangolin/gl/glformattraits.h>
 #include <pangolin/display/opengl_render_state.h>
+#include <pangolin/gl/gldraw.h>
+
+#include <Eigen/Core>
 
 #include "utils.h"
 #include "constants.h"
 
 using namespace std;
 
-template<typename T>
-inline void glDrawVertices(
-        size_t num_vertices, const T* const vertex_ptr, GLenum mode,
-        size_t elements_per_vertex = pangolin::GlFormatTraits<T>::components,
-        size_t vertex_stride_bytes = 0 )
-{
-    if(num_vertices > 0)
-    {
-        PANGO_ENSURE(vertex_ptr != nullptr);
-        PANGO_ENSURE(mode != GL_LINES || num_vertices % 2 == 0, "number of vertices (%) must be even in GL_LINES mode", num_vertices );
 
-        glVertexPointer(elements_per_vertex, pangolin::GlFormatTraits<T>::gltype, vertex_stride_bytes, vertex_ptr);
+inline void glDrawVertices(
+        size_t num_vertices, const GLfloat* const vertex_ptr, GLenum mode,
+        size_t elements_per_vertex = pangolin::GlFormatTraits<GLfloat>::components,
+        size_t vertex_stride_bytes = 0) {
+    if (num_vertices > 0) {
+        PANGO_ENSURE(vertex_ptr != nullptr);
+        PANGO_ENSURE(mode != GL_LINES || num_vertices % 2 == 0, "number of vertices (%) must be even in GL_LINES mode",
+                     num_vertices);
+
+        glVertexPointer(elements_per_vertex, pangolin::GlFormatTraits<GLfloat>::gltype, vertex_stride_bytes,
+                        vertex_ptr);
         glEnableClientState(GL_VERTEX_ARRAY);
         glDrawArrays(mode, 0, num_vertices);
         glDisableClientState(GL_VERTEX_ARRAY);
     }
 }
 
-void getFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, int h, GLfloat scale )
+void goodGetFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, int h, GLfloat scale )
 {
     const GLfloat xl = scale * u0;
     const GLfloat xh = scale * (w*fu + u0);
@@ -52,6 +55,33 @@ void getFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, i
     };
 
     glDrawVertices(11, verts, GL_LINE_STRIP, 3);
+}
+// TODO: optimize this
+
+pair<vector<Eigen::Matrix<float, 4, 1>>, GLfloat *>
+getFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, int h, GLfloat scale) {
+
+    const GLfloat xl = scale * u0;
+    const GLfloat xh = scale * (w * fu + u0);
+    const GLfloat yl = scale * v0;
+    const GLfloat yh = scale * (h * fv + v0);
+    const int vertCount = 11;
+    GLfloat verts[] = {
+            xl, yl, scale, xh, yl, scale,
+            xh, yh, scale, xl, yh, scale,
+            xl, yl, scale, 0, 0, 0,
+            xh, yl, scale, 0, 0, 0,
+            xl, yh, scale, 0, 0, 0,
+            xh, yh, scale
+    };
+
+    vector<Eigen::Matrix<float, 4, 1>> homogVerts;
+    for (int i = 0; i < vertCount; i++) {
+        homogVerts.push_back(
+                (Eigen::Matrix<float, 4, 1>() << verts[3 * i], verts[3 * i + 1], verts[3 * i + 2], 1).finished());
+    }
+    return make_pair(homogVerts, verts);
+//    glDrawVertices(vertCount, verts, GL_LINE_STRIP, 3);
 }
 
 int main(int /*argc*/, char ** /*argv*/ ) {
@@ -180,9 +210,22 @@ int main(int /*argc*/, char ** /*argv*/ ) {
 
         // Render OpenGL Cube
 
-//        pangolin::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 1);
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-        getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
+        // TODO: this is working
+        goodGetFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
+        // TODO: this is not working
+        auto frustrum = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
+        vector<Eigen::Matrix<float, 4, 1>> frustumVertices = frustrum.first;
+        glDrawVertices(11, frustrum.second, GL_LINE_STRIP, 3);
+        Eigen::Matrix4f transformationMatrix;
+        transformationMatrix << 0, 0, 0, 0,
+                                0, 0, 0, 0,
+                                0, 0, 0, 0,
+                                0, 0, 0, 0;
+
+        for (auto vertex: frustumVertices) {
+            vertex = transformationMatrix * vertex;
+        }
 
         cv::vconcat(displayFrame, undistortedFrame, displayFrame);
         cv::resize(displayFrame, displayFrame, displaySize);
@@ -196,8 +239,6 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         imageTexture.Upload(pangoImageArray, GL_BGR, GL_UNSIGNED_BYTE);
         d_image.Activate();
         glColor3f(1, 1, 1);
-        imageTexture.RenderToViewport();
-
         imageTexture.RenderToViewport();
 
         // Swap frames and Process Events
