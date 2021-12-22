@@ -10,10 +10,10 @@
 #include <pangolin/handler/handler.h>
 #include <pangolin/gl/gl.h>
 #include <pangolin/gl/glinclude.h>
-#include <pangolin/gl/glformattraits.h>
 #include <pangolin/display/opengl_render_state.h>
 #include <pangolin/gl/gldraw.h>
 #include <pangolin/video/video_input.h>
+#include <pangolin/gl/glformattraits.h>
 
 #include <Eigen/Core>
 
@@ -22,86 +22,6 @@
 
 using namespace std;
 
-// TODO: refactor
-// TODO: put some stuff in constants
-
-//inline void glDrawVertices(
-//        size_t num_vertices, const GLfloat *const vertex_ptr, GLenum mode,
-//        size_t elements_per_vertex = pangolin::GlFormatTraits<GLfloat>::components,
-//        size_t vertex_stride_bytes = 0) {
-//    if (num_vertices > 0) {
-//        PANGO_ENSURE(vertex_ptr != nullptr);
-//        PANGO_ENSURE(mode != GL_LINES || num_vertices % 2 == 0, "number of vertices (%) must be even in GL_LINES mode",
-//                     num_vertices);
-//
-//        glVertexPointer(elements_per_vertex, pangolin::GlFormatTraits<GLfloat>::gltype, vertex_stride_bytes,
-//                        vertex_ptr);
-//        glEnableClientState(GL_VERTEX_ARRAY);
-//        glDrawArrays(mode, 0, num_vertices);
-//        glDisableClientState(GL_VERTEX_ARRAY);
-//    }
-//}
-
-vector<Eigen::Matrix<float, 4, 1>> getFrustumVertices(float u0, float v0, float fu, float fv, int w, int h, float scale) {
-    const float xl = scale * u0;
-    const float xh = scale * (w * fu + u0);
-    const float yl = scale * v0;
-    const float yh = scale * (h * fv + v0);
-
-//    pangolin::glDrawLine(xl, yl, scale, xl, yh, scale);
-//    pangolin::glDrawLine(xh, yl, scale, xh, yh, scale);
-//    pangolin::glDrawLine(xl, yl, scale, xh, yl, scale);
-//    pangolin::glDrawLine(xl, yh, scale, xh, yh, scale);
-//    pangolin::glDrawLine(xl, yh, scale, 0, 0, 0);
-//    pangolin::glDrawLine(xh, yl, scale, 0, 0, 0);
-//    pangolin::glDrawLine(xl, yl, scale, 0, 0, 0);
-//    pangolin::glDrawLine(xh, yh, scale, 0, 0, 0);
-
-    vector<Eigen::Matrix<float, 4, 1>> homogVerts;
-    homogVerts.push_back((Eigen::Matrix<float, 4, 1>() << xl, yl, scale, 1).finished());
-    homogVerts.push_back((Eigen::Matrix<float, 4, 1>() << xh, yh, scale, 1).finished());
-    homogVerts.push_back((Eigen::Matrix<float, 4, 1>() << xl, yh, scale, 1).finished());
-    homogVerts.push_back((Eigen::Matrix<float, 4, 1>() << xh, yl, scale, 1).finished());
-    homogVerts.push_back((Eigen::Matrix<float, 4, 1>() << 0, 0, 0, 1).finished());
-    return homogVerts;
-}
-
-void drawFrustum(vector<Eigen::Matrix<float, 4, 1>> vertices) {
-    for (int i = 0; i < vertices.size(); i++) {
-        for (int j = i; j < vertices.size(); j++) {
-            pangolin::glDrawLine(vertices[i].data()[0], vertices[i].data()[1], vertices[i].data()[2], vertices[j].data()[0], vertices[j].data()[1], vertices[j].data()[2]);
-        }
-    }
-}
-// TODO: optimize this
-
-//pair<vector<Eigen::Matrix<float, 4, 1>>, GLfloat *>
-//getFrustumVertices(GLfloat u0, GLfloat v0, GLfloat fu, GLfloat fv, int w, int h, GLfloat scale) {
-//
-//    const GLfloat xl = scale * u0;
-//    const GLfloat xh = scale * (w * fu + u0);
-//    const GLfloat yl = scale * v0;
-//    const GLfloat yh = scale * (h * fv + v0);
-//    const int vertCount = 11;
-//    GLfloat verts[] = {
-//            xl, yl, scale, xh, yl, scale,
-//            xh, yh, scale, xl, yh, scale,
-//            xl, yl, scale, 0, 0, 0,
-//            xh, yl, scale, 0, 0, 0,
-//            xl, yh, scale, 0, 0, 0,
-//            xh, yh, scale
-//    };
-//
-//    vector<Eigen::Matrix<float, 4, 1>> homogVerts;
-//    for (int i = 0; i < vertCount; i++) {
-//        homogVerts.push_back(
-//                (Eigen::Matrix<float, 4, 1>() << verts[3 * i], verts[3 * i + 1], verts[3 * i + 2], 1).finished());
-//    }
-//    return make_pair(homogVerts, verts);
-//    glDrawVertices(vertCount, verts, GL_LINE_STRIP, 3);
-//}
-
-
 int main(int /*argc*/, char ** /*argv*/ ) {
     cv::VideoCapture cap(constants::cameraId);
     if (!cap.isOpened()) {
@@ -109,19 +29,19 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         return -1;
     }
     cap.set(cv::CAP_PROP_FPS, constants::fps);
-    cv::Ptr <cv::aruco::Dictionary> arucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
-    cv::Ptr <cv::aruco::DetectorParameters> arucoParams = cv::aruco::DetectorParameters::create();
+    cv::Ptr<cv::aruco::Dictionary> arucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
+    cv::Ptr<cv::aruco::DetectorParameters> arucoParams = cv::aruco::DetectorParameters::create();
     cv::FileStorage calibFile(constants::calibPath, cv::FileStorage::READ);
     cout << calibFile.isOpened() << endl;
     auto cameraMatrix = calibFile.operator[]("K").mat(); // extrinsics
     auto distCoeffs = calibFile.operator[]("D").mat(); // intrinsics
     calibFile.~FileStorage();
 
-    cv::Ptr <cv::aruco::Board> board = cv::aruco::Board::create(constants::boardArucoPts, arucoDictionary,
-                                                                constants::arucoIds);
-    vector <vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
+    cv::Ptr<cv::aruco::Board> board = cv::aruco::Board::create(constants::boardArucoPts, arucoDictionary,
+                                                               constants::arucoIds);
+    vector<vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
     vector<int> detectedArucoIds;
-    vector <cv::Point2f> transform_src;
+    vector<cv::Point2f> transform_src;
     for (const auto &i: constants::boardArucoPts) {
         for (auto c: i) {
             transform_src.push_back(cv::Point2f(c.x * constants::imgSize.width / constants::platformDim.width,
@@ -138,7 +58,8 @@ int main(int /*argc*/, char ** /*argv*/ ) {
     // viewing state of virtual camera for rendering scene; intrinsics and extrinsics
     pangolin::OpenGlRenderState s_cam(
             pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 100),
-            pangolin::ModelViewLookAt(constants::platformDim.width/2, -15, 5, constants::platformDim.width/2, constants::platformDim.height/2, 0, pangolin::AxisZ)
+            pangolin::ModelViewLookAt(constants::platformDim.width / 2, -15, 10, constants::platformDim.width / 2,
+                                      constants::platformDim.height / 2, 0, pangolin::AxisZ)
     );
 
     // Create Interactive View in window
@@ -183,9 +104,9 @@ int main(int /*argc*/, char ** /*argv*/ ) {
                 cv::circle(displayFrame, pt, constants::arucoCircRadius, constants::aqua, cv::FILLED);
             }
         }
-        vector <cv::Point2f> transform_dst;
+        vector<cv::Point2f> transform_dst;
         if (detectedArucoIds.size() == 4) {
-            vector < pair < int, vector < cv::Point2f>>> tmp_corners;
+            vector<pair<int, vector<cv::Point2f>>> tmp_corners;
             cv::aruco::estimatePoseBoard(detectedArucoCorners, detectedArucoIds, board, cameraMatrix, distCoeffs, rvec,
                                          tvec);
             // Sets up transform dst for findHomography
@@ -216,44 +137,34 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         glColor4f(1, 1, 1, 1);
         pangolin::glDrawLine(0, 0, 0, constants::platformDim.width, 0, 0);
         pangolin::glDrawLine(0, 0, 0, 0, constants::platformDim.height, 0);
-        pangolin::glDrawLine(constants::platformDim.width, 0, 0, constants::platformDim.width, constants::platformDim.height, 0);
-        pangolin::glDrawLine(0, constants::platformDim.height, 0, constants::platformDim.width, constants::platformDim.height, 0);
+        pangolin::glDrawLine(constants::platformDim.width, 0, 0, constants::platformDim.width,
+                             constants::platformDim.height, 0);
+        pangolin::glDrawLine(0, constants::platformDim.height, 0, constants::platformDim.width,
+                             constants::platformDim.height, 0);
 
         // Draws Camera Frustum
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-        // TODO: this is working
-        auto frustumVertices = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
-        drawFrustum(frustumVertices);
-
-        // TODO: this is not working :(
-
-//        auto frustum = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
-//        pangolin::glDrawVertices()
-//        vector<Eigen::Matrix<float, 4, 1>> frustumVertices = frustum.first;
-//        for (auto v : frustumVertices) {
-//            cout << v << ", ";
-//        }
-//        cout << endl << endl << endl;
-//        glDrawVertices(11, frustum.second, GL_LINE_STRIP, 3);
-//        pangolin::glDrawVertices(11, frustum.second, GL_LINE_STRIP, 3);
-
-/*
- * Translation Matrix
- * [ 1 0 0 X ]
- * [ 0 1 0 Y ]
- * [ 0 0 1 Z ]
- * [ 0 0 0 1 ]
- *
- */
+        auto frustumVertices = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
         Eigen::Matrix4f transformationMatrix;
-        transformationMatrix << 0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0;
 
-//        for (auto vertex: frustumVertices) {
-//            vertex = transformationMatrix * vertex;
-//        }
+        /*
+        * Translation Matrix
+        * [ 1 0 0 X ]
+        * [ 0 1 0 Y ]
+        * [ 0 0 1 Z ]
+        * [ 0 0 0 1 ]
+        */
+        transformationMatrix << 1, 0, 0, 1,
+                0, 1, 0, 1,
+                0, 0, 1, 1,
+                0, 0, 0, 1;
+
+        for (auto &vertex: frustumVertices) {
+            vertex = transformationMatrix * vertex;
+        }
+        Utils::drawFrustum(frustumVertices);
+        glColor3f(1, 1, 1);
+
 
         cv::vconcat(displayFrame, undistortedFrame, displayFrame);
         cv::flip(displayFrame, displayFrame, 0);
@@ -264,7 +175,6 @@ int main(int /*argc*/, char ** /*argv*/ ) {
 
         imageTexture.Upload(displayFrame.data, GL_BGR, GL_UNSIGNED_BYTE);
         d_image.Activate();
-        glColor3f(1, 1, 1);
         imageTexture.RenderToViewport();
 
         // Swap frames and Process Events
