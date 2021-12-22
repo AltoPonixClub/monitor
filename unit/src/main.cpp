@@ -22,6 +22,8 @@
 
 using namespace std;
 
+// TODO: refactor
+// TODO: put some stuff in constants
 
 inline void glDrawVertices(
         size_t num_vertices, const GLfloat *const vertex_ptr, GLenum mode,
@@ -193,9 +195,8 @@ int main(int /*argc*/, char ** /*argv*/ ) {
                 }
             }
 
-            /**
-             * Initiating Planar Rectification based on Aruco Markers
-             */
+            /* Planar Rectification based on Aruco Markers */
+
             // Maps real world coords of board to those in the image
             //TODO: is it bad to create objects constantly in loop instead of initializing outside?
             cv::Mat H = cv::findHomography(tmp_corners_src, tmp_corners_dst, cv::RANSAC, 5);
@@ -214,7 +215,9 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
         // TODO: this is working
         goodGetFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
-        // TODO: this is not working
+        // TODO: this is not working :(
+
+        /**
         auto frustrum = getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
         vector<Eigen::Matrix<float, 4, 1>> frustumVertices = frustrum.first;
         glDrawVertices(11, frustrum.second, GL_LINE_STRIP, 3);
@@ -227,48 +230,15 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         for (auto vertex: frustumVertices) {
             vertex = transformationMatrix * vertex;
         }
+        */
 
         cv::vconcat(displayFrame, undistortedFrame, displayFrame);
         cv::resize(displayFrame, displayFrame, displaySize);
+        cv::flip(displayFrame, displayFrame, 0);
         // TODO: clean up how these images are stacked because very scuffed atm
-        // TODO: fix this offset color how to switch just green and blue
         // TODO: Clean up dimensions between pangolin window, actual image, and display Image which is big time mess
 
-
-
-
-        // or extract them all
-
-        //TODO: clean up this atrocious code
-//        channels[1].data channels[0].data channels[2].data
-        vector<cv::Mat> channels(3);
-        cv::split(displayFrame, channels);
-        swap(channels[0], channels[1]);
-        cv::merge(channels, displayFrame);
-
-//        int index = 0;
-//        cout << sizeof(channels[1].data)/sizeof(channels[1].data[0]);
-//        int dataSize = constants::imgWidth * constants::imgHeight;
-//        for (int i = 0; i < 3*dataSize; i+=3) {
-//            pangoImageArray[index] = (unsigned char) channels[1].data[i];
-//            pangoImageArray[index+1] = (unsigned char) channels[0].data[i+1];
-//            pangoImageArray[index+2] = (unsigned char) channels[2].data[i+2];
-//            index += 3;
-//        }
-//        for (int i = 0; i < dataSize; i++) {
-//            pangoImageArray[index] = (unsigned char) channels[0].data[i];
-//            index += 1;
-//        }
-//        for (int i = 0; i < dataSize; i++) {
-//            pangoImageArray[index] = (unsigned char) channels[2].data[i];
-//            index += 1;
-//        }
-
-        for (int i = 3 * constants::imgWidth * constants::imgHeight - 1; i >= 0; i--) {
-            pangoImageArray[i] = (unsigned char) (displayFrame.data[3 * constants::imgWidth * constants::imgHeight - i +
-                                                                    1]);
-        }
-        imageTexture.Upload(pangoImageArray, GL_BGR, GL_UNSIGNED_BYTE);
+        imageTexture.Upload(displayFrame.data, GL_BGR, GL_UNSIGNED_BYTE);
         d_image.Activate();
         glColor3f(1, 1, 1);
         imageTexture.RenderToViewport();
