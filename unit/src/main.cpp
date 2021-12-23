@@ -14,6 +14,8 @@
 #include <pangolin/gl/gldraw.h>
 #include <pangolin/video/video_input.h>
 #include <pangolin/gl/glformattraits.h>
+#include <pangolin/var/var.h>
+#include <pangolin/var/varextra.h>
 
 #include <Eigen/Core>
 
@@ -69,13 +71,6 @@ int main(int /*argc*/, char ** /*argv*/ ) {
     pangolin::View &d_cam = pangolin::CreateDisplay()
             .SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f)
             .SetHandler(&handler);
-
-    // This view will take up no more than a third of the windows width or height, and it
-    // will have a fixed aspect ratio to match the image that it will display. When fitting
-    // within the specified bounds, push to the top-left (as specified by SetLock).
-//    pangolin::View &d_image = pangolin::Display("image")
-//            .SetBounds(2 / 3.0f, 1.0f, 0, 1 / 3.0f, 640.0 / 480)
-//            .SetLock(pangolin::LockLeft, pangolin::LockTop);
 
     pangolin::View &d_image = pangolin::Display("image")
             .SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
@@ -144,7 +139,7 @@ int main(int /*argc*/, char ** /*argv*/ ) {
 
         // Draws Camera Frustum
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-        auto frustumVertices = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 0.25);
+        auto frustumVertices = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 1);
         Eigen::Matrix4f transformationMatrix;
 
         /*
@@ -154,14 +149,15 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         * [ 0 0 1 Z ]
         * [ 0 0 0 1 ]
         */
-        transformationMatrix << 1, 0, 0, 1,
-                0, 1, 0, 1,
-                0, 0, 1, 1,
-                0, 0, 0, 1;
+        transformationMatrix << 1, 0, 0, tvec[0],
+                                0, 1, 0, tvec[1],
+                                0, 0, 1, tvec[2],
+                                0, 0, 0, 1;
 
         for (auto &vertex: frustumVertices) {
             vertex = transformationMatrix * vertex;
         }
+        // todo: check w element of matrix is 1
         Utils::drawFrustum(frustumVertices);
         glColor3f(1, 1, 1);
 
