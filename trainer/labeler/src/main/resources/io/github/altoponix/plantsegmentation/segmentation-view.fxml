@@ -55,14 +55,31 @@
         </HBox>
     </center>
     <bottom>
-        <HBox alignment="CENTER">
-            <padding>
-                <Insets bottom="25" left="25" right="25" top="25" />
-            </padding>
-            <Button fx:id="importPhoto" alignment="center" onAction="#importPhoto" text="Import Photo" />
-            <Button fx:id="updateStage" alignment="center" onAction="#update" text="Update" />
-            <Button fx:id="save" alignment="center" onAction="#save" text="Save" />
-            <Button fx:id="undo" alignment="center" onAction="#undo" text="Undo" />
-        </HBox>
+        <VBox>
+            <HBox alignment="CENTER" spacing="10">
+                <padding>
+                    <Insets bottom="10" left="10" right="10" top="10" />
+                </padding>
+                <Button fx:id="updateStage" alignment="center" onAction="#update" text="Update Filters" />
+                <Button fx:id="save" alignment="center" onAction="#save" text="Save" />
+                <Button fx:id="undo" alignment="center" onAction="#undo" text="Undo" />
+            </HBox>
+            <Separator />
+            <HBox alignment="CENTER" spacing="10">
+                <padding>
+                    <Insets bottom="10" top="10" />
+                </padding>
+                <Label text="Folder Path" />
+                <TextField fx:id="folderPath" />
+                <Label text="Output Folder Path" />
+                <TextField fx:id="outputPath" />
+                <Button fx:id="updatePath" alignment="center" onAction="#updatePath" text="Update Paths" />
+                <Button fx:id="nextPhoto" alignment="center" onAction="#nextPhoto" text="Next Photo" />
+                <Label text="Photo #"/>
+                <TextField fx:id="photoIndex" text="0"/>
+                <Label fx:id="totalPhotos" text="0" />
+                <Button fx:id="updateIndex" alignment="center" onAction="#updateIndex" text="Update Index"/>
+            </HBox>
+        </VBox>
     </bottom>
 </BorderPane>
