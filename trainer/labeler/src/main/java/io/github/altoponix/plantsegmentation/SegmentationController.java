@@ -2,6 +2,7 @@ package io.github.altoponix.plantsegmentation;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -37,6 +38,14 @@ public class SegmentationController {
     private TextField eyedropperBounds;
     @FXML
     private TextField brushSize;
+    @FXML
+    private TextField folderPath;
+    @FXML
+    private TextField outputPath;
+    @FXML
+    private TextField photoIndex;
+    @FXML
+    private Label totalPhotos;
 
     private String filePath;
     private Mat image = new Mat();
@@ -49,12 +58,37 @@ public class SegmentationController {
     private Mat hierarchy = new Mat();
     private double fitScale;
     private boolean fitSide;
+    private File[] files;
+    private int filesIndex;
 
-    //imports a photo using JavaFX FileChooser
     @FXML
-    public void importPhoto() {
-        FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showOpenDialog(Main.getStageAccess());
+    public void updatePath() {
+        File dir = new File(folderPath.getText());
+        files = dir.listFiles();
+        if (files != null) {
+            photoIndex.setText("0");
+            totalPhotos.setText(String.valueOf(files.length));
+            photoIndex.setText(String.valueOf(filesIndex));
+            loadPhoto(files[filesIndex]);
+        } else {
+            System.out.println("Invalid Directory");
+        }
+    }
+
+    @FXML
+    public void nextPhoto() {
+        filesIndex++;
+        photoIndex.setText(String.valueOf(filesIndex));
+        loadPhoto(files[filesIndex]);
+    }
+
+    @FXML
+    public void updateIndex() {
+        filesIndex = Integer.parseInt(photoIndex.getText());
+        loadPhoto(files[filesIndex]);
+    }
+
+    private void loadPhoto(File file) {
         if(file != null) {
             filePath = file.toURI().toString().substring(6);
             image = Imgcodecs.imread(filePath);
@@ -95,9 +129,9 @@ public class SegmentationController {
 
     @FXML
     public void save() {
-        String filename = filePath.substring(0, filePath.indexOf("."));
-        Imgcodecs.imwrite(filename + "_mask.png", maskOut);
-        System.out.println("Image saved");
+        String filename = outputPath.getText() + filePath.substring(folderPath.getText().length(), filePath.indexOf(".")) + "_mask.png";
+        Imgcodecs.imwrite(filename, maskOut);
+        System.out.println("Image saved at " + filename);
     }
 
     @FXML
@@ -112,6 +146,8 @@ public class SegmentationController {
     //eyedropper and drawing
     public void mouseEvent(double x, double y) {
         if (eyedropper.isSelected()) {
+            Mat hsvMat = new Mat();
+            Imgproc.cvtColor(image, hsvMat, Imgproc.COLOR_BGR2HSV);
             double[] hsv = image.get((int)x, (int)y);
             double bounds = Double.parseDouble(eyedropperBounds.getText());
             hmin.setText(String.valueOf(hsv[0] - bounds));
