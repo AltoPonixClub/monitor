@@ -7,9 +7,24 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 
+
+class UpScale(nn.Module):
+    def __init__(self, channels, dropout=0, batchnorm=True, pool=False):
+        super(UpScale, self).__init__()
+
+        pass
+
+class DownScale(nn.Module):
+    def __init__(self):
+        super(DownScale, self).__init__()
+        pass
+
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
+
+
+
         self.conv1 = nn.Conv2d(1, 32, 3, 1)
         self.conv2 = nn.Conv2d(32, 64, 3, 1)
         self.dropout1 = nn.Dropout(0.25)
