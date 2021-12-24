@@ -99,6 +99,7 @@ int main(int /*argc*/, char ** /*argv*/ ) {
                 cv::circle(displayFrame, pt, constants::arucoCircRadius, constants::aqua, cv::FILLED);
             }
         }
+        // TODO: undistorted frame should update always based on last found transform_dst (dont freeze)
         vector<cv::Point2f> transform_dst;
         if (detectedArucoIds.size() == 4) {
             vector<pair<int, vector<cv::Point2f>>> tmp_corners;
