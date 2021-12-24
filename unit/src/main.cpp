@@ -16,6 +16,7 @@
 #include <pangolin/gl/glformattraits.h>
 #include <pangolin/var/var.h>
 #include <pangolin/var/varextra.h>
+#include <pangolin/plot/plotter.h>
 
 #include <Eigen/Core>
 
@@ -23,6 +24,8 @@
 #include "constants.h"
 
 using namespace std;
+
+// TODO: cpp specific formatting
 
 int main(int /*argc*/, char ** /*argv*/ ) {
     cv::VideoCapture cap(constants::cameraId);
@@ -52,7 +55,7 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         }
     }
 
-    cv::Vec3d rvec, tvec;
+    cv::Vec3d rvec, tvec = cv::Vec3d(0, 0, 0);
 
     pangolin::CreateWindowAndBind("Main", constants::dispSize.width, constants::dispSize.height);
     glEnable(GL_DEPTH_TEST);
@@ -67,11 +70,26 @@ int main(int /*argc*/, char ** /*argv*/ ) {
     // Create Interactive View in window
     pangolin::Handler3D handler(s_cam);
 
-    // Display area for the camera
     pangolin::View &d_cam = pangolin::CreateDisplay()
             .SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f)
             .SetHandler(&handler);
 
+    // Set up plotter
+    const float tinc = 0.01f; // TODO: fix
+    pangolin::DataLog log;
+//    plotter.AddMarker(pangolin::Marker::Horizontal, 10, pangolin::Marker::Equal, pangolin::Colour::Green().WithAlpha(0.2f) );
+//    plotter.AddMarker(pangolin::Marker::Vertical, )
+    std::vector<std::string> labels;
+    labels.emplace_back("tvec[0]");
+    log.SetLabels(labels);
+
+    pangolin::Plotter plotter(&log,0.0f,4.0f*(float)M_PI/tinc-2.0f,-5,30,0.5f);
+    plotter.SetBounds(0, 0.3, 0.0, 0.33);
+    plotter.Track("$i");
+    pangolin::DisplayBase().AddDisplay(plotter);
+//    pangolin::CreatePanel("ui")
+//            .SetBounds(0.0, 1.0, 0.0, pangolin::Attach::Pix(UI_WIDTH));
+//
     pangolin::View &d_image = pangolin::Display("image")
             .SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
                        (float) constants::imgDispSize.width / (float) constants::imgDispSize.height)
@@ -150,8 +168,9 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         * [ 0 0 1 Z ]
         * [ 0 0 0 1 ]
         */
-        transformationMatrix << 1, 0, 0, tvec[0],
-                                0, 1, 0, tvec[1],
+        // TODO: this broken
+        transformationMatrix << 1, 0, 0, tvec[0] + constants::platformDim.height/2,
+                                0, 1, 0, tvec[1] + constants::platformDim.width/2,
                                 0, 0, 1, tvec[2],
                                 0, 0, 0, 1;
 
@@ -173,6 +192,9 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         imageTexture.Upload(displayFrame.data, GL_BGR, GL_UNSIGNED_BYTE);
         d_image.Activate();
         imageTexture.RenderToViewport();
+
+        // Plotter log
+        log.Log(tvec[0]);
 
         // Swap frames and Process Events
         pangolin::FinishFrame();
