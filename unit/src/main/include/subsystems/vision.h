@@ -7,10 +7,29 @@
 
 #include <iostream>
 #include <subsystems/subsystemBase.h>
-#include <robot/hardwareAdapter.h>
+#include <subsystems/hardwareBase.h>
 
 class Vision : public SubsystemBase {
 public:
+    class VisionHardware : public HardwareBase {
+    public:
+        cv::VideoCapture cap;
+
+        void configure();
+
+        void read(RobotState *state);
+
+        void write(Outputs *outputs);
+
+        static VisionHardware *instance();
+
+    private:
+        static inline VisionHardware *pInstance = nullptr;
+
+        VisionHardware() {
+        }
+    };
+
     void configure();
 
     void read(RobotState *state);

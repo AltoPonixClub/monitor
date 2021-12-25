@@ -1,19 +1,28 @@
 
-#include "subsystems/vision.h"
+#include <subsystems/vision.h>
 
-void Vision::configure() {
-    VisionHardware::instance()->configure();
+Vision::VisionHardware *Vision::VisionHardware::instance() {
+    if (VisionHardware::pInstance == nullptr) {
+        VisionHardware::pInstance = new VisionHardware();
+    }
+    return VisionHardware::pInstance;
 }
 
-void Vision::read(RobotState *state) {
-    VisionHardware::instance()->read(state);
+void Vision::VisionHardware::configure() {
+    VisionHardware::cap = cv::VideoCapture(0);
+    if (!cap.isOpened()) {
+        std::cout << "Vision Hardware Broken" << std::endl;
+    }
+}
+
+void Vision::VisionHardware::read(RobotState *state) {
+    VisionHardware::cap >> state->capFrame;
+}
+
+void Vision::VisionHardware::write(Outputs *outputs) {
 }
 
 void Vision::calculate(RobotState *state, Commands *commands, Outputs *outputs) {
-}
-
-void Vision::write(Outputs *outputs) {
-    VisionHardware::instance()->write(outputs);
 }
 
 Vision *Vision::instance() {

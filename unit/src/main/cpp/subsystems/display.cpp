@@ -1,22 +1,29 @@
 
-#include "subsystems/display.h"
+#include <subsystems/display.h>
 
-void Display::configure() {
-    DisplayHardware::instance()->configure();
+Display::DisplayHardware *Display::DisplayHardware::instance() {
+    if (DisplayHardware::pInstance == nullptr) {
+        DisplayHardware::pInstance = new DisplayHardware();
+    }
+    return DisplayHardware::pInstance;
 }
 
-void Display::read(RobotState *state) {
-    VisionHardware::instance()->read(state);
+void Display::DisplayHardware::configure() {
+    std::cout << "Display Hardware Initialized" << std::endl;
+}
+
+void Display::DisplayHardware::read(RobotState *state) {
+}
+
+void Display::DisplayHardware::write(Outputs *outputs) {
+    cv::imshow("Window", outputs->displayImg);
+    cv::waitKey(1);
 }
 
 void Display::calculate(RobotState *state, Commands *commands, Outputs *outputs) {
     if (commands->visionWantedState == commands->STREAMING) {
         outputs->displayImg = state->capFrame.clone();
     }
-}
-
-void Display::write(Outputs *outputs) {
-    DisplayHardware::instance()->write(outputs);
 }
 
 Display *Display::instance() {
