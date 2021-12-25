@@ -8,6 +8,7 @@ public:
     enum VisionState {
         STREAMING, STOPPED
     };
+
     VisionState visionWantedState;
 private:
     static inline Commands *pInstance = nullptr;

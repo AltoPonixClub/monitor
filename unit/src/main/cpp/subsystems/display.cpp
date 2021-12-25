@@ -1,5 +1,5 @@
-
 #include <subsystems/display.h>
+#include <config/constants.h>
 
 void Display::configure() {
     std::cout << "Display Hardware Initialized" << std::endl;
@@ -14,9 +14,7 @@ void Display::write(Outputs *outputs) {
 }
 
 void Display::calculate(RobotState *state, Commands *commands, Outputs *outputs) {
-    if (commands->visionWantedState == commands->STREAMING) {
-        outputs->displayImg = state->capFrame.clone();
-    }
+    outputs->displayImg = state->undistortedFrame.empty() ? cv::Mat(constants::vision::imgSize.height, constants::vision::imgSize.width, CV_8UC3, cv::Scalar(100, 100, 100)) : state->undistortedFrame;
 }
 
 Display *Display::instance() {
