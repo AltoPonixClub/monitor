@@ -46,6 +46,8 @@ public class SegmentationController {
     private TextField photoIndex;
     @FXML
     private Label totalPhotos;
+    @FXML
+    private TextField blur;
 
     private String filePath;
     private Mat image = new Mat();
@@ -59,17 +61,17 @@ public class SegmentationController {
     private double fitScale;
     private boolean fitSide;
     private File[] files;
-    private int filesIndex;
+    private int filesIndex = 1;
 
     @FXML
     public void updatePath() {
         File dir = new File(folderPath.getText());
         files = dir.listFiles();
         if (files != null) {
-            photoIndex.setText("0");
+            photoIndex.setText("1");
             totalPhotos.setText(String.valueOf(files.length));
             photoIndex.setText(String.valueOf(filesIndex));
-            loadPhoto(files[filesIndex]);
+            loadPhoto(files[filesIndex-1]);
         } else {
             System.out.println("Invalid Directory");
         }
@@ -79,17 +81,18 @@ public class SegmentationController {
     public void nextPhoto() {
         filesIndex++;
         photoIndex.setText(String.valueOf(filesIndex));
-        loadPhoto(files[filesIndex]);
+        loadPhoto(files[filesIndex-1]);
     }
 
     @FXML
     public void updateIndex() {
         filesIndex = Integer.parseInt(photoIndex.getText());
-        loadPhoto(files[filesIndex]);
+        loadPhoto(files[filesIndex-1]);
     }
 
     private void loadPhoto(File file) {
         if(file != null) {
+            //set this 6 to a 5 on mac
             filePath = file.toURI().toString().substring(6);
             image = Imgcodecs.imread(filePath);
             mask = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
@@ -195,7 +198,8 @@ public class SegmentationController {
         oldMaskOut = maskOut.clone();
         contours = new ArrayList<>();
         Mat color = doColorFilter(Imgcodecs.imread(filePath));
-        getContours(color);
+        Mat blur = blur(color);
+        getContours(blur);
         updateStage();
     }
 
@@ -207,7 +211,7 @@ public class SegmentationController {
     }
 
     //filter colors using HSV and returns mat
-    private Mat doColorFilter(Mat mat){
+    private Mat doColorFilter(Mat mat) {
         Mat hsvImage = new Mat();
         Mat mask = new Mat();
         Mat result = new Mat();
@@ -222,6 +226,15 @@ public class SegmentationController {
         return result;
     }
 
+    private Mat blur(Mat mat) {
+        Mat result = new Mat();
+        Mat kernel = Mat.ones(Integer.parseInt(blur.getText()),Integer.parseInt(blur.getText()), CvType.CV_32F);
+
+        Imgproc.morphologyEx(mat, result, Imgproc.MORPH_OPEN, kernel);
+        Imgproc.morphologyEx(result, result, Imgproc.MORPH_CLOSE, kernel);
+        return result;
+    }
+
     //draws and returns list of contours
     private void getContours(Mat mat) {
         Mat gray = new Mat();
@@ -229,6 +242,6 @@ public class SegmentationController {
         Imgproc.cvtColor(mat, gray, Imgproc.COLOR_RGB2GRAY);
         Imgproc.findContours(gray, this.contours, this.hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         Imgproc.drawContours(image, contours, -1, new Scalar(0, 255, 0), 5);
-        Imgproc.drawContours(mask, contours, -1, Scalar.all(255), 5);
+        Imgproc.drawContours(mask, contours, -1, Scalar.all(100), 5);
     }
 }

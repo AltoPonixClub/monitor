@@ -42,6 +42,8 @@
                 <TextField fx:id="eyedropperBounds" text="30" />
                 <Label text="Brush Size" />
                 <TextField fx:id="brushSize" text="5" />
+                <Label text="Blur" />
+                <TextField fx:id="blur" text="5" />
             </HBox>
         </VBox>
     </top>
@@ -76,7 +78,7 @@
                 <Button fx:id="updatePath" alignment="center" onAction="#updatePath" text="Update Paths" />
                 <Button fx:id="nextPhoto" alignment="center" onAction="#nextPhoto" text="Next Photo" />
                 <Label text="Photo #"/>
-                <TextField fx:id="photoIndex" text="0"/>
+                <TextField fx:id="photoIndex" text="1"/>
                 <Label fx:id="totalPhotos" text="0" />
                 <Button fx:id="updateIndex" alignment="center" onAction="#updateIndex" text="Update Index"/>
             </HBox>
