@@ -51,11 +51,11 @@ public class SegmentationController {
 
     private String filePath;
     private Mat image = new Mat();
-    private Mat oldImage = new Mat();
+    private ArrayList<Mat> oldImage = new ArrayList<>();
     private Mat mask = new Mat();
-    private Mat oldMask = new Mat();
+    private ArrayList<Mat> oldMask = new ArrayList<>();
     private Mat maskOut = new Mat();
-    private Mat oldMaskOut = new Mat();
+    private ArrayList<Mat> oldMaskOut = new ArrayList<>();
     private List<MatOfPoint> contours = new ArrayList<>();
     private Mat hierarchy = new Mat();
     private double fitScale;
@@ -97,6 +97,12 @@ public class SegmentationController {
             image = Imgcodecs.imread(filePath);
             mask = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
             maskOut = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
+            oldImage.removeAll(oldImage);
+            oldImage.add(image);
+            oldMask.removeAll(oldMask);
+            oldMask.add(mask);
+            oldMaskOut.removeAll(oldMaskOut);
+            oldMaskOut.add(maskOut);
             fitSide = image.cols() >= image.rows();
             if (fitSide) {
                 fitScale = image.cols() / 600.0;
@@ -140,9 +146,14 @@ public class SegmentationController {
     @FXML
     public void undo() {
         System.out.println("Undo");
-        image = oldImage.clone();
-        mask = oldMask.clone();
-        maskOut = oldMaskOut.clone();
+        if (oldImage.size() > 0) {
+            image = oldImage.get(oldImage.size()-1).clone();
+            mask = oldMask.get(oldMask.size()-1).clone();
+            maskOut = oldMaskOut.get(oldMaskOut.size()-1).clone();
+            oldImage.remove(oldImage.size()-1);
+            oldMask.remove(oldMask.size()-1);
+            oldMaskOut.remove(oldMaskOut.size()-1);
+        }
         updateStage();
     }
 
@@ -160,9 +171,9 @@ public class SegmentationController {
             smax.setText(String.valueOf(hsv[1] + bounds));
             vmax.setText(String.valueOf(hsv[2] + bounds));
         } else {
-            oldImage = image.clone();
-            oldMask = mask.clone();
-            oldMaskOut = maskOut.clone();
+            oldImage.add(image.clone());
+            oldMask.add(mask.clone());
+            oldMaskOut.add(maskOut.clone());
             int size = Integer.parseInt(brushSize.getText());
             int v = 0;
 
@@ -193,9 +204,9 @@ public class SegmentationController {
     //applies filters and draws contours
     @FXML
     private void update() {
-        oldImage = image.clone();
-        oldMask = mask.clone();
-        oldMaskOut = maskOut.clone();
+        oldImage.add(image.clone());
+        oldMask.add(mask.clone());
+        oldMaskOut.add(maskOut.clone());
         contours = new ArrayList<>();
         Mat color = doColorFilter(Imgcodecs.imread(filePath));
         Mat blur = blur(color);
