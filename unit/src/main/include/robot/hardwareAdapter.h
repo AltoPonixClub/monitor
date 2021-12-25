@@ -9,17 +9,22 @@
 
 class ItemHardware {
 public:
-    static ItemHardware* instance();
+    static ItemHardware *instance();
+
     virtual void configure() = 0;
-    virtual void read(RobotState* state) = 0;
-    virtual void write(Outputs outputs) = 0;
+
+    virtual void read(RobotState *state) = 0;
+
+    virtual void write(Outputs *outputs) = 0;
 };
 
 class HardwareAdapter {
 public:
     static void configureHardware();
-    static void readHardware(RobotState* state);
-    static void writeHardware(Outputs outputs);
+
+    static void readHardware(RobotState *state);
+
+    static void writeHardware(Outputs *outputs);
 
     class VisionHardware : public ItemHardware {
     public:
@@ -27,9 +32,9 @@ public:
 
         void configure();
 
-        void read(RobotState* state);
+        void read(RobotState *state);
 
-        void write(Outputs outputs);
+        void write(Outputs *outputs);
 
         static VisionHardware *instance();
 
@@ -44,9 +49,9 @@ public:
     public:
         void configure();
 
-        void read(RobotState* state);
+        void read(RobotState *state);
 
-        void write(Outputs outputs);
+        void write(Outputs *outputs);
 
         static DisplayHardware *instance();
 
@@ -57,5 +62,6 @@ public:
         }
     };
 };
+
 #endif //MONITOR_HARDWAREADAPTER_H
 
