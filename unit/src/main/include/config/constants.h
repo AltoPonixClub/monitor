@@ -9,10 +9,8 @@
 namespace constants {
     namespace vision {
         const int cameraId = 0;
-        const cv::Size dispSize = cv::Size(int(640 * 2), int(480 * 2));
         const cv::Size imgSize = cv::Size(int(640), int(480));
-        const cv::Size imgDispSize = cv::Size(int(640), int(2 * 480));
-        const cv::Size platformDim = cv::Size(20.7, 19.7);
+        const cv::Size platformDim = cv::Size(20.7, 19.7); // TODO: physical constant, move out
         //    const int ui_width = 20 * pangolin::default_font().MaxWidth();
         const int fps = 60;
         const std::string calibPath = std::string("/home/aoberai/programming/altoponix/monitor/unit/outputs.yml");
@@ -34,6 +32,10 @@ namespace constants {
                                                                                                          0)}};
         const std::vector<int> arucoIds = {24, 42, 69, 48};
     };
+    namespace display {
+        const cv::Size dispSize = cv::Size(int(640 * 2), int(480 * 2));
+        const cv::Size imgDispSize = cv::Size(int(640), int(2 * 480));
+    }
 };
 
 #endif //MONITOR_CONSTANTS_H
