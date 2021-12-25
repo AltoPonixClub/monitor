@@ -5,6 +5,8 @@ class Commands {
 public:
     static Commands *instance();
 
+    void configure();
+
     enum VisionState {
         STREAMING, STOPPED
     };
