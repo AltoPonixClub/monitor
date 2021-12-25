@@ -25,17 +25,17 @@ void VisionHardware::configure() {
 }
 
 void DisplayHardware::configure() {
-    std::cout << "Display Hardware Initialized"
+    std::cout << "Display Hardware Initialized" << std::endl;
 }
 
-void VisionHardware::read() {
+void VisionHardware::read(RobotState state) {
 }
 
-void DisplayHardware::read() {
+void DisplayHardware::read(RobotState state) {
 }
 
-void VisionHardware::write() {
+void VisionHardware::write(Outputs outputs) {
 }
 
-void DisplayHardware::write() {
+void DisplayHardware::write(Outputs outputs) {
 }
