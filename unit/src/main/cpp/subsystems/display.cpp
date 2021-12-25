@@ -1,21 +1,14 @@
 
 #include <subsystems/display.h>
 
-Display::DisplayHardware *Display::DisplayHardware::instance() {
-    if (DisplayHardware::pInstance == nullptr) {
-        DisplayHardware::pInstance = new DisplayHardware();
-    }
-    return DisplayHardware::pInstance;
-}
-
-void Display::DisplayHardware::configure() {
+void Display::configure() {
     std::cout << "Display Hardware Initialized" << std::endl;
 }
 
-void Display::DisplayHardware::read(RobotState *state) {
+void Display::read(RobotState *state) {
 }
 
-void Display::DisplayHardware::write(Outputs *outputs) {
+void Display::write(Outputs *outputs) {
     cv::imshow("Window", outputs->displayImg);
     cv::waitKey(1);
 }

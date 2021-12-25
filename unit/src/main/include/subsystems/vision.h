@@ -7,28 +7,11 @@
 
 #include <iostream>
 #include <subsystems/subsystemBase.h>
-#include <subsystems/hardwareBase.h>
 
+// TODO: prevent data being read or uploaded from sensor in calculate func
 class Vision : public SubsystemBase {
 public:
-    class VisionHardware : public HardwareBase {
-    public:
-        cv::VideoCapture cap;
-
-        void configure();
-
-        void read(RobotState *state);
-
-        void write(Outputs *outputs);
-
-        static VisionHardware *instance();
-
-    private:
-        static inline VisionHardware *pInstance = nullptr;
-
-        VisionHardware() {
-        }
-    };
+    cv::VideoCapture cap;
 
     void configure();
 
