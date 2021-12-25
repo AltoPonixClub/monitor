@@ -1,5 +1,5 @@
 #include <iostream>
-#include <robot/hardwareAdapter.h>
+#include <subsystems/hardwareBase.h>
 #include <robot/robotState.h>
 #include <subsystems/subsystemBase.h>
 #include <subsystems/vision.h>
@@ -14,15 +14,16 @@ int main() {
 
 
     for (SubsystemBase *subsystem: enabledSubsystems) {
-        subsystem->configure();
+//        subsystem->
+//        configure();
     }
 
     while (true) {
         for (SubsystemBase *subsystem: enabledSubsystems) {
-            subsystem->read(state);
+//            subsystem->read(state);
             subsystem->calculate(state, commands, outputs);
 //            std::cout << state->capFrame << std::endl << std::endl;
-            subsystem->write(outputs);
+//            subsystem->write(outputs);
         }
     }
 }
