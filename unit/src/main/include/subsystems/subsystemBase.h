@@ -8,8 +8,6 @@
 
 class SubsystemBase {
 public:
-    virtual void configure() = 0;
-
     virtual void read(State *state) = 0;
 
     virtual void write(Outputs *outputs) = 0;

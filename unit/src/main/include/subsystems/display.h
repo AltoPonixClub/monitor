@@ -10,13 +10,14 @@
 
 class Display : public SubsystemBase {
 public:
+    // TODO: Make private
     pangolin::OpenGlRenderState s_cam;
     pangolin::Handler3D handler;
-//    pangolin::View &d_cam;
-//    pangolin::DataLog log;
-//    pangolin::View &d_image;
+    pangolin::View &d_cam;
+    pangolin::DataLog log;
+    pangolin::View &d_image;
 
-    void configure();
+    Display();
 
     void read(State *state);
 

@@ -5,7 +5,7 @@
 
 // TODO should these vars be put in configure func or outside - probably outside?
 // TODO: better error logging
-void Vision::configure() {
+Vision::Vision() {
     cap = cv::VideoCapture(constants::vision::cameraId);
     if (!cap.isOpened()) {
         std::cout << "Vision Hardware Broken" << std::endl;
