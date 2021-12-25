@@ -1,5 +1,8 @@
-#Labeler
-##Installation
+# Labeler
+
+https://user-images.githubusercontent.com/55261018/147200322-40672246-d7b2-4463-8790-8ddddcb3da5a.mp4
+
+## Installation
 Open labeler as a project in IntelliJ
 
 Go to File -> Project Structure -> Libraries
@@ -14,8 +17,9 @@ If it does not work due to a module not found, try deleting plant-segmentation.i
 
 ![img.png](resources/projectStructure.png)
 
-##Usage
+## Usage
 Set folder path and output path first and import the initial photo with _Update Paths_
+
 
 Use _Next Photo_ to go to the next photo or change the Photo # to change to a specific file
 
@@ -33,5 +37,5 @@ _Save_ will save to the output folder with the name filename_mask.png
 
 
 
-##Online Resources: 
+## Online Resources: 
 https://drive.google.com/drive/folders/1ZdKNRT2pHCuEI01Y8s0H-iAO9tshNuAC?usp=sharing
