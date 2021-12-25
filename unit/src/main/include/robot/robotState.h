@@ -3,8 +3,12 @@
 
 #include <opencv2/opencv.hpp>
 
-struct RobotState {
+class RobotState {
+public:
+    static RobotState *instance();
     cv::Mat capFrame;
+private:
+    static inline RobotState *pInstance = nullptr;
 };
 
 #endif //MONITOR_ROBOTSTATE_H
