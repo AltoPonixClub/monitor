@@ -6,6 +6,7 @@
 class RobotState {
 public:
     static RobotState *instance();
+
     cv::Mat capFrame;
 private:
     static inline RobotState *pInstance = nullptr;

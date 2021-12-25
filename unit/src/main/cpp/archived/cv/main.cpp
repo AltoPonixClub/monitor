@@ -83,7 +83,7 @@ int main(int /*argc*/, char ** /*argv*/ ) {
     labels.emplace_back("tvec[0]");
     log.SetLabels(labels);
 
-    pangolin::Plotter plotter(&log,0.0f,4.0f*(float)M_PI/tinc-2.0f,-5,30,0.5f);
+    pangolin::Plotter plotter(&log, 0.0f, 4.0f * (float) M_PI / tinc - 2.0f, -5, 30, 0.5f);
     plotter.SetBounds(0, 0.3, 0.0, 0.33);
     plotter.Track("$i");
     pangolin::DisplayBase().AddDisplay(plotter);
@@ -169,10 +169,10 @@ int main(int /*argc*/, char ** /*argv*/ ) {
         * [ 0 0 0 1 ]
         */
         // TODO: this broken
-        transformationMatrix << 1, 0, 0, tvec[0] + constants::platformDim.height/2,
-                                0, 1, 0, tvec[1] + constants::platformDim.width/2,
-                                0, 0, 1, tvec[2],
-                                0, 0, 0, 1;
+        transformationMatrix << 1, 0, 0, tvec[0] + constants::platformDim.height / 2,
+                0, 1, 0, tvec[1] + constants::platformDim.width / 2,
+                0, 0, 1, tvec[2],
+                0, 0, 0, 1;
 
         for (auto &vertex: frustumVertices) {
             vertex = transformationMatrix * vertex;

@@ -1,9 +1,10 @@
 import cv2
 import os
 
-
 photos_path_prefix = "calibration"
-x = max([int(i.replace(".jpg", "").replace(photos_path_prefix, "").replace("/calib", "").replace("/calibration", "")) for i in os.listdir(photos_path_prefix)]) + 1
+x = max(
+    [int(i.replace(".jpg", "").replace(photos_path_prefix, "").replace("/calib", "").replace("/calibration", "")) for i
+     in os.listdir(photos_path_prefix)]) + 1
 print("Starting at %d" % x)
 
 cap = cv2.VideoCapture(0)
