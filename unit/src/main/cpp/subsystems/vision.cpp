@@ -32,7 +32,7 @@ void Vision::configure() {
 
 }
 
-void Vision::read(RobotState *state) {
+void Vision::read(State *state) {
     cv::Mat frame;
     cap >> frame;
     cv::resize(frame, frame, constants::vision::imgSize);
@@ -80,7 +80,7 @@ void Vision::read(RobotState *state) {
 void Vision::write(Outputs *outputs) {
 }
 
-void Vision::calculate(RobotState *state, Commands *commands, Outputs *outputs) {
+void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
     // TODO: put corners on img
 }
 

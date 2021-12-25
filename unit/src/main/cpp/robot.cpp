@@ -1,16 +1,20 @@
 #include <iostream>
-#include <robot/robotState.h>
+#include <robot/state.h>
 #include <subsystems/subsystemBase.h>
 #include <subsystems/vision.h>
 #include <subsystems/display.h>
 #include <utils/utils.h>
 
 int main() {
-    RobotState *state = RobotState::instance();
+    State *state = State::instance();
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
     std::vector<SubsystemBase *> enabledSubsystems{Vision::instance(), Display::instance()}; // Order might matter
     commands->visionWantedState = commands->STREAMING;
+
+    state->configure();
+    outputs->configure();
+    commands->configure();
 
     for (SubsystemBase *subsystem: enabledSubsystems) {
         subsystem->configure();

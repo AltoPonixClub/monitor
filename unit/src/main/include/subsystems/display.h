@@ -12,17 +12,17 @@ class Display : public SubsystemBase {
 public:
     pangolin::OpenGlRenderState s_cam;
     pangolin::Handler3D handler;
-    pangolin::View &d_cam;
-    pangolin::DataLog log;
-    pangolin::View &d_image;
+//    pangolin::View &d_cam;
+//    pangolin::DataLog log;
+//    pangolin::View &d_image;
 
     void configure();
 
-    void read(RobotState *state);
+    void read(State *state);
 
     void write(Outputs *outputs);
 
-    void calculate(RobotState *state, Commands *commands, Outputs *outputs);
+    void calculate(State *state, Commands *commands, Outputs *outputs);
 
     static Display *instance();
 

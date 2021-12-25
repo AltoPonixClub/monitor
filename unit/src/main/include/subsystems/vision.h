@@ -27,9 +27,9 @@ public:
 
     void configure();
 
-    void read(RobotState *state);
+    void read(State *state);
 
-    void calculate(RobotState *state, Commands *commands, Outputs *outputs);
+    void calculate(State *state, Commands *commands, Outputs *outputs);
 
     void write(Outputs *outputs);
 
