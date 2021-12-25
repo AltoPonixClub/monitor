@@ -5,6 +5,7 @@
 #include <subsystems/display.h>
 #include <utils/utils.h>
 
+// TODO: use constructors instead of configure func
 int main() {
     State *state = State::instance();
     Commands *commands = Commands::instance();
@@ -16,9 +17,9 @@ int main() {
     outputs->configure();
     commands->configure();
 
-    for (SubsystemBase *subsystem: enabledSubsystems) {
-        subsystem->configure();
-    }
+//    for (SubsystemBase *subsystem: enabledSubsystems) {
+//        subsystem->configure();
+//    }
 
     std::cout << "Finished Initializations" << std::endl;
 

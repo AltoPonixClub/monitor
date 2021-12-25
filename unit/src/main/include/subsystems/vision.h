@@ -25,7 +25,7 @@ public:
     cv::Ptr<cv::aruco::Board> board;
     std::vector<cv::Point2f> transform_src;
 
-    void configure();
+    Vision();
 
     void read(State *state);
 
