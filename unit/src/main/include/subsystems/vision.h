@@ -16,6 +16,7 @@
 class Vision : public SubsystemBase {
 public:
     cv::VideoCapture cap;
+    // TODO: this should prlly be moved out
     cv::Ptr<cv::aruco::Dictionary> arucoDictionary;
     cv::Ptr<cv::aruco::DetectorParameters> arucoParams;
     cv::FileStorage calibFile;
