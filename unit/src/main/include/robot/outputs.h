@@ -6,6 +6,7 @@
 class Outputs {
 public:
     static Outputs *instance();
+
     cv::Mat displayImg;
 private:
     static inline Outputs *pInstance = nullptr;

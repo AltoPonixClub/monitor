@@ -4,58 +4,43 @@
  * Singleton guide https://www.aristeia.com/Papers/DDJ_Jul_Aug_2004_revised.pdf
  */
 
-void HardwareAdapter::configureHardware() {
-    HardwareAdapter::VisionHardware::instance()->configure();
-    HardwareAdapter::DisplayHardware::instance()->configure();
-}
 
-void HardwareAdapter::readHardware(RobotState* state) {
-    HardwareAdapter::VisionHardware::instance()->read(state);
-    HardwareAdapter::DisplayHardware::instance()->read(state);
-}
-
-void HardwareAdapter::writeHardware(Outputs* outputs) {
-    HardwareAdapter::VisionHardware::instance()->write(outputs);
-    HardwareAdapter::DisplayHardware::instance()->write(outputs);
-}
-
-
-HardwareAdapter::VisionHardware* HardwareAdapter::VisionHardware::instance() {
+VisionHardware *VisionHardware::instance() {
     if (VisionHardware::pInstance == nullptr) {
         VisionHardware::pInstance = new VisionHardware();
     }
     return VisionHardware::pInstance;
 }
 
-HardwareAdapter::DisplayHardware* HardwareAdapter::DisplayHardware::instance() {
+DisplayHardware *DisplayHardware::instance() {
     if (DisplayHardware::pInstance == nullptr) {
         DisplayHardware::pInstance = new DisplayHardware();
     }
     return DisplayHardware::pInstance;
 }
 
-void HardwareAdapter::VisionHardware::configure() {
-    HardwareAdapter::VisionHardware::cap = cv::VideoCapture(0);
+void VisionHardware::configure() {
+    VisionHardware::cap = cv::VideoCapture(0);
     if (!cap.isOpened()) {
         std::cout << "Vision Hardware Broken" << std::endl;
     }
 }
 
-void HardwareAdapter::DisplayHardware::configure() {
+void DisplayHardware::configure() {
     std::cout << "Display Hardware Initialized" << std::endl;
 }
 
-void HardwareAdapter::VisionHardware::read(RobotState* state) {
-    HardwareAdapter::VisionHardware::cap >> state->capFrame;
+void VisionHardware::read(RobotState *state) {
+    VisionHardware::cap >> state->capFrame;
 }
 
-void HardwareAdapter::DisplayHardware::read(RobotState* state) {
+void DisplayHardware::read(RobotState *state) {
 }
 
-void HardwareAdapter::VisionHardware::write(Outputs* outputs) {
+void VisionHardware::write(Outputs *outputs) {
 }
 
-void HardwareAdapter::DisplayHardware::write(Outputs* outputs) {
+void DisplayHardware::write(Outputs *outputs) {
     cv::imshow("Window", outputs->displayImg);
     cv::waitKey(1);
 }

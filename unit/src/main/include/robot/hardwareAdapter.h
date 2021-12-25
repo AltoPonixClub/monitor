@@ -5,62 +5,54 @@
 #include <robot/robotState.h>
 #include <robot/outputs.h>
 
-// TODO: this includes reader and writer
+// TODO: this includes reader and writer; move to subsystem
 
 class ItemHardware {
 public:
-    static ItemHardware *instance();
 
     virtual void configure() = 0;
 
     virtual void read(RobotState *state) = 0;
 
     virtual void write(Outputs *outputs) = 0;
+
+    static ItemHardware *instance();
 };
 
-class HardwareAdapter {
+class VisionHardware : public ItemHardware {
 public:
-    static void configureHardware();
+    cv::VideoCapture cap;
 
-    static void readHardware(RobotState *state);
+    void configure();
 
-    static void writeHardware(Outputs *outputs);
+    void read(RobotState *state);
 
-    class VisionHardware : public ItemHardware {
-    public:
-        cv::VideoCapture cap;
+    void write(Outputs *outputs);
 
-        void configure();
+    static VisionHardware *instance();
 
-        void read(RobotState *state);
+private:
+    static inline VisionHardware *pInstance = nullptr;
 
-        void write(Outputs *outputs);
+    VisionHardware() {
+    }
+};
 
-        static VisionHardware *instance();
+class DisplayHardware : public ItemHardware {
+public:
+    void configure();
 
-    private:
-        static inline VisionHardware *pInstance = nullptr;
+    void read(RobotState *state);
 
-        VisionHardware() {
-        }
-    };
+    void write(Outputs *outputs);
 
-    class DisplayHardware : public ItemHardware {
-    public:
-        void configure();
+    static DisplayHardware *instance();
 
-        void read(RobotState *state);
+private:
+    static inline DisplayHardware *pInstance = nullptr;
 
-        void write(Outputs *outputs);
-
-        static DisplayHardware *instance();
-
-    private:
-        static inline DisplayHardware *pInstance = nullptr;
-
-        DisplayHardware() {
-        }
-    };
+    DisplayHardware() {
+    }
 };
 
 #endif //MONITOR_HARDWAREADAPTER_H

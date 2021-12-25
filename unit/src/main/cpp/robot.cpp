@@ -1,20 +1,28 @@
 #include <iostream>
 #include <robot/hardwareAdapter.h>
 #include <robot/robotState.h>
-
-using namespace std;
+#include <subsystems/subsystemBase.h>
+#include <subsystems/vision.h>
+#include <subsystems/display.h>
 
 int main() {
-    RobotState* state = RobotState::instance();
-    Outputs* outputs = Outputs::instance();
+    RobotState *state = RobotState::instance();
+    Commands *commands = Commands::instance();
+    Outputs *outputs = Outputs::instance();
+    std::vector<SubsystemBase *> enabledSubsystems{Vision::instance(), Display::instance()};
+    commands->visionWantedState = commands->STREAMING;
 
-    // Init
-    HardwareAdapter::configureHardware();
 
-    // Periodic
+    for (SubsystemBase *subsystem: enabledSubsystems) {
+        subsystem->configure();
+    }
+
     while (true) {
-        HardwareAdapter::readHardware(state);
-        outputs->displayImg = state->capFrame.clone(); // this in subsystem logic
-        HardwareAdapter::writeHardware(outputs);
+        for (SubsystemBase *subsystem: enabledSubsystems) {
+            subsystem->read(state);
+            subsystem->calculate(state, commands, outputs);
+//            std::cout << state->capFrame << std::endl << std::endl;
+            subsystem->write(outputs);
+        }
     }
 }
