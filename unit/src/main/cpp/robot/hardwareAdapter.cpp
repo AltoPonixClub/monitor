@@ -14,7 +14,7 @@ void HardwareAdapter::readHardware(RobotState* state) {
     HardwareAdapter::DisplayHardware::instance()->read(state);
 }
 
-void HardwareAdapter::writeHardware(Outputs outputs) {
+void HardwareAdapter::writeHardware(Outputs* outputs) {
     HardwareAdapter::VisionHardware::instance()->write(outputs);
     HardwareAdapter::DisplayHardware::instance()->write(outputs);
 }
@@ -35,6 +35,7 @@ HardwareAdapter::DisplayHardware* HardwareAdapter::DisplayHardware::instance() {
 }
 
 void HardwareAdapter::VisionHardware::configure() {
+    HardwareAdapter::VisionHardware::cap = cv::VideoCapture(0);
     if (!cap.isOpened()) {
         std::cout << "Vision Hardware Broken" << std::endl;
     }
@@ -51,8 +52,10 @@ void HardwareAdapter::VisionHardware::read(RobotState* state) {
 void HardwareAdapter::DisplayHardware::read(RobotState* state) {
 }
 
-void HardwareAdapter::VisionHardware::write(Outputs outputs) {
+void HardwareAdapter::VisionHardware::write(Outputs* outputs) {
 }
 
-void HardwareAdapter::DisplayHardware::write(Outputs outputs) {
+void HardwareAdapter::DisplayHardware::write(Outputs* outputs) {
+    cv::imshow("Window", outputs->displayImg);
+    cv::waitKey(1);
 }
