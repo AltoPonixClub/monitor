@@ -7,11 +7,22 @@
 
 #include <iostream>
 #include <subsystems/subsystemBase.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/aruco/dictionary.hpp>
+#include <opencv2/aruco.hpp>
+#include <config/constants.h>
 
 // TODO: prevent data being read or uploaded from sensor in calculate func
 class Vision : public SubsystemBase {
 public:
     cv::VideoCapture cap;
+    cv::Ptr<cv::aruco::Dictionary> arucoDictionary;
+    cv::Ptr<cv::aruco::DetectorParameters> arucoParams;
+    cv::FileStorage calibFile;
+    cv::Mat cameraMatrix; // extrinsics
+    cv::Mat distCoeffs; // intrinsics
+    cv::Ptr<cv::aruco::Board> board;
+    std::vector<cv::Point2f> transform_src;
 
     void configure();
 
