@@ -1,5 +1,4 @@
 #include <iostream>
-#include <subsystems/hardwareBase.h>
 #include <robot/robotState.h>
 #include <subsystems/subsystemBase.h>
 #include <subsystems/vision.h>
@@ -12,18 +11,15 @@ int main() {
     std::vector<SubsystemBase *> enabledSubsystems{Vision::instance(), Display::instance()};
     commands->visionWantedState = commands->STREAMING;
 
-
     for (SubsystemBase *subsystem: enabledSubsystems) {
-//        subsystem->
-//        configure();
+        subsystem->configure();
     }
 
     while (true) {
         for (SubsystemBase *subsystem: enabledSubsystems) {
-//            subsystem->read(state);
+            subsystem->read(state);
             subsystem->calculate(state, commands, outputs);
-//            std::cout << state->capFrame << std::endl << std::endl;
-//            subsystem->write(outputs);
+            subsystem->write(outputs);
         }
     }
 }

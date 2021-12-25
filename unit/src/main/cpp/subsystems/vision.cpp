@@ -1,25 +1,20 @@
 
 #include <subsystems/vision.h>
 
-Vision::VisionHardware *Vision::VisionHardware::instance() {
-    if (VisionHardware::pInstance == nullptr) {
-        VisionHardware::pInstance = new VisionHardware();
-    }
-    return VisionHardware::pInstance;
-}
-
-void Vision::VisionHardware::configure() {
-    VisionHardware::cap = cv::VideoCapture(0);
+void Vision::configure() {
+    cap = cv::VideoCapture(0);
     if (!cap.isOpened()) {
         std::cout << "Vision Hardware Broken" << std::endl;
+        return;
     }
+    std::cout << "Display Hardware Initialized";
 }
 
-void Vision::VisionHardware::read(RobotState *state) {
-    VisionHardware::cap >> state->capFrame;
+void Vision::read(RobotState *state) {
+    cap >> state->capFrame;
 }
 
-void Vision::VisionHardware::write(Outputs *outputs) {
+void Vision::write(Outputs *outputs) {
 }
 
 void Vision::calculate(RobotState *state, Commands *commands, Outputs *outputs) {
