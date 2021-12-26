@@ -37,22 +37,21 @@ Display::Display() {
 //     Create Interactive View in window
 
 //     Set up plotter
-//
-//    const float tinc = 0.01f;
-//    pangolin::Plotter plotter(&this->log, 0.0f, 4.0f * (float) M_PI / tinc - 2.0f, -5, 30, 0.5f);
-//    plotter.SetBounds(0, 0.3, 0.0, 0.33);
-//    plotter.Track("$i");
-//    pangolin::DisplayBase().AddDisplay(plotter);
 
-//    this->log = pangolin::DataLog();
-//    std::vector<std::string> labels{"tvec[0]"};
-//    this->log.SetLabels(labels);
+    const float tinc = 0.01f;
+
+    std::vector<std::string> labels{"tvec[0]"};
+    this->log.SetLabels(labels);
+    this->plotter = new pangolin::Plotter(&this->log, 0.0f, 4.0f * (float) M_PI / tinc - 2.0f, -5, 30, 0.5f);
+    plotter->SetBounds(0, 0.3, 0.0, 0.33);
+    plotter->Track("$i");
+    pangolin::DisplayBase().AddDisplay(*plotter);
+
 
     this->dImg = pangolin::Display("image").SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
                                                       (float) constants::display::kImgDispSize.width /
                                                       (float) constants::display::kImgDispSize.height).SetLock(
             pangolin::LockLeft, pangolin::LockTop);
-//
 }
 
 void Display::read(State *state) {
@@ -117,7 +116,7 @@ void Display::write(Outputs *outputs) {
         imgTex.RenderToViewport();
 
         // Plotter log
-        log.Log(outputs->logVal); // TODO: outputs since tvec is an output to show
+//        log.Log(outputs->logVal); // TODO: outputs since tvec is an output to show
 
         // Swap frames and Process Events
         pangolin::FinishFrame();
