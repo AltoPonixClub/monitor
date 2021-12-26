@@ -30,27 +30,27 @@ Display::Display() {
             pangolin::ModelViewLookAt(constants::vision::platformDim.width / 2, -15, 10,
                                       constants::vision::platformDim.width / 2,constants::vision::platformDim.height / 2, 0, pangolin::AxisZ));
 
+//    pangolin::View& dCam = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f).SetHandler(new pangolin::Handler3D(this->sCam));
+    this->dCam = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f).SetHandler(new pangolin::Handler3D(this->sCam));
 //     Create Interactive View in window
 
-    pangolin::Handler3D handler(this->sCam);
-    this->dCam = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f).SetHandler(&handler);
-
 //     Set up plotter
+//
+//    const float tinc = 0.01f; // TODO: move this tf out
+//    pangolin::Plotter plotter(&this->log, 0.0f, 4.0f * (float) M_PI / tinc - 2.0f, -5, 30, 0.5f);
+//    plotter.SetBounds(0, 0.3, 0.0, 0.33);
+//    plotter.Track("$i");
+//    pangolin::DisplayBase().AddDisplay(plotter);
 
-    const float tinc = 0.01f; // TODO: move this tf out
-    pangolin::Plotter plotter(&this->log, 0.0f, 4.0f * (float) M_PI / tinc - 2.0f, -5, 30, 0.5f);
-    plotter.SetBounds(0, 0.3, 0.0, 0.33);
-    plotter.Track("$i");
-
-    std::vector<std::string> labels{"tvec[0]"};
-    this->log.SetLabels(labels);
-    pangolin::DisplayBase().AddDisplay(plotter);
+//    this->log = pangolin::DataLog();
+//    std::vector<std::string> labels{"tvec[0]"};
+//    this->log.SetLabels(labels);
 
     this->dImg = pangolin::Display("image").SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
                                                       (float) constants::display::imgDispSize.width /
                                                       (float) constants::display::imgDispSize.height).SetLock(
             pangolin::LockLeft, pangolin::LockTop);
-
+//
     this->imgTex = pangolin::GlTexture(constants::display::imgDispSize.width,
                                        constants::display::imgDispSize.height, GL_RGB, false, 0, GL_RGB,
                                        GL_UNSIGNED_BYTE);
@@ -63,33 +63,33 @@ void Display::write(Outputs *outputs) {
     if (!pangolin::ShouldQuit()) {
         // Clear screen and activate view to render into
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//        this->dCam.Activate(this->sCam);
+        this->dCam.Activate(this->sCam);
 //
 //         Draws Platform
-//        glColor4f(1, 1, 1, 1);
+        glColor4f(1, 1, 1, 1);
 //         TODO: these constants not from vision
-//        pangolin::glDrawLine(0, 0, 0, constants::vision::platformDim.width, 0, 0);
-//        pangolin::glDrawLine(0, 0, 0, 0, constants::vision::platformDim.height, 0);
-//        pangolin::glDrawLine(constants::vision::platformDim.width, 0, 0, constants::vision::platformDim.width,
-//                             constants::vision::platformDim.height, 0);
-//        pangolin::glDrawLine(0, constants::vision::platformDim.height, 0, constants::vision::platformDim.width,
-//                             constants::vision::platformDim.height, 0);
-    //
+        pangolin::glDrawLine(0, 0, 0, constants::vision::platformDim.width, 0, 0);
+        pangolin::glDrawLine(0, 0, 0, 0, constants::vision::platformDim.height, 0);
+        pangolin::glDrawLine(constants::vision::platformDim.width, 0, 0, constants::vision::platformDim.width,
+                             constants::vision::platformDim.height, 0);
+        pangolin::glDrawLine(0, constants::vision::platformDim.height, 0, constants::vision::platformDim.width,
+                             constants::vision::platformDim.height, 0);
+
         // Draws Camera Frustum
-    //    glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+        glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 
         // todo: check w element of matrix is 1
-    //    Utils::drawFrustum(outputs->frustumVerts);
-    //    glColor3f(1, 1, 1);
-    //
+        Utils::drawFrustum(outputs->frustumVerts);
+        glColor3f(1, 1, 1);
+
     //        // TODO: plot tvec and rvec
     //        // TODO: point clouds
     //        // TODO: menu bar
     //
-//        this->imgTex.Upload(outputs->displayFrame.data, GL_BGR,
-//                                     GL_UNSIGNED_BYTE); // todo: move imgTex out of outputs, its hardware shit
-//        this->dImg.Activate();
-//        this->imgTex.RenderToViewport();
+        this->imgTex.Upload(outputs->displayFrame.data, GL_BGR,
+                                     GL_UNSIGNED_BYTE); // todo: move imgTex out of outputs, its hardware shit
+        this->dImg.Activate();
+        this->imgTex.RenderToViewport();
     //
     //        // Plotter log
 //        log.Log(outputs->logVal); // TODO: outputs since tvec is an output to show
@@ -117,14 +117,14 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     */
     // TODO: move this calculation elsewhere possibly
     // TODO: this broken
-    transformationMatrix << 1, 0, 0, state->cam_tvec[0] + constants::vision::platformDim.height / 2,
-            0, 1, 0, state->cam_tvec[1] + constants::vision::platformDim.width / 2,
-            0, 0, 1, state->cam_tvec[2],
-            0, 0, 0, 1;
-
-    for (auto &vertex: outputs->frustumVerts) {
-        vertex = transformationMatrix * vertex;
-    }
+//    transformationMatrix << 1, 0, 0, state->cam_tvec[0] + constants::vision::platformDim.height / 2,
+//            0, 1, 0, state->cam_tvec[1] + constants::vision::platformDim.width / 2,
+//            0, 0, 1, state->cam_tvec[2],
+//            0, 0, 0, 1;
+//
+//    for (auto &vertex: outputs->frustumVerts) {
+//        vertex = transformationMatrix * vertex;
+//    }
     cv::vconcat(state->capFrame, state->undistortedFrame, outputs->displayFrame);
     cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
     cv::resize(outputs->displayFrame, outputs->displayFrame, constants::display::imgDispSize);
