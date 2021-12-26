@@ -22,36 +22,34 @@ Display::Display() {
 
     pangolin::CreateWindowAndBind("Main", constants::display::dispSize.width, constants::display::dispSize.height);
     glEnable(GL_DEPTH_TEST);
-//
+
     // viewing state of virtual camera for rendering scene; intrinsics and extrinsics
-    Display::s_cam = pangolin::OpenGlRenderState(
+    this->s_cam = pangolin::OpenGlRenderState(
             pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 100),
             pangolin::ModelViewLookAt(constants::vision::platformDim.width / 2, -15, 10,
                                       constants::vision::platformDim.width / 2,
                                       constants::vision::platformDim.height / 2, 0, pangolin::AxisZ));
 
 //     Create Interactive View in window
-    Display::handler = pangolin::Handler3D(s_cam);
+//
 
-    Display::d_cam = pangolin::CreateDisplay()
-            .SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f)
-            .SetHandler(&handler);
-
-    // Set up plotter
+    pangolin::Handler3D handler(this->s_cam);
+    this->d_cam = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f).SetHandler(&handler);
+//
+//     Set up plotter
     const float tinc = 0.01f; // TODO: move this tf out
     pangolin::Plotter plotter(&log, 0.0f, 4.0f * (float) M_PI / tinc - 2.0f, -5, 30, 0.5f);
     plotter.SetBounds(0, 0.3, 0.0, 0.33);
     plotter.Track("$i");
     pangolin::DisplayBase().AddDisplay(plotter);
-
     std::vector<std::string> labels{"tvec[0]"};
-    Display::log.SetLabels(labels);
-
-    Display::d_image = pangolin::Display("image").SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
+    this->log.SetLabels(labels);
+    this->d_image = pangolin::Display("image").SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
                                                    (float) constants::display::imgDispSize.width /
                                                    (float) constants::display::imgDispSize.height).SetLock(
             pangolin::LockLeft, pangolin::LockTop);
 }
+
 void Display::read(State *state) {
 }
 
