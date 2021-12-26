@@ -8,12 +8,14 @@
 // TODO: organize between subsystems
 class Outputs {
 public:
+    Outputs();
+
     static Outputs *instance();
 
-    void configure();
+    cv::Mat displayFrame;
+    std::vector<Eigen::Matrix<float, 4, 1>> frustumVerts;
+    float logVal;
 
-    cv::Mat displayImg;
-    pangolin::GlTexture imageTexture;
 private:
     static inline Outputs *pInstance = nullptr;
 };

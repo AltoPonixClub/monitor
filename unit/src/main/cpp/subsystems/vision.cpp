@@ -2,6 +2,7 @@
 #include <subsystems/vision.h>
 #include <config/constants.h>
 #include <utils/utils.h>
+#include "../archived/cv/constants.h"
 
 // TODO should these vars be put in configure func or outside - probably outside?
 // TODO: better error logging
@@ -78,10 +79,15 @@ void Vision::read(State *state) {
 }
 
 void Vision::write(Outputs *outputs) {
+
 }
 
 void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
-    // TODO: put corners on img
+//    for (const auto &corner: state->detectedArucoCorners) {
+//        for (auto pt: corner) {
+//            cv::circle(outputs->displayFrame, pt, constants::vision::arucoCircRadius, constants::vision::aqua, cv::FILLED);
+//        }
+//    }
 }
 
 Vision *Vision::instance() {
