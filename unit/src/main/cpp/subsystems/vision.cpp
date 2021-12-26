@@ -19,9 +19,10 @@ Vision::Vision() {
     calibFile.~FileStorage();
     for (const auto &i: constants::vision::kBoardArucoPts) {
         for (auto c: i) {
-            transform_src.emplace_back(c.x * constants::vision::kImgSize.width / constants::physical::kPlatformDim.width,
-                                c.y * constants::vision::kImgSize.height /
-                                constants::physical::kPlatformDim.height); // Multiplier to make bigger in final image
+            transform_src.emplace_back(
+                    c.x * constants::vision::kImgSize.width / constants::physical::kPlatformDim.width,
+                    c.y * constants::vision::kImgSize.height /
+                    constants::physical::kPlatformDim.height); // Multiplier to make bigger in final image
         }
     }
 
@@ -33,16 +34,19 @@ void Vision::read(State *state) {
     cv::resize(frame, frame, constants::vision::kImgSize);
     state->capFrame = frame;
 
-    cv::aruco::detectMarkers(frame, constants::vision::kArucoDictionary, state->detectedArucoCorners, state->detectedArucoIds, constants::vision::kArucoParams,
+    cv::aruco::detectMarkers(frame, constants::vision::kArucoDictionary, state->detectedArucoCorners,
+                             state->detectedArucoIds, constants::vision::kArucoParams,
                              state->rejectedArucoCorners);
-    cv::aruco::refineDetectedMarkers(frame, constants::vision::kBoard, state->detectedArucoCorners, state->detectedArucoIds,
+    cv::aruco::refineDetectedMarkers(frame, constants::vision::kBoard, state->detectedArucoCorners,
+                                     state->detectedArucoIds,
                                      state->rejectedArucoCorners,
                                      cameraMatrix, distCoeffs);
 
     state->transform_dst.clear();
     if (state->detectedArucoIds.size() == 4) {
         std::vector<std::pair<int, std::vector<cv::Point2f>>> tmp_corners;
-        cv::aruco::estimatePoseBoard(state->detectedArucoCorners, state->detectedArucoIds, constants::vision::kBoard, cameraMatrix,
+        cv::aruco::estimatePoseBoard(state->detectedArucoCorners, state->detectedArucoIds, constants::vision::kBoard,
+                                     cameraMatrix,
                                      distCoeffs, state->cam_rvec,
                                      state->cam_tvec);
         // Sets up transform dst for findHomography
@@ -75,7 +79,8 @@ void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
     outputs->editedCapFrame = state->capFrame.clone();
     for (const auto &corner: state->detectedArucoCorners) {
         for (auto pt: corner) {
-            cv::circle(outputs->editedCapFrame, pt, constants::display::kArucoCircRadius, constants::display::kAqua, cv::FILLED);
+            cv::circle(outputs->editedCapFrame, pt, constants::display::kArucoCircRadius, constants::display::kAqua,
+                       cv::FILLED);
         }
     }
 }

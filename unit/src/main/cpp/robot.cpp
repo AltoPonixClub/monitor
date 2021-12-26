@@ -5,7 +5,6 @@
 #include <subsystems/vision.h>
 #include <subsystems/display.h>
 
-// TODO: logger as separate subsystem
 int main() {
     State *state = State::instance();
     Commands *commands = Commands::instance();
