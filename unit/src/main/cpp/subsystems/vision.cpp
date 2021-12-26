@@ -19,10 +19,9 @@ Vision::Vision() {
     calibFile.~FileStorage();
     for (const auto &i: constants::vision::kBoardArucoPts) {
         for (auto c: i) {
-            transform_src.push_back(
-                    cv::Point2f(c.x * constants::vision::kImgSize.width / constants::physical::kPlatformDim.width,
+            transform_src.emplace_back(c.x * constants::vision::kImgSize.width / constants::physical::kPlatformDim.width,
                                 c.y * constants::vision::kImgSize.height /
-                                constants::physical::kPlatformDim.height)); // Multiplier to make bigger in final image
+                                constants::physical::kPlatformDim.height); // Multiplier to make bigger in final image
         }
     }
 
@@ -69,7 +68,6 @@ void Vision::read(State *state) {
             std::cout << "Not Yet Found Board" << std::endl;
         }
         // TODO: use rodrigues on rvec and tvec to turn into projection matrix
-//        cout << "translation: " << tvec << endl;
     }
 }
 

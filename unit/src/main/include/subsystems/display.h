@@ -27,6 +27,7 @@ private:
     pangolin::View dCam;
     pangolin::DataLog log;
     pangolin::View dImg;
+    pangolin::Plotter* plotter; // TODO: why no work if this not pointer?
 
     static inline Display *pInstance = nullptr;
 
