@@ -2,6 +2,7 @@
 #include <config/constants.h>
 
 
+// TODO: should this stuff be initialized in subsystem or here? (same for commands etc)
 State::State() {
     this->time = 0;
     this->capFrame = cv::Mat();

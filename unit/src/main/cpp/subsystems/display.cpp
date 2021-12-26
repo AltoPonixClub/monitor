@@ -34,10 +34,8 @@ Display::Display() {
 //    pangolin::View& dCam = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f).SetHandler(new pangolin::Handler3D(this->sCam));
     this->dCam = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f).SetHandler(
             new pangolin::Handler3D(this->sCam));
-//     Create Interactive View in window
 
 //     Set up plotter
-
     const float tinc = 0.01f;
 
     std::vector<std::string> labels{"tvec[0]"};
@@ -67,11 +65,12 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     * [ 0 0 0 1 ]
     */
     // TODO: fix this
+    // TODO: check w element of matrix is 1
     transformationMatrix << 1, 0, 0, state->cam_tvec[0] + constants::physical::kPlatformDim.height / 2,
             0, 1, 0, state->cam_tvec[1] + constants::physical::kPlatformDim.width / 2,
             0, 0, 1, state->cam_tvec[2],
             0, 0, 0, 1;
-
+    outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 1); // TODO: this is atrocious, dont redo each loop smh
     for (auto &vertex: outputs->frustumVerts) {
         vertex = transformationMatrix * vertex;
     }
@@ -106,7 +105,6 @@ void Display::write(Outputs *outputs) {
         // Draws Camera Frustum
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 
-        // TODO: check w element of matrix is 1
         Utils::drawFrustum(outputs->frustumVerts);
         glColor3f(1, 1, 1);
 
@@ -116,7 +114,7 @@ void Display::write(Outputs *outputs) {
         imgTex.RenderToViewport();
 
         // Plotter log
-//        log.Log(outputs->logVal); // TODO: outputs since tvec is an output to show
+        log.Log(outputs->logVal); // TODO: outputs since tvec is an output to show
 
         // Swap frames and Process Events
         pangolin::FinishFrame();
