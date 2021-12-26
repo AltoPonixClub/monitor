@@ -51,9 +51,6 @@ Display::Display() {
                                                       (float) constants::display::imgDispSize.height).SetLock(
             pangolin::LockLeft, pangolin::LockTop);
 //
-    this->imgTex = pangolin::GlTexture(constants::display::imgDispSize.width,
-                                       constants::display::imgDispSize.height, GL_RGB, false, 0, GL_RGB,
-                                       GL_UNSIGNED_BYTE);
 }
 
 void Display::read(State *state) {
@@ -61,6 +58,11 @@ void Display::read(State *state) {
 
 void Display::write(Outputs *outputs) {
     if (!pangolin::ShouldQuit()) {
+
+        // TODO: why does split declaration and assignment here not work!!? haunted? yes
+        pangolin::GlTexture imgTex = pangolin::GlTexture(constants::display::imgDispSize.width,
+                                           constants::display::imgDispSize.height, GL_RGB, false, 0, GL_RGB,
+                                           GL_UNSIGNED_BYTE); // TODO: MOVE THIS OUT MAKES SLOWER PRLLY
         // Clear screen and activate view to render into
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         this->dCam.Activate(this->sCam);
@@ -86,10 +88,10 @@ void Display::write(Outputs *outputs) {
     //        // TODO: point clouds
     //        // TODO: menu bar
     //
-        this->imgTex.Upload(outputs->displayFrame.data, GL_BGR,
+        imgTex.Upload(outputs->displayFrame.data, GL_BGR,
                                      GL_UNSIGNED_BYTE); // todo: move imgTex out of outputs, its hardware shit
         this->dImg.Activate();
-        this->imgTex.RenderToViewport();
+        imgTex.RenderToViewport();
     //
     //        // Plotter log
 //        log.Log(outputs->logVal); // TODO: outputs since tvec is an output to show
