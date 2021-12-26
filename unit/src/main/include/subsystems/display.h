@@ -16,7 +16,6 @@ public:
     pangolin::View dCam;
     pangolin::DataLog log;
     pangolin::View dImg;
-    pangolin::GlTexture imgTex;
 
     Display();
 
