@@ -13,8 +13,7 @@ int main() {
     std::vector<SubsystemBase *> enabledSubsystems{Vision::instance(), Display::instance()}; // Order might matter
     commands->visionWantedState = commands->STREAMING;
 
-    state->configure();
-    outputs->configure();
+    state->configure(); // Remove these two configure
     commands->configure();
 
 //    for (SubsystemBase *subsystem: enabledSubsystems) {

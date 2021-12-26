@@ -12,10 +12,11 @@ class Display : public SubsystemBase {
 public:
     // TODO: Make private
     // TODO: this fuckin need to be static or else cpp freaks out, hella broken
-    pangolin::OpenGlRenderState s_cam;
-    pangolin::View d_cam;
+    pangolin::OpenGlRenderState sCam;
+    pangolin::View dCam;
     pangolin::DataLog log;
-    pangolin::View d_image;
+    pangolin::View dImg;
+    pangolin::GlTexture imgTex;
 
     Display();
 
