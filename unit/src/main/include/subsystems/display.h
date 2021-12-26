@@ -10,27 +10,26 @@
 
 class Display : public SubsystemBase {
 public:
-    // TODO: Make private
-    // TODO: this fuckin need to be static or else cpp freaks out, hella broken
-    pangolin::OpenGlRenderState sCam;
-    pangolin::View dCam;
-    pangolin::DataLog log;
-    pangolin::View dImg;
-
     Display();
 
     void read(State *state);
 
-    void write(Outputs *outputs);
-
     void calculate(State *state, Commands *commands, Outputs *outputs);
+
+    void write(Outputs *outputs);
 
     static Display *instance();
 
     std::string name();
 
 private:
+    pangolin::OpenGlRenderState sCam;
+    pangolin::View dCam;
+    pangolin::DataLog log;
+    pangolin::View dImg;
+
     static inline Display *pInstance = nullptr;
+
 };
 
 #endif //MONITOR_DISPLAY_H

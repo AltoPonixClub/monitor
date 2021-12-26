@@ -97,8 +97,8 @@ int main(int /*argc*/, char ** /*argv*/ ) {
     cv::Mat frame, displayFrame;
     cv::Mat undistortedFrame(constants::imgSize.height, constants::imgSize.width, CV_8UC3, cv::Scalar(100, 100, 100));
     pangolin::GlTexture imageTexture(constants::imgDispSize.width, constants::imgDispSize.height, GL_RGB, false, 0,
-                                     GL_RGB,
-                                     GL_UNSIGNED_BYTE);
+            GL_RGB,
+            GL_UNSIGNED_BYTE);
     while (!pangolin::ShouldQuit()) {
         // Clear screen and activate view to render into
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

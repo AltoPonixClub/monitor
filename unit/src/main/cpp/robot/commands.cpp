@@ -1,7 +1,7 @@
 #include <robot/commands.h>
 
-void Commands::configure() {
-    Commands::visionWantedState = Commands::VisionState::STREAMING;
+Commands::Commands() {
+    this->visionWantedState = Commands::VisionState::STREAMING;
 }
 
 Commands *Commands::instance() {

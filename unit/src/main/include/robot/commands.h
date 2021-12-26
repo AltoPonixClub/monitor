@@ -3,15 +3,19 @@
 
 class Commands {
 public:
-    static Commands *instance();
+    Commands();
 
-    void configure();
+    static Commands *instance();
 
     enum VisionState {
         STREAMING, STOPPED
     };
+    enum DisplayState {
+        ON, OFF
+    };
 
     VisionState visionWantedState;
+    DisplayState displayWantedState;
 private:
     static inline Commands *pInstance = nullptr;
 };

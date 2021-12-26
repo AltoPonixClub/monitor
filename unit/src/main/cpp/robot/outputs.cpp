@@ -4,7 +4,7 @@
 
 
 Outputs::Outputs() {
-    this->displayFrame = cv::Mat(constants::vision::imgSize.height, constants::vision::imgSize.width, CV_8UC3,
+    this->displayFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
                                  cv::Scalar(100, 100, 100));
     this->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 1);
     this->logVal = 0;
