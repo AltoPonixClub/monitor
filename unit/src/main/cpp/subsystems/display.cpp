@@ -59,12 +59,7 @@ void Display::read(State *state) {
 }
 
 void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
-//    outputs->displayFrame = state->undistortedFrame.empty() ? cv::Mat(constants::physical::kImgSize.height,
-//                                                                      constants::physical::kImgSize.width, CV_8UC3,
-//                                                                      cv::Scalar(100, 100, 100))
-//                                                            : state->undistortedFrame;
     Eigen::Matrix4f transformationMatrix;
-
     /*
     * Translation Matrix
     * [ 1 0 0 X ]
@@ -72,15 +67,16 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     * [ 0 0 1 Z ]
     * [ 0 0 0 1 ]
     */
-//    transformationMatrix << 1, 0, 0, state->cam_tvec[0] + constants::physical::kPlatformDim.height / 2,
-//            0, 1, 0, state->cam_tvec[1] + constants::physical::kPlatformDim.width / 2,
-//            0, 0, 1, state->cam_tvec[2],
-//            0, 0, 0, 1;
-//
-//    for (auto &vertex: outputs->frustumVerts) {
-//        vertex = transformationMatrix * vertex;
-//    }
-    cv::vconcat(state->capFrame, state->undistortedFrame, outputs->displayFrame);
+    // TODO: fix this
+    transformationMatrix << 1, 0, 0, state->cam_tvec[0] + constants::physical::kPlatformDim.height / 2,
+            0, 1, 0, state->cam_tvec[1] + constants::physical::kPlatformDim.width / 2,
+            0, 0, 1, state->cam_tvec[2],
+            0, 0, 0, 1;
+
+    for (auto &vertex: outputs->frustumVerts) {
+        vertex = transformationMatrix * vertex;
+    }
+    cv::vconcat(outputs->editedCapFrame, state->undistortedFrame, outputs->displayFrame);
     cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
     cv::resize(outputs->displayFrame, outputs->displayFrame, constants::display::kImgDispSize);
 

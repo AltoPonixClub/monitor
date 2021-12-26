@@ -13,7 +13,7 @@ public:
     static Outputs *instance();
 
     // TODO: put in namespace?
-    cv::Mat displayFrame;
+    cv::Mat editedCapFrame, displayFrame;
     std::vector<Eigen::Matrix<float, 4, 1>> frustumVerts;
     float logVal;
 

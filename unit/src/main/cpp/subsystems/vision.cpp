@@ -74,11 +74,12 @@ void Vision::read(State *state) {
 }
 
 void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
-//    for (const auto &corner: state->detectedArucoCorners) {
-//        for (auto pt: corner) {
-//            cv::circle(outputs->displayFrame, pt, constants::vision::kArucoCircRadius, constants::vision::kAqua, cv::FILLED);
-//        }
-//    }
+    outputs->editedCapFrame = state->capFrame.clone();
+    for (const auto &corner: state->detectedArucoCorners) {
+        for (auto pt: corner) {
+            cv::circle(outputs->editedCapFrame, pt, constants::display::kArucoCircRadius, constants::display::kAqua, cv::FILLED);
+        }
+    }
 }
 
 void Vision::write(Outputs *outputs) {
