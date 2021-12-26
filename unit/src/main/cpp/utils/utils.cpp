@@ -1,14 +1,10 @@
-//
-// Created by aoberai on 12/20/21.
-//
-
 #include <string>
-#include "utils.h"
+#include <utils/utils.h>
 
 template<typename T>
 std::string Utils::vec2str(std::vector<T> arr) {
     std::string ot = std::string("[");
-    for (auto v : arr) {
+    for (auto v: arr) {
         ot += (std::to_string(v) + std::string(", "));
     }
     ot += std::string("]");
@@ -19,7 +15,8 @@ bool Utils::pairSortComparator(std::pair<int, std::vector<cv::Point2f>> a, std::
     return (a.first < b.first);
 }
 
-std::vector<Eigen::Matrix<float, 4, 1>> Utils::getFrustumVertices(float u0, float v0, float fu, float fv, int w, int h, float scale) {
+std::vector<Eigen::Matrix<float, 4, 1>>
+Utils::getFrustumVertices(float u0, float v0, float fu, float fv, int w, int h, float scale) {
     const float xl = scale * u0;
     const float xh = scale * (w * fu + u0);
     const float yl = scale * v0;
@@ -37,10 +34,13 @@ std::vector<Eigen::Matrix<float, 4, 1>> Utils::getFrustumVertices(float u0, floa
 void Utils::drawFrustum(std::vector<Eigen::Matrix<float, 4, 1>> vertices) {
     for (int i = 0; i < vertices.size(); i++) {
         for (int j = i; j < vertices.size(); j++) {
-            pangolin::glDrawLine(vertices[i].data()[0], vertices[i].data()[1], vertices[i].data()[2], vertices[j].data()[0], vertices[j].data()[1], vertices[j].data()[2]);
+            pangolin::glDrawLine(vertices[i].data()[0], vertices[i].data()[1], vertices[i].data()[2],
+                                 vertices[j].data()[0], vertices[j].data()[1], vertices[j].data()[2]);
         }
     }
 }
 
 template std::string Utils::vec2str<int>(std::vector<int>);
+
 template std::string Utils::vec2str<float>(std::vector<float>);
+
