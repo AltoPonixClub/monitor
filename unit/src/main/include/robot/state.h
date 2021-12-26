@@ -5,9 +5,9 @@
 
 class State {
 public:
-    static State *instance();
+    State();
 
-    void configure();
+    static State *instance();
 
     // Physical
     float time; // TODO: physical state subsystem

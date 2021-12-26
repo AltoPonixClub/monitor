@@ -10,9 +10,9 @@ class SubsystemBase {
 public:
     virtual void read(State *state) = 0;
 
-    virtual void write(Outputs *outputs) = 0;
-
     virtual void calculate(State *state, Commands *commands, Outputs *outputs) = 0;
+
+    virtual void write(Outputs *outputs) = 0;
 
     static SubsystemBase *instance();
 

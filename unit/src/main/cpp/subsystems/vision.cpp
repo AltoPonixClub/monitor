@@ -4,30 +4,25 @@
 #include <utils/utils.h>
 #include "../archived/cv/constants.h"
 
-// TODO should these vars be put in configure func or outside - probably outside?
-// TODO: better error logging
 Vision::Vision() {
-    cap = cv::VideoCapture(constants::vision::cameraId);
+    cap = cv::VideoCapture(constants::vision::kCameraId);
     if (!cap.isOpened()) {
         std::cout << "Vision Hardware Broken" << std::endl;
         return;
     }
-    cap.set(cv::CAP_PROP_FPS, constants::vision::fps);
+    cap.set(cv::CAP_PROP_FPS, constants::vision::kFps);
     std::cout << "Vision Hardware Initialized";
-    arucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
-    arucoParams = cv::aruco::DetectorParameters::create();
-    calibFile = cv::FileStorage(constants::vision::calibPath, cv::FileStorage::READ);
-    std::cout << calibFile.isOpened() << std::endl;
+    calibFile = cv::FileStorage(constants::vision::kCalibPath, cv::FileStorage::READ);
+    assert(calibFile.isOpened());
     cameraMatrix = calibFile.operator[]("K").mat(); // extrinsics
     distCoeffs = calibFile.operator[]("D").mat(); // intrinsics
     calibFile.~FileStorage();
-    board = cv::aruco::Board::create(constants::vision::boardArucoPts, arucoDictionary, constants::vision::arucoIds);
-    for (const auto &i: constants::vision::boardArucoPts) {
+    for (const auto &i: constants::vision::kBoardArucoPts) {
         for (auto c: i) {
             transform_src.push_back(
-                    cv::Point2f(c.x * constants::vision::imgSize.width / constants::vision::platformDim.width,
-                                c.y * constants::vision::imgSize.height /
-                                constants::vision::platformDim.height)); // Multiplier to make bigger in final image
+                    cv::Point2f(c.x * constants::vision::kImgSize.width / constants::physical::kPlatformDim.width,
+                                c.y * constants::vision::kImgSize.height /
+                                constants::physical::kPlatformDim.height)); // Multiplier to make bigger in final image
         }
     }
 
@@ -36,19 +31,19 @@ Vision::Vision() {
 void Vision::read(State *state) {
     cv::Mat frame;
     cap >> frame;
-    cv::resize(frame, frame, constants::vision::imgSize);
+    cv::resize(frame, frame, constants::vision::kImgSize);
     state->capFrame = frame;
 
-    cv::aruco::detectMarkers(frame, arucoDictionary, state->detectedArucoCorners, state->detectedArucoIds, arucoParams,
+    cv::aruco::detectMarkers(frame, constants::vision::kArucoDictionary, state->detectedArucoCorners, state->detectedArucoIds, constants::vision::kArucoParams,
                              state->rejectedArucoCorners);
-    cv::aruco::refineDetectedMarkers(frame, board, state->detectedArucoCorners, state->detectedArucoIds,
+    cv::aruco::refineDetectedMarkers(frame, constants::vision::kBoard, state->detectedArucoCorners, state->detectedArucoIds,
                                      state->rejectedArucoCorners,
                                      cameraMatrix, distCoeffs);
 
     state->transform_dst.clear();
     if (state->detectedArucoIds.size() == 4) {
         std::vector<std::pair<int, std::vector<cv::Point2f>>> tmp_corners;
-        cv::aruco::estimatePoseBoard(state->detectedArucoCorners, state->detectedArucoIds, board, cameraMatrix,
+        cv::aruco::estimatePoseBoard(state->detectedArucoCorners, state->detectedArucoIds, constants::vision::kBoard, cameraMatrix,
                                      distCoeffs, state->cam_rvec,
                                      state->cam_tvec);
         // Sets up transform dst for findHomography
@@ -65,10 +60,10 @@ void Vision::read(State *state) {
             // Maps real world coords of board to those in the image
             cv::Mat H = cv::findHomography(transform_src, state->transform_dst, cv::RANSAC, 5);
             // Apply perspective transformation to original image
-            cv::warpPerspective(state->capFrame, state->undistortedFrame, H.inv(), constants::display::imgDispSize,
+            cv::warpPerspective(state->capFrame, state->undistortedFrame, H.inv(), constants::display::kImgDispSize,
                                 cv::INTER_LINEAR);
             state->undistortedFrame = state->undistortedFrame(
-                    cv::Rect(0, 0, constants::vision::imgSize.width, constants::vision::imgSize.height));
+                    cv::Rect(0, 0, constants::vision::kImgSize.width, constants::vision::kImgSize.height));
         }
         catch (...) {
             std::cout << "Not Yet Found Board" << std::endl;
@@ -78,16 +73,15 @@ void Vision::read(State *state) {
     }
 }
 
-void Vision::write(Outputs *outputs) {
-
-}
-
 void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
 //    for (const auto &corner: state->detectedArucoCorners) {
 //        for (auto pt: corner) {
-//            cv::circle(outputs->displayFrame, pt, constants::vision::arucoCircRadius, constants::vision::aqua, cv::FILLED);
+//            cv::circle(outputs->displayFrame, pt, constants::vision::kArucoCircRadius, constants::vision::kAqua, cv::FILLED);
 //        }
 //    }
+}
+
+void Vision::write(Outputs *outputs) {
 }
 
 Vision *Vision::instance() {

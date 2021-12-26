@@ -15,16 +15,6 @@
 // TODO: prevent data being read or uploaded from sensor in calculate func
 class Vision : public SubsystemBase {
 public:
-    cv::VideoCapture cap;
-    // TODO: this should prlly be moved out
-    cv::Ptr<cv::aruco::Dictionary> arucoDictionary;
-    cv::Ptr<cv::aruco::DetectorParameters> arucoParams;
-    cv::FileStorage calibFile;
-    cv::Mat cameraMatrix; // extrinsics
-    cv::Mat distCoeffs; // intrinsics
-    cv::Ptr<cv::aruco::Board> board;
-    std::vector<cv::Point2f> transform_src;
-
     Vision();
 
     void read(State *state);
@@ -38,6 +28,14 @@ public:
     std::string name();
 
 private:
+    cv::VideoCapture cap;
+
+    // TODO: constants
+    cv::FileStorage calibFile;
+    cv::Mat cameraMatrix; // extrinsics
+    cv::Mat distCoeffs; // intrinsics
+    std::vector<cv::Point2f> transform_src;
+
     static inline Vision *pInstance = nullptr;
 };
 

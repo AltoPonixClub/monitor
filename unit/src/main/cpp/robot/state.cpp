@@ -2,11 +2,12 @@
 #include <config/constants.h>
 
 
-void State::configure() {
-    State::capFrame = cv::Mat();
-    State::undistortedFrame = cv::Mat(constants::vision::imgSize.height, constants::vision::imgSize.width, CV_8UC3,
-                                      cv::Scalar(100, 100, 100));
-    State::cam_rvec, State::cam_tvec = cv::Vec3d(0, 0, 0);
+State::State() {
+    this->time = 0;
+    this->capFrame = cv::Mat();
+    this->undistortedFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
+                                     cv::Scalar(100, 100, 100));
+    this->cam_rvec, this->cam_tvec = cv::Vec3d(0, 0, 0);
 }
 
 State *State::instance() {
