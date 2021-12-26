@@ -10,7 +10,6 @@
 #include <pangolin/handler/handler.h>
 #include <pangolin/gl/gl.h>
 #include <pangolin/gl/glinclude.h>
-#include <pangolin/display/opengl_render_state.h>
 #include <pangolin/gl/gldraw.h>
 #include <pangolin/video/video_input.h>
 #include <pangolin/gl/glformattraits.h>
@@ -19,6 +18,9 @@
 #include <pangolin/plot/plotter.h>
 
 #include <Eigen/Core>
+
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 #include "utils.h"
 #include "constants.h"
@@ -29,15 +31,16 @@ using namespace std;
 
 int main(int /*argc*/, char ** /*argv*/ ) {
     cv::VideoCapture cap(constants::cameraId);
+    auto logger = spdlog::stderr_color_mt("stderr");
     if (!cap.isOpened()) {
-        cout << "Broken Camera";
+        logger->error("Broken Camera");
         return -1;
     }
     cap.set(cv::CAP_PROP_FPS, constants::fps);
     cv::Ptr<cv::aruco::Dictionary> arucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
     cv::Ptr<cv::aruco::DetectorParameters> arucoParams = cv::aruco::DetectorParameters::create();
     cv::FileStorage calibFile(constants::calibPath, cv::FileStorage::READ);
-    cout << calibFile.isOpened() << endl;
+    logger->info(calibFile.isOpened());
     auto cameraMatrix = calibFile.operator[]("K").mat(); // extrinsics
     auto distCoeffs = calibFile.operator[]("D").mat(); // intrinsics
     calibFile.~FileStorage();
@@ -132,7 +135,6 @@ int main(int /*argc*/, char ** /*argv*/ ) {
                     transform_dst.push_back(pt);
             }
             // TODO: use rodrigues on rvec and tvec to turn into projection matrix
-            cout << "translation: " << tvec << endl;
         }
         try {
             /* Planar Rectification based on Aruco Markers */
@@ -144,7 +146,7 @@ int main(int /*argc*/, char ** /*argv*/ ) {
             undistortedFrame = undistortedFrame(cv::Rect(0, 0, constants::imgSize.width, constants::imgSize.height));
         }
         catch (...) {
-            cout << "Not Yet Found" << endl;
+            logger->warn("Not Yet Found");
         }
 
         // Draws Platform

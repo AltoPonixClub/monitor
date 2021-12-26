@@ -15,7 +15,6 @@
 #include <pangolin/gl/gl.h>
 #include <pangolin/gl/glinclude.h>
 #include <pangolin/gl/glformattraits.h>
-#include <pangolin/display/opengl_render_state.h>
 #include <pangolin/gl/gldraw.h>
 #include <pangolin/video/video_input.h>
 
