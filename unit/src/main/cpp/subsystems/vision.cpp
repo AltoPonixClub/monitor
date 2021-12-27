@@ -47,8 +47,8 @@ void Vision::read(State *state) {
         std::vector<std::pair<int, std::vector<cv::Point2f>>> tmp_corners;
         cv::aruco::estimatePoseBoard(state->detectedArucoCorners, state->detectedArucoIds, constants::vision::kBoard,
                                      cameraMatrix,
-                                     distCoeffs, state->cam_rvec,
-                                     state->cam_tvec);
+                                     distCoeffs, state->camRvec,
+                                     state->camTvec);
         // Sets up transform dst for findHomography
         for (int i = 0; i < state->detectedArucoIds.size(); i++)
             tmp_corners.emplace_back(state->detectedArucoIds[i], state->detectedArucoCorners[i]);
@@ -72,6 +72,12 @@ void Vision::read(State *state) {
             std::cout << "Not Yet Found Board" << std::endl;
         }
         // TODO: use rodrigues on rvec and tvec to turn into projection matrix
+    }
+    // TODO: replace with stereo
+    for(int i = 0;i < state->depthMap.size();i++){
+        for(int j = 0;j < state->depthMap[0].size();j++) {
+            state->depthMap[i][j] = sin(i/10) - cos(j/10)/3+3;
+        }
     }
 }
 
