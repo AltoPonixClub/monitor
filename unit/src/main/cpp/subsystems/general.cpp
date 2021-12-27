@@ -1,8 +1,7 @@
 #include <subsystems/general.h>
 #include <config/constants.h>
-#include <utils/utils.h>
 
-General::General(State* state) {
+General::General(State *state) {
 //    state->initTimeS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     state->initTimeS = 0;
 }

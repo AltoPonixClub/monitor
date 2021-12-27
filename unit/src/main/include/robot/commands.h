@@ -1,9 +1,11 @@
 #ifndef MONITOR_COMMANDS_H
 #define MONITOR_COMMANDS_H
 
+#include <vector>
+
 class Commands {
 public:
-    Commands();
+    Commands() {};
 
     static Commands *instance();
 
@@ -11,11 +13,11 @@ public:
         STREAMING, STOPPED
     };
     enum DisplayState {
-        ON, OFF
+        MESH, CAMERA_IMG, UNDISTORTED_IMG, PLOTTER
     };
 
     VisionState visionWantedState;
-    DisplayState displayWantedState;
+    std::vector<DisplayState> displayWantedStates;
 private:
     static inline Commands *pInstance = nullptr;
 };

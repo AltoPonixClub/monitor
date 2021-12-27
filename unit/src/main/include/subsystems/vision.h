@@ -11,7 +11,7 @@
 // TODO: prevent data being read or uploaded from sensor in calculate func
 class Vision : public SubsystemBase {
 public:
-    Vision(State *state);
+    Vision(State *state, Commands *commands, Outputs *outputs);
 
     void read(State *state);
 
@@ -19,7 +19,7 @@ public:
 
     void write(Outputs *outputs);
 
-    static Vision *instance(State *state);
+    static Vision *instance(State *state, Commands *commands, Outputs *outputs);
 
     std::string name();
 

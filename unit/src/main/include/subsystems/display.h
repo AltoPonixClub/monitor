@@ -10,7 +10,7 @@
 
 class Display : public SubsystemBase {
 public:
-    Display(State *state);
+    Display(State *state, Commands *commands, Outputs *outputs);
 
     void read(State *state);
 
@@ -18,7 +18,7 @@ public:
 
     void write(Outputs *outputs);
 
-    static Display *instance(State *state);
+    static Display *instance(State *state, Commands *commands, Outputs *outputs);
 
     std::string name();
 

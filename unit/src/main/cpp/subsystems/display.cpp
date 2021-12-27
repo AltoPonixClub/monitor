@@ -17,8 +17,8 @@
 
 #include <Eigen/Core>
 
-// TODO: Move commands to all functions
-Display::Display(State *state) {
+// TODO: do based on commands wants
+Display::Display(State *state, Commands *commands, Outputs *outputs) {
     std::cout << "Display Hardware Initialized" << std::endl;
 
     pangolin::CreateWindowAndBind("Main", constants::display::kDispSize.width, constants::display::kDispSize.height);
@@ -36,20 +36,26 @@ Display::Display(State *state) {
             new pangolin::Handler3D(this->sCam));
 
 //     Set up plotter
-    const float tinc = 0.01f; // TODO: move this out
-
-    std::vector<std::string> labels{"tvec[0]"};
-    this->log.SetLabels(labels);
-    this->plotter = new pangolin::Plotter(&this->log, 0.0f, 4.0f * (float) M_PI / tinc - 2.0f, -5, 30, 0.5f);
-    plotter->SetBounds(0, 0.3, 0.0, 0.33);
-    plotter->Track("$i");
-    pangolin::DisplayBase().AddDisplay(*plotter);
-
+    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), commands->PLOTTER)) {
+        const float tinc = 0.01f; // TODO: move this out
+        std::vector<std::string> labels{"tvec[0]"};
+        this->log.SetLabels(labels);
+        this->plotter = new pangolin::Plotter(&this->log, 0.0f, 4.0f * (float) M_PI / tinc - 2.0f, -5, 30, 0.5f);
+        plotter->SetBounds(0, 0.3, 0.0, 0.33);
+        plotter->Track("$i");
+        pangolin::DisplayBase().AddDisplay(*plotter);
+        std::cout << "entered" << "\n";
+    }
 
     this->dImg = pangolin::Display("image").SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
                                                       (float) constants::display::kImgDispSize.width /
                                                       (float) constants::display::kImgDispSize.height).SetLock(
             pangolin::LockLeft, pangolin::LockTop);
+
+    outputs->displayFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
+                                 cv::Scalar(100, 100, 100));
+    outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 1);
+    outputs->logVal = 0;
 }
 
 void Display::read(State *state) {
@@ -153,9 +159,9 @@ void Display::write(Outputs *outputs) {
 }
 
 
-Display *Display::instance(State *state) {
+Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
     if (Display::pInstance == nullptr) {
-        Display::pInstance = new Display(state);
+        Display::pInstance = new Display(state, commands, outputs);
 
     }
     return Display::pInstance;
