@@ -36,7 +36,7 @@ Display::Display() {
             new pangolin::Handler3D(this->sCam));
 
 //     Set up plotter
-    const float tinc = 0.01f;
+    const float tinc = 0.01f; // TODO: move this out
 
     std::vector<std::string> labels{"tvec[0]"};
     this->log.SetLabels(labels);
@@ -66,9 +66,9 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     */
     // TODO: fix this
     // TODO: check w element of matrix is 1
-    transformationMatrix << 1, 0, 0, state->cam_tvec[0] + constants::physical::kPlatformDim.height / 2,
-            0, 1, 0, state->cam_tvec[1] + constants::physical::kPlatformDim.width / 2,
-            0, 0, 1, state->cam_tvec[2],
+    transformationMatrix << 1, 0, 0, state->camTvec[0] + constants::physical::kPlatformDim.height / 2,
+            0, 1, 0, state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
+            0, 0, 1, state->camTvec[2],
             0, 0, 0, 1;
     outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 1); // TODO: this is atrocious, dont redo each loop smh
     for (auto &vertex: outputs->frustumVerts) {
@@ -78,7 +78,18 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
     cv::resize(outputs->displayFrame, outputs->displayFrame, constants::display::kImgDispSize);
 
-    outputs->logVal = state->cam_tvec[0];
+    outputs->logVal = state->camTvec[0];
+
+    // Mesh Creation
+
+//      outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() << 0, 0, 0, 0, 0, 1).finished());
+    for (int i = 0; i < constants::display::kMeshDensity-1; i++) {
+        for (int j = 0; j < constants::display::kMeshDensity-1; j++) { // TODO: this wrong
+            outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() <<  constants::physical::kPlatformDim.width * i / constants::display::kMeshDensity, constants::physical::kPlatformDim.height * j / constants::display::kMeshDensity, state->depthMap[int(state->depthMap.size() * (i/constants::display::kMeshDensity))][int(state->depthMap[0].size() * (j/constants::display::kMeshDensity))], constants::physical::kPlatformDim.width * (i + 1) / constants::display::kMeshDensity, constants::physical::kPlatformDim.height * (j + 1) / constants::display::kMeshDensity, state->depthMap[int(state->depthMap.size() * ((i+1)/constants::display::kMeshDensity))][int(state->depthMap[0].size() * ((j+1)/constants::display::kMeshDensity))]).finished());
+//            outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() << i/10, j/10, state->depthMap[i][j], i/10, (j+1)/10, state->depthMap[i][j+1]).finished());
+//            outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() << j/10, i/10, state->depthMap[j][i], (j+1)/10, i/10, state->depthMap[j+1][i]).finished());
+        }
+    }
 }
 
 void Display::write(Outputs *outputs) {
@@ -104,9 +115,12 @@ void Display::write(Outputs *outputs) {
 
         // Draws Camera Frustum
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-
         Utils::drawFrustum(outputs->frustumVerts);
         glColor3f(1, 1, 1);
+
+        for (auto meshLine : outputs->meshLines) {
+            pangolin::glDrawLine(meshLine[0], meshLine[1], meshLine[2], meshLine[3], meshLine[4], meshLine[5]);
+        }
 
         imgTex.Upload(outputs->displayFrame.data, GL_BGR,
                       GL_UNSIGNED_BYTE);
