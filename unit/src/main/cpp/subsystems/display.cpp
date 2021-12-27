@@ -83,12 +83,11 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 
     // Mesh Creation
 
-//      outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() << 0, 0, 0, 0, 0, 1).finished());
-
     // TODO: Only needs to happen once in a while, scheduling thing would be nice
-    std::cout << outputs->meshColor.size() << std::endl;
     outputs->meshColor.clear();
     outputs->meshLines.clear();
+    cv::Mat tmp; // TODO: clean up
+    cv::resize(state->undistortedFrame, tmp, cv::Size(constants::display::kMeshDensity, constants::display::kMeshDensity));
     for (int i = 0; i < constants::display::kMeshDensity - 1; i++) {
         for (int j = 0; j < constants::display::kMeshDensity - 1; j++) { // TODO: this wrong
             outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>()
@@ -102,20 +101,16 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
                     constants::display::kMeshDensity, state->depthMap[int(
                     state->depthMap.size() * ((i + 1) / constants::display::kMeshDensity))][int(
                     state->depthMap[0].size() * ((j + 1) / constants::display::kMeshDensity))]).finished());
-//            std::cout << state->undistortedFrame.at<cv::Vec3b>(cv::Point(int(state->depthMap.size() * (i/constants::display::kMeshDensity)),int(state->depthMap[0].size() * (j/constants::display::kMeshDensity)))) << std::endl;
-            outputs->meshColor.emplace_back(state->undistortedFrame.at<cv::Vec3b>(
-                    cv::Point(int(state->depthMap.size() * (i / constants::display::kMeshDensity)),
-                              int(state->depthMap[0].size() * (j / constants::display::kMeshDensity)))));
-//            outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() << i/10, j/10, state->depthMap[i][j], i/10, (j+1)/10, state->depthMap[i][j+1]).finished());
-//            outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() << j/10, i/10, state->depthMap[j][i], (j+1)/10, i/10, state->depthMap[j+1][i]).finished());
+            outputs->meshColor.push_back(tmp.at<cv::Vec3b>(
+                    cv::Point(i, j)));
         }
-//    outputs->meshLines.clear();
     }
 }
 
 void Display::write(Outputs *outputs) {
     if (!pangolin::ShouldQuit()) {
-
+        glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
+        glLineWidth(3);
         // TODO: why does split declaration and assignment here not work!!? haunted? yes
         pangolin::GlTexture imgTex = pangolin::GlTexture(constants::display::kImgDispSize.width,
                                                          constants::display::kImgDispSize.height, GL_RGB, false, 0,
@@ -139,8 +134,7 @@ void Display::write(Outputs *outputs) {
         Utils::drawFrustum(outputs->frustumVerts);
 
         for (int i = 0; i < outputs->meshLines.size(); i++) {
-            glColor3f(outputs->meshColor[i][2], outputs->meshColor[i][1], outputs->meshColor[i][0]);
-//            std::cout << outputs->meshColor[i];
+            glColor3ub(outputs->meshColor[i][2], outputs->meshColor[i][1], outputs->meshColor[i][0]);
             pangolin::glDrawLine(outputs->meshLines[i][0], outputs->meshLines[i][1], outputs->meshLines[i][2], outputs->meshLines[i][3], outputs->meshLines[i][4], outputs->meshLines[i][5]);
         }
 
@@ -156,8 +150,6 @@ void Display::write(Outputs *outputs) {
         // Swap frames and Process Events
         pangolin::FinishFrame();
     }
-//    cv::imshow("Window", outputs->displayFrame);
-//    cv::waitKey(1);
 }
 
 
