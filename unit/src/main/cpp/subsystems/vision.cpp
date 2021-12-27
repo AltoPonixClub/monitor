@@ -73,12 +73,8 @@ void Vision::read(State *state) {
         }
         // TODO: use rodrigues on rvec and tvec to turn into projection matrix
     }
-    // TODO: replace with stereo
-    for(int i = 0;i < state->depthMap.size();i++){
-        for(int j = 0;j < state->depthMap[0].size();j++) {
-            state->depthMap[i][j] = sin(i/10) - cos(j/10)/3+3;
-        }
-    }
+    // TODO: stereo pointcloud
+
 }
 
 void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {

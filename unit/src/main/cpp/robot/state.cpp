@@ -8,9 +8,16 @@ State::State() {
     this->time = 0;
     this->capFrame = cv::Mat();
     this->undistortedFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
-                                     cv::Scalar(100, 100, 100));
+                                     cv::Scalar(100, 0, 0));
     this->camRvec, this->camTvec = cv::Vec3d(0, 0, 0);
     this->depthMap = std::vector<std::vector<float>>(constants::vision::kImgSize.height, std::vector<float> (constants::vision::kImgSize.width, 0));
+
+    // TODO: remove
+    for(int i = 0;i < this->depthMap.size();i++){
+        for(int j = 0;j < this->depthMap[0].size();j++) {
+            this->depthMap[i][j] = sin(i/10) - cos(j/10)/3+3;
+        }
+    }
 }
 
 State *State::instance() {

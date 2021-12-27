@@ -70,7 +70,8 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
             0, 1, 0, state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
             0, 0, 1, state->camTvec[2],
             0, 0, 0, 1;
-    outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 1); // TODO: this is atrocious, dont redo each loop smh
+    outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1,
+                                                      1); // TODO: this is atrocious, dont redo each loop smh
     for (auto &vertex: outputs->frustumVerts) {
         vertex = transformationMatrix * vertex;
     }
@@ -83,12 +84,32 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     // Mesh Creation
 
 //      outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() << 0, 0, 0, 0, 0, 1).finished());
-    for (int i = 0; i < constants::display::kMeshDensity-1; i++) {
-        for (int j = 0; j < constants::display::kMeshDensity-1; j++) { // TODO: this wrong
-            outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() <<  constants::physical::kPlatformDim.width * i / constants::display::kMeshDensity, constants::physical::kPlatformDim.height * j / constants::display::kMeshDensity, state->depthMap[int(state->depthMap.size() * (i/constants::display::kMeshDensity))][int(state->depthMap[0].size() * (j/constants::display::kMeshDensity))], constants::physical::kPlatformDim.width * (i + 1) / constants::display::kMeshDensity, constants::physical::kPlatformDim.height * (j + 1) / constants::display::kMeshDensity, state->depthMap[int(state->depthMap.size() * ((i+1)/constants::display::kMeshDensity))][int(state->depthMap[0].size() * ((j+1)/constants::display::kMeshDensity))]).finished());
+
+    // TODO: Only needs to happen once in a while, scheduling thing would be nice
+    std::cout << outputs->meshColor.size() << std::endl;
+    outputs->meshColor.clear();
+    outputs->meshLines.clear();
+    for (int i = 0; i < constants::display::kMeshDensity - 1; i++) {
+        for (int j = 0; j < constants::display::kMeshDensity - 1; j++) { // TODO: this wrong
+            outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>()
+                    << constants::physical::kPlatformDim.width * i / constants::display::kMeshDensity,
+                    constants::physical::kPlatformDim.height * j /
+                    constants::display::kMeshDensity, state->depthMap[int(
+                    state->depthMap.size() * (i / constants::display::kMeshDensity))][int(
+                    state->depthMap[0].size() * (j / constants::display::kMeshDensity))],
+                    constants::physical::kPlatformDim.width * (i + 1) / constants::display::kMeshDensity,
+                    constants::physical::kPlatformDim.height * (j + 1) /
+                    constants::display::kMeshDensity, state->depthMap[int(
+                    state->depthMap.size() * ((i + 1) / constants::display::kMeshDensity))][int(
+                    state->depthMap[0].size() * ((j + 1) / constants::display::kMeshDensity))]).finished());
+//            std::cout << state->undistortedFrame.at<cv::Vec3b>(cv::Point(int(state->depthMap.size() * (i/constants::display::kMeshDensity)),int(state->depthMap[0].size() * (j/constants::display::kMeshDensity)))) << std::endl;
+            outputs->meshColor.emplace_back(state->undistortedFrame.at<cv::Vec3b>(
+                    cv::Point(int(state->depthMap.size() * (i / constants::display::kMeshDensity)),
+                              int(state->depthMap[0].size() * (j / constants::display::kMeshDensity)))));
 //            outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() << i/10, j/10, state->depthMap[i][j], i/10, (j+1)/10, state->depthMap[i][j+1]).finished());
 //            outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>() << j/10, i/10, state->depthMap[j][i], (j+1)/10, i/10, state->depthMap[j+1][i]).finished());
         }
+//    outputs->meshLines.clear();
     }
 }
 
@@ -116,12 +137,14 @@ void Display::write(Outputs *outputs) {
         // Draws Camera Frustum
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
         Utils::drawFrustum(outputs->frustumVerts);
-        glColor3f(1, 1, 1);
 
-        for (auto meshLine : outputs->meshLines) {
-            pangolin::glDrawLine(meshLine[0], meshLine[1], meshLine[2], meshLine[3], meshLine[4], meshLine[5]);
+        for (int i = 0; i < outputs->meshLines.size(); i++) {
+            glColor3f(outputs->meshColor[i][2], outputs->meshColor[i][1], outputs->meshColor[i][0]);
+//            std::cout << outputs->meshColor[i];
+            pangolin::glDrawLine(outputs->meshLines[i][0], outputs->meshLines[i][1], outputs->meshLines[i][2], outputs->meshLines[i][3], outputs->meshLines[i][4], outputs->meshLines[i][5]);
         }
 
+        glColor3f(1, 1, 1);
         imgTex.Upload(outputs->displayFrame.data, GL_BGR,
                       GL_UNSIGNED_BYTE);
         this->dImg.Activate();
