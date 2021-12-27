@@ -1,10 +1,8 @@
-
 #include <subsystems/vision.h>
 #include <config/constants.h>
 #include <utils/utils.h>
-#include "../archived/cv/constants.h"
 
-Vision::Vision() {
+Vision::Vision(State *state) {
     cap = cv::VideoCapture(constants::vision::kCameraId);
     if (!cap.isOpened()) {
         std::cout << "Vision Hardware Broken" << std::endl;
@@ -74,10 +72,17 @@ void Vision::read(State *state) {
         // TODO: use rodrigues on rvec and tvec to turn into projection matrix
     }
     // TODO: stereo pointcloud
-
+    for(int i = 0;i < state->depthMap.size();i++){
+        for(int j = 0;j < state->depthMap[0].size();j++) {
+            state->depthMap[i][j] = sin(i/10+100*(state->timeS - state->initTimeS)) - cos(j/10-100*(state->timeS - state->initTimeS))/3+3;
+        }
+    }
+//    std::cout << state->depthMap[0][0] << std::endl;
+    std::cout << state->timeS << std::endl;
 }
 
 void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
+
     outputs->editedCapFrame = state->capFrame.clone();
     for (const auto &corner: state->detectedArucoCorners) {
         for (auto pt: corner) {
@@ -90,9 +95,9 @@ void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
 void Vision::write(Outputs *outputs) {
 }
 
-Vision *Vision::instance() {
+Vision *Vision::instance(State *state) {
     if (Vision::pInstance == nullptr) {
-        Vision::pInstance = new Vision();
+        Vision::pInstance = new Vision(state);
     }
     return Vision::pInstance;
 }

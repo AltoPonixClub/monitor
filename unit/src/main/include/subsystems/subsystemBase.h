@@ -14,7 +14,7 @@ public:
 
     virtual void write(Outputs *outputs) = 0;
 
-    static SubsystemBase *instance();
+    static SubsystemBase *instance(State* state);
 
     virtual std::string name() = 0;
 };

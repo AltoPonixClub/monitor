@@ -10,8 +10,8 @@ public:
 
     static State *instance();
 
-    // Physical
-    float time; // TODO: physical state subsystem
+    // General
+    float initTimeS, timeS;
 
     // Vision
     cv::Mat capFrame, undistortedFrame;
