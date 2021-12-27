@@ -18,7 +18,7 @@ public:
 
     void write(Outputs *outputs);
 
-    static General *instance(State* state);
+    static General *instance(State *state);
 
     std::string name();
 

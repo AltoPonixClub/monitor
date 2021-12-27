@@ -2,7 +2,8 @@
 #include <config/constants.h>
 #include <utils/utils.h>
 
-Vision::Vision(State *state) {
+// TODO: specify read only write only based on annotations
+Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
     cap = cv::VideoCapture(constants::vision::kCameraId);
     if (!cap.isOpened()) {
         std::cout << "Vision Hardware Broken" << std::endl;
@@ -24,6 +25,11 @@ Vision::Vision(State *state) {
         }
     }
 
+    state->capFrame = state->undistortedFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
+                                     constants::display::kGrey);
+
+    state->camRvec, state->camTvec = cv::Vec3d(0, 0, 0);
+    state->depthMap = std::vector<std::vector<float>>(constants::vision::kImgSize.height, std::vector<float> (constants::vision::kImgSize.width, 0));
 }
 
 void Vision::read(State *state) {
@@ -77,8 +83,6 @@ void Vision::read(State *state) {
             state->depthMap[i][j] = sin(i/10+100*(state->timeS - state->initTimeS)) - cos(j/10-100*(state->timeS - state->initTimeS))/3+3;
         }
     }
-//    std::cout << state->depthMap[0][0] << std::endl;
-    std::cout << state->timeS << std::endl;
 }
 
 void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
@@ -95,9 +99,9 @@ void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
 void Vision::write(Outputs *outputs) {
 }
 
-Vision *Vision::instance(State *state) {
+Vision *Vision::instance(State *state, Commands *commands, Outputs *outputs) {
     if (Vision::pInstance == nullptr) {
-        Vision::pInstance = new Vision(state);
+        Vision::pInstance = new Vision(state, commands, outputs);
     }
     return Vision::pInstance;
 }

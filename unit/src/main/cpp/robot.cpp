@@ -10,8 +10,8 @@ int main() {
     State *state = State::instance();
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
-    std::vector<SubsystemBase *> enabledSubsystems{General::instance(state), Vision::instance(state), Display::instance(state)};
     Control::configure(commands);
+    std::vector<SubsystemBase *> enabledSubsystems{General::instance(state), Vision::instance(state, commands, outputs), Display::instance(state, commands, outputs)};
     std::cout << "Finished Initializations" << std::endl;
 
     while (true) {

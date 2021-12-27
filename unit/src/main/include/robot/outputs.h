@@ -8,7 +8,7 @@
 // TODO: organize between subsystems
 class Outputs {
 public:
-    Outputs();
+    Outputs() {};
 
     static Outputs *instance();
 
