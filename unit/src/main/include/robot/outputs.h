@@ -15,6 +15,7 @@ public:
     // TODO: put in namespace?
     cv::Mat editedCapFrame, displayFrame;
     std::vector<Eigen::Matrix<float, 6, 1>> meshLines;
+    std::vector<cv::Scalar> meshColor;
     std::vector<Eigen::Matrix<float, 4, 1>> frustumVerts;
     float logVal;
 
