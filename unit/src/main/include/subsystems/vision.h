@@ -1,7 +1,3 @@
-//
-// Created by aoberai on 12/24/21.
-//
-
 #ifndef MONITOR_VISION_H
 #define MONITOR_VISION_H
 
@@ -15,7 +11,7 @@
 // TODO: prevent data being read or uploaded from sensor in calculate func
 class Vision : public SubsystemBase {
 public:
-    Vision();
+    Vision(State *state);
 
     void read(State *state);
 
@@ -23,7 +19,7 @@ public:
 
     void write(Outputs *outputs);
 
-    static Vision *instance();
+    static Vision *instance(State *state);
 
     std::string name();
 

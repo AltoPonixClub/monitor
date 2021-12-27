@@ -4,12 +4,13 @@
 #include <subsystems/subsystemBase.h>
 #include <subsystems/vision.h>
 #include <subsystems/display.h>
+#include <subsystems/general.h>
 
 int main() {
     State *state = State::instance();
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
-    std::vector<SubsystemBase *> enabledSubsystems{Vision::instance(), Display::instance()};
+    std::vector<SubsystemBase *> enabledSubsystems{General::instance(state), Vision::instance(state), Display::instance(state)};
     Control::configure(commands);
     std::cout << "Finished Initializations" << std::endl;
 

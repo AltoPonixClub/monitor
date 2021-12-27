@@ -18,7 +18,7 @@
 #include <Eigen/Core>
 
 // TODO: Move commands to all functions
-Display::Display() {
+Display::Display(State *state) {
     std::cout << "Display Hardware Initialized" << std::endl;
 
     pangolin::CreateWindowAndBind("Main", constants::display::kDispSize.width, constants::display::kDispSize.height);
@@ -161,9 +161,9 @@ void Display::write(Outputs *outputs) {
 }
 
 
-Display *Display::instance() {
+Display *Display::instance(State *state) {
     if (Display::pInstance == nullptr) {
-        Display::pInstance = new Display();
+        Display::pInstance = new Display(state);
 
     }
     return Display::pInstance;
