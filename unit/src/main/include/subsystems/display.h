@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <subsystems/subsystemBase.h>
-#include <pangolin/display/opengl_render_state.h>
+#include <pangolin/gl/opengl_render_state.h>
 #include <pangolin/handler/handler.h>
 #include <pangolin/plot/datalog.h>
 #include <pangolin/plot/plotter.h>

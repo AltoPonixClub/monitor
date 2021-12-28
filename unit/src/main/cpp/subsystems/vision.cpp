@@ -12,7 +12,7 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
     cap.set(cv::CAP_PROP_FPS, constants::vision::kFps);
     std::cout << "Vision Hardware Initialized";
     calibFile = cv::FileStorage(constants::vision::kCalibPath, cv::FileStorage::READ);
-    assert(calibFile.isOpened());
+//    assert(calibFile.isOpened());
     cameraMatrix = calibFile.operator[]("K").mat(); // extrinsics
     distCoeffs = calibFile.operator[]("D").mat(); // intrinsics
     calibFile.~FileStorage();
@@ -78,11 +78,20 @@ void Vision::read(State *state) {
         // TODO: use rodrigues on rvec and tvec to turn into projection matrix
     }
     // TODO: stereo pointcloud
+    cv::Mat tmp; // TODO: clean up
+    tmp = cv::imread("/home/parallels/CLionProjects/monitor/unit/src/main/cpp/robot/adityascuffeddepth.png", cv::IMREAD_COLOR);
+    cv::resize(tmp, tmp, cv::Size(constants::display::kMeshDensity, constants::display::kMeshDensity));
+    std::cout << "start" << std::endl;
+    std::cout << tmp.size() << std::endl;
+    state->depthMap = std::vector<std::vector<float>>(250, std::vector<float> (250, 0));
+
     for(int i = 0;i < state->depthMap.size();i++){
         for(int j = 0;j < state->depthMap[0].size();j++) {
-            state->depthMap[i][j] = sin(i/10+100*(state->timeS - state->initTimeS)) - cos(j/10-100*(state->timeS - state->initTimeS))/3+3;
+            state->depthMap[i][j] = tmp.at<cv::Vec3b>(cv::Point(i, j))[0]/255.0;
         }
     }
+    std::cout << state->depthMap.size() << std::endl;
+    std::cout << state->depthMap[0].size() << std::endl;
 }
 
 void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
