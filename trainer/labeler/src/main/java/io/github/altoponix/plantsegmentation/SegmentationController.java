@@ -33,6 +33,8 @@ public class SegmentationController {
     @FXML
     private TextField vmax;
     @FXML
+    private CheckBox eraser;
+    @FXML
     private CheckBox eyedropper;
     @FXML
     private TextField eyedropperBounds;
@@ -48,6 +50,8 @@ public class SegmentationController {
     private Label totalPhotos;
     @FXML
     private TextField blur;
+    @FXML
+    private TextField ffBounds;
 
     private String filePath;
     private Mat image = new Mat();
@@ -62,6 +66,9 @@ public class SegmentationController {
     private boolean fitSide;
     private File[] files;
     private int filesIndex = 1;
+    private Mat floodfillMask = new Mat();
+    private Scalar penColor = new Scalar(0, 255, 0);
+    private Scalar maskColor = Scalar.all(255);
 
     @FXML
     public void updatePath() {
@@ -97,6 +104,7 @@ public class SegmentationController {
             image = Imgcodecs.imread(filePath);
             mask = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
             maskOut = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
+            floodfillMask = new Mat(image.rows()+2, image.cols()+2, CvType.CV_8U, Scalar.all(0));
             oldImage.removeAll(oldImage);
             oldImage.add(image);
             oldMask.removeAll(oldMask);
@@ -162,7 +170,7 @@ public class SegmentationController {
         if (eyedropper.isSelected()) {
             Mat hsvMat = new Mat();
             Imgproc.cvtColor(image, hsvMat, Imgproc.COLOR_BGR2HSV);
-            double[] hsv = image.get((int)x, (int)y);
+            double[] hsv = image.get((int)y, (int)x);
             double bounds = Double.parseDouble(eyedropperBounds.getText());
             hmin.setText(String.valueOf(hsv[0] - bounds));
             smin.setText(String.valueOf(hsv[1] - bounds));
@@ -174,12 +182,24 @@ public class SegmentationController {
             oldImage.add(image.clone());
             oldMask.add(mask.clone());
             oldMaskOut.add(maskOut.clone());
+
             int size = Integer.parseInt(brushSize.getText());
+            int floodFill = Integer.parseInt(ffBounds.getText());
+            Scalar floodFillBounds = new Scalar(floodFill, floodFill, floodFill);
+
+            if (eraser.isSelected()) {
+                penColor = new Scalar(0, 0, 0);
+                maskColor = Scalar.all(0);
+            } else {
+                penColor = new Scalar(0, 255, 0);
+                maskColor = Scalar.all(255);
+            }
+
             int v = 0;
 
-            Imgproc.circle(image, new Point(x, y), size, new Scalar(0, 255, 0), Imgproc.FILLED);
-            Imgproc.circle(mask, new Point(x, y), size, Scalar.all(255), Imgproc.FILLED);
-            Imgproc.circle(maskOut, new Point(x, y), size, Scalar.all(255), Imgproc.FILLED);
+            Mat imageFFMask = floodfillMask.clone();
+            Mat maskFFMask = floodfillMask.clone();
+            Mat maskOutFFMask = floodfillMask.clone();
 
             for (MatOfPoint contour:contours) {
                 v++;
@@ -187,16 +207,19 @@ public class SegmentationController {
                     MatOfPoint2f convertedContour = new MatOfPoint2f(contours.get(i).toArray());
                     double r = Imgproc.pointPolygonTest(convertedContour, new Point(x, y), false);
                     if (r == 1) {
-                        List<MatOfPoint> contourArray = new ArrayList<MatOfPoint>();
-                        contourArray.add( new MatOfPoint(contours.get(i).toArray()));
-                        Imgproc.fillPoly(image, contourArray, new Scalar(0, 255, 0));
-                        Imgproc.fillPoly(mask, contourArray, Scalar.all(255));
-                        Imgproc.fillPoly(maskOut, contourArray, Scalar.all(255));
-                        Imgproc.polylines(mask, contourArray, true, Scalar.all(255), 2);
-                        Imgproc.polylines(maskOut, contourArray, true, Scalar.all(255), 2);
+                        Imgproc.floodFill(image, imageFFMask, new Point(x, y), penColor, new Rect(), floodFillBounds, floodFillBounds, 8 | (255 << 8));
+                        Imgproc.floodFill(mask, maskFFMask, new Point(x, y), maskColor, new Rect(), floodFillBounds, floodFillBounds, 8 | (255 << 8));
+                        Imgproc.floodFill(maskOut, maskOutFFMask, new Point(x, y), maskColor, new Rect(), floodFillBounds, floodFillBounds, 8 | (255 << 8));
                     }
                 }
             }
+
+            Imgproc.circle(image, new Point(x, y), size, penColor, Imgproc.FILLED);
+            Imgproc.circle(mask, new Point(x, y), size, maskColor, Imgproc.FILLED);
+            Imgproc.circle(maskOut, new Point(x, y), size, maskColor, Imgproc.FILLED);
+
+            Imgproc.drawContours(image, contours, -1, new Scalar(0, 0, 255), 2);
+            Imgproc.drawContours(mask, contours, -1, Scalar.all(100), 2);
             updateStage();
         }
     }
@@ -252,7 +275,8 @@ public class SegmentationController {
         Imgproc.cvtColor(mat, gray, Imgproc.COLOR_HSV2RGB);
         Imgproc.cvtColor(mat, gray, Imgproc.COLOR_RGB2GRAY);
         Imgproc.findContours(gray, this.contours, this.hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.drawContours(image, contours, -1, new Scalar(0, 255, 0), 5);
-        Imgproc.drawContours(mask, contours, -1, Scalar.all(100), 5);
+        Imgproc.drawContours(image, contours, -1, new Scalar(0, 0, 255), 2);
+        Imgproc.drawContours(mask, contours, -1, Scalar.all(100), 2);
+        Imgproc.drawContours(floodfillMask, contours, -1, Scalar.all(255), 2);
     }
 }
