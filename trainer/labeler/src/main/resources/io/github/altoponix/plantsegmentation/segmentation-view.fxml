@@ -44,6 +44,10 @@
                 <TextField fx:id="brushSize" text="5" />
                 <Label text="Blur" />
                 <TextField fx:id="blur" text="5" />
+                <Label text="Flood Fill Bounds"/>
+                <TextField fx:id="ffBounds" text="30"/>
+                <Label text="Eraser" />
+                <CheckBox fx:id="eraser" />
             </HBox>
         </VBox>
     </top>
