@@ -13,11 +13,11 @@
                     <Insets bottom="10" top="10" />
                 </padding>
                 <Label text="Hue Min" />
-                <TextField fx:id="hmin" text="0" />
+                <TextField fx:id="hmin" text="30" />
                 <Label text="Saturation Min" />
-                <TextField fx:id="smin" text="0" />
+                <TextField fx:id="smin" text="30" />
                 <Label text="Value Min" />
-                <TextField fx:id="vmin" text="0" />
+                <TextField fx:id="vmin" text="60" />
             </HBox>
             <Separator />
             <HBox alignment="CENTER" spacing="10">
@@ -25,7 +25,7 @@
                     <Insets bottom="10" top="10" />
                 </padding>
                 <Label text="Hue Max" />
-                <TextField fx:id="hmax" text="180" />
+                <TextField fx:id="hmax" text="90" />
                 <Label text="Saturation Max" />
                 <TextField fx:id="smax" text="255" />
                 <Label text="Value Max" />
@@ -44,10 +44,6 @@
                 <TextField fx:id="brushSize" text="5" />
                 <Label text="Blur" />
                 <TextField fx:id="blur" text="5" />
-                <Label text="Flood Fill Bounds"/>
-                <TextField fx:id="ffBounds" text="30"/>
-                <Label text="Eraser" />
-                <CheckBox fx:id="eraser" />
             </HBox>
         </VBox>
     </top>
@@ -76,9 +72,9 @@
                     <Insets bottom="10" top="10" />
                 </padding>
                 <Label text="Folder Path" />
-                <TextField fx:id="folderPath" />
+                <TextField fx:id="folderPath" text="../foliage-dataset/imgs"/>
                 <Label text="Output Folder Path" />
-                <TextField fx:id="outputPath" />
+                <TextField fx:id="outputPath" text = "../foliage-dataset/masks"/>
                 <Button fx:id="updatePath" alignment="center" onAction="#updatePath" text="Update Paths" />
                 <Button fx:id="nextPhoto" alignment="center" onAction="#nextPhoto" text="Next Photo" />
                 <Label text="Photo #"/>
