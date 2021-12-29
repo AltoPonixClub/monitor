@@ -179,6 +179,11 @@ public class SegmentationController {
             smax.setText(String.valueOf(hsv[1] + bounds));
             vmax.setText(String.valueOf(hsv[2] + bounds));
         } else {
+            if (oldImage.size() > 100) {
+                oldImage.remove(0);
+                oldMask.remove(0);
+                oldMaskOut.remove(0);
+            }
             oldImage.add(image.clone());
             oldMask.add(mask.clone());
             oldMaskOut.add(maskOut.clone());
@@ -227,6 +232,11 @@ public class SegmentationController {
     //applies filters and draws contours
     @FXML
     private void update() {
+        if (oldImage.size() > 100) {
+            oldImage.remove(0);
+            oldMask.remove(0);
+            oldMaskOut.remove(0);
+        }
         oldImage.add(image.clone());
         oldMask.add(mask.clone());
         oldMaskOut.add(maskOut.clone());
