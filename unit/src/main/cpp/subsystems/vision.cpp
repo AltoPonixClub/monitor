@@ -79,11 +79,11 @@ void Vision::read(State *state) {
     }
     // TODO: stereo pointcloud
     cv::Mat tmp; // TODO: clean up
-    tmp = cv::imread("/home/parallels/CLionProjects/monitor/unit/src/main/cpp/robot/adityascuffeddepth.png", cv::IMREAD_COLOR);
+    tmp = cv::imread("/home/aoberai/programming/altoponix/monitor/unit/src/main/cpp/robot/adityascuffeddepth.png", cv::IMREAD_COLOR);
     cv::resize(tmp, tmp, cv::Size(constants::display::kMeshDensity, constants::display::kMeshDensity));
     std::cout << "start" << std::endl;
     std::cout << tmp.size() << std::endl;
-    state->depthMap = std::vector<std::vector<float>>(250, std::vector<float> (250, 0));
+    state->depthMap = std::vector<std::vector<float>>(constants::display::kMeshDensity, std::vector<float> (constants::display::kMeshDensity, 0));
 
     for(int i = 0;i < state->depthMap.size();i++){
         for(int j = 0;j < state->depthMap[0].size();j++) {

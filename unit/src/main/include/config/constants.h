@@ -27,7 +27,7 @@ namespace constants {
     namespace display {
         const cv::Size kDispSize = cv::Size(int(640 * 2), int(480 * 2));
         const cv::Size kImgDispSize = cv::Size(int(640), int(2 * 480));
-        const float kMeshDensity = 250.0; // must be float
+        const float kMeshDensity = 500.0; // must be float
         const int kArucoCircRadius = 7;
         const cv::Scalar kAqua(255, 255, 0); // BGR
         const cv::Scalar kGrey(100, 100, 100); // BGR

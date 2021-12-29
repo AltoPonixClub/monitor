@@ -7,7 +7,6 @@
 #include <pangolin/handler/handler.h>
 #include <pangolin/gl/gl.h>
 #include <pangolin/gl/glinclude.h>
-#include <pangolin/gl/opengl_render_state.h>
 #include <pangolin/gl/gldraw.h>
 #include <pangolin/video/video_input.h>
 #include <pangolin/gl/glformattraits.h>
@@ -93,7 +92,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     outputs->meshColor.clear();
     outputs->meshLines.clear();
     cv::Mat tmp; // TODO: clean up
-    tmp = cv::imread("/home/parallels/CLionProjects/monitor/unit/src/main/cpp/robot/lett.png", cv::IMREAD_COLOR);
+    tmp = cv::imread("/home/aoberai/programming/altoponix/monitor/unit/src/main/cpp/robot/lett.png", cv::IMREAD_COLOR);
     cv::resize(tmp, tmp, cv::Size(constants::display::kMeshDensity, constants::display::kMeshDensity));
     for (int i = 0; i < constants::display::kMeshDensity - 1; i++) {
         for (int j = 0; j < constants::display::kMeshDensity - 1; j++) { // TODO: this wrong
