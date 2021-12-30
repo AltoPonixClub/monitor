@@ -1,16 +1,17 @@
 #include <subsystems/vision.h>
 #include <config/constants.h>
 #include <utils/utils.h>
+#include <spdlog/spdlog.h>
 
 // TODO: specify read only write only based on annotations
 Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
     cap = cv::VideoCapture(constants::vision::kCameraId);
     if (!cap.isOpened()) {
-        std::cout << "Vision Hardware Broken" << std::endl;
+        spdlog::error("Vision: Could not open camera");
         return;
     }
     cap.set(cv::CAP_PROP_FPS, constants::vision::kFps);
-    std::cout << "Vision Hardware Initialized";
+    spdlog::info("Vision: Camera opened");
     calibFile = cv::FileStorage(constants::vision::kCalibPath, cv::FileStorage::READ);
     assert(calibFile.isOpened());
     cameraMatrix = calibFile.operator[]("K").mat(); // extrinsics
@@ -73,7 +74,7 @@ void Vision::read(State *state) {
                     cv::Rect(0, 0, constants::vision::kImgSize.width, constants::vision::kImgSize.height));
         }
         catch (...) {
-            std::cout << "Not Yet Found Board" << std::endl;
+            spdlog::error("Vision: Could not find homography");
         }
         // TODO: use rodrigues on rvec and tvec to turn into projection matrix
     }

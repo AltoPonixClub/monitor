@@ -5,14 +5,20 @@
 #include <subsystems/vision.h>
 #include <subsystems/display.h>
 #include <subsystems/general.h>
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 int main() {
+    auto logger = spdlog::stdout_color_mt("console");
+    spdlog::set_default_logger(logger);
+
+    spdlog::info("Starting robot");
     State *state = State::instance();
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
     Control::configure(commands);
     std::vector<SubsystemBase *> enabledSubsystems{General::instance(state), Vision::instance(state, commands, outputs), Display::instance(state, commands, outputs)};
-    std::cout << "Finished Initializations" << std::endl;
+    spdlog::info("Finished initialization");
 
     while (true) {
         Control::update(commands);
