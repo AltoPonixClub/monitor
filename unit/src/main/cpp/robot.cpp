@@ -5,13 +5,13 @@
 #include <subsystems/vision.h>
 #include <subsystems/display.h>
 #include <subsystems/general.h>
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include <spdlog/spdlog.h>
+#include <utils/utils.h>
 
+// TODO: threading
+// TODO: friend class cpp
 int main() {
-    auto logger = spdlog::stdout_color_mt("console");
-    spdlog::set_default_logger(logger);
-
+    Utils::configureLogger();
     spdlog::info("Starting robot");
     State *state = State::instance();
     Commands *commands = Commands::instance();
