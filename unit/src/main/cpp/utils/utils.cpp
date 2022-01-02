@@ -1,5 +1,7 @@
 #include <string>
 #include <utils/utils.h>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 template<typename T>
 std::string Utils::vec2str(std::vector<T> arr) {
@@ -38,6 +40,11 @@ void Utils::drawFrustum(std::vector<Eigen::Matrix<float, 4, 1>> vertices) {
                                  vertices[j].data()[0], vertices[j].data()[1], vertices[j].data()[2]);
         }
     }
+}
+
+void Utils::configureLogger() {
+    auto logger = spdlog::stdout_color_mt("console");
+    spdlog::set_default_logger(logger);
 }
 
 template std::string Utils::vec2str<int>(std::vector<int>);
