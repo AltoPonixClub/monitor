@@ -3,3 +3,4 @@ data
 cmake-build-debug
 *.jpg
 *.png
+.DS_STORE
