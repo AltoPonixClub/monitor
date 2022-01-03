@@ -1,6 +1,7 @@
 #ifndef MONITOR_OUTPUTS_H
 #define MONITOR_OUTPUTS_H
 
+#include <string>
 #include <opencv2/opencv.hpp>
 #include <pangolin/gl/gl.h>
 #include <config/constants.h>
@@ -19,6 +20,8 @@ public:
     std::vector<Eigen::Matrix<float, 4, 1>> frustumVerts;
     float logVal;
 
+    //Uploader
+    std::string jsonString = "";
 private:
     static inline Outputs *pInstance = nullptr;
 };

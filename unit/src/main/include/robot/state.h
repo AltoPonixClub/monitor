@@ -12,6 +12,7 @@ public:
 
     // General
     float initTimeS, timeS;
+    float monitorMeasurements[constants::general::kNumMeasurements] = { 1, 2, 3, 4, 5, 6, 7, 8 };
 
     // Vision
     cv::Mat capFrame, undistortedFrame;
@@ -20,6 +21,12 @@ public:
     std::vector<std::vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
     std::vector<int> detectedArucoIds;
     std::vector<cv::Point2f> transform_dst;
+
+    //Uploading
+    long lastTimeS;
+    bool doUpload = false;
+    bool uploadValues[constants::general::kNumMeasurements] = { true, false, true, false, true, false, true, false };
+
 private:
     static inline State *pInstance = nullptr;
 };
