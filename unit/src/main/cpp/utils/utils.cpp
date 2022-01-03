@@ -1,5 +1,9 @@
 #include <string>
 #include <utils/utils.h>
+#include <iostream>
+#include <fstream>
+#include <chrono>
+#include <thread>
 
 template<typename T>
 std::string Utils::vec2str(std::vector<T> arr) {
@@ -43,4 +47,13 @@ void Utils::drawFrustum(std::vector<Eigen::Matrix<float, 4, 1>> vertices) {
 template std::string Utils::vec2str<int>(std::vector<int>);
 
 template std::string Utils::vec2str<float>(std::vector<float>);
+
+void Utils::daq(std::string request) {
+    std::ofstream arduino;
+    arduino.open( "/dev/cu.usbmodem13301");
+    //arduino needs time to reboot before running stuff
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    arduino << request;
+    arduino.close();
+}
 
