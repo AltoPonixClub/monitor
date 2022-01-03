@@ -1,5 +1,8 @@
 #include <string>
+#include <chrono>
 #include <utils/utils.h>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 template<typename T>
 std::string Utils::vec2str(std::vector<T> arr) {
@@ -40,7 +43,11 @@ void Utils::drawFrustum(std::vector<Eigen::Matrix<float, 4, 1>> vertices) {
     }
 }
 
+long Utils::getUnixTimestamp() {
+    return std::chrono::system_clock::now().time_since_epoch() /
+           std::chrono::milliseconds(1);
+}
+
 template std::string Utils::vec2str<int>(std::vector<int>);
 
 template std::string Utils::vec2str<float>(std::vector<float>);
-
