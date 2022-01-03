@@ -52,8 +52,11 @@ public class SegmentationController {
     private TextField blur;
     @FXML
     private TextField ffBounds;
+    @FXML
+    private TextField opacity;
 
     private String filePath;
+    private Mat original = new Mat();
     private Mat image = new Mat();
     private ArrayList<Mat> oldImage = new ArrayList<>();
     private Mat mask = new Mat();
@@ -67,8 +70,6 @@ public class SegmentationController {
     private File[] files;
     private int filesIndex = 1;
     private Mat floodfillMask = new Mat();
-    private Scalar penColor = new Scalar(0, 255, 0);
-    private Scalar maskColor = Scalar.all(255);
 
     @FXML
     public void updatePath() {
@@ -102,6 +103,7 @@ public class SegmentationController {
             //set this 6 to a 5 on mac
             filePath = file.toURI().toString().substring(6);
             image = Imgcodecs.imread(filePath);
+            original = Imgcodecs.imread(filePath);
             mask = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
             maskOut = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
             floodfillMask = new Mat(image.rows()+2, image.cols()+2, CvType.CV_8U, Scalar.all(0));
@@ -123,7 +125,10 @@ public class SegmentationController {
 
     //updates the image with filters
     public void updateStage() {
-        updateImage(imageView, image);
+        Mat weightedImage = new Mat();
+        double opacity = Double.parseDouble(this.opacity.getText())/100;
+        Core.addWeighted(image, opacity, original, 1-opacity, 0, weightedImage);
+        updateImage(imageView, weightedImage);
         updateImage(maskView, mask);
     }
 
@@ -193,35 +198,33 @@ public class SegmentationController {
             Scalar floodFillBounds = new Scalar(floodFill, floodFill, floodFill);
 
             if (eraser.isSelected()) {
-                penColor = new Scalar(0, 0, 0);
-                maskColor = Scalar.all(0);
+                Imgproc.circle(image, new Point(x, y), size, new Scalar(0, 0, 0), Imgproc.FILLED);
+                Imgproc.circle(mask, new Point(x, y), size, Scalar.all(0), Imgproc.FILLED);
+                Imgproc.circle(maskOut, new Point(x, y), size, Scalar.all(0), Imgproc.FILLED);
             } else {
-                penColor = new Scalar(0, 255, 0);
-                maskColor = Scalar.all(255);
-            }
+                int v = 0;
 
-            int v = 0;
+                Mat imageFFMask = floodfillMask.clone();
+                Mat maskFFMask = floodfillMask.clone();
+                Mat maskOutFFMask = floodfillMask.clone();
 
-            Mat imageFFMask = floodfillMask.clone();
-            Mat maskFFMask = floodfillMask.clone();
-            Mat maskOutFFMask = floodfillMask.clone();
-
-            for (MatOfPoint contour:contours) {
-                v++;
-                for (int i = 0; i < v; i++) {
-                    MatOfPoint2f convertedContour = new MatOfPoint2f(contours.get(i).toArray());
-                    double r = Imgproc.pointPolygonTest(convertedContour, new Point(x, y), false);
-                    if (r == 1) {
-                        Imgproc.floodFill(image, imageFFMask, new Point(x, y), penColor, new Rect(), floodFillBounds, floodFillBounds, 8 | (255 << 8));
-                        Imgproc.floodFill(mask, maskFFMask, new Point(x, y), maskColor, new Rect(), floodFillBounds, floodFillBounds, 8 | (255 << 8));
-                        Imgproc.floodFill(maskOut, maskOutFFMask, new Point(x, y), maskColor, new Rect(), floodFillBounds, floodFillBounds, 8 | (255 << 8));
+                for (MatOfPoint contour : contours) {
+                    v++;
+                    for (int i = 0; i < v; i++) {
+                        MatOfPoint2f convertedContour = new MatOfPoint2f(contours.get(i).toArray());
+                        double r = Imgproc.pointPolygonTest(convertedContour, new Point(x, y), false);
+                        if (r == 1) {
+                            Imgproc.floodFill(image, imageFFMask, new Point(x, y), new Scalar(0, 255, 0), new Rect(), floodFillBounds, floodFillBounds, 8 | (255 << 8));
+                            Imgproc.floodFill(mask, maskFFMask, new Point(x, y), Scalar.all(255), new Rect(), floodFillBounds, floodFillBounds, 8 | (255 << 8));
+                            Imgproc.floodFill(maskOut, maskOutFFMask, new Point(x, y), Scalar.all(255), new Rect(), floodFillBounds, floodFillBounds, 8 | (255 << 8));
+                        }
                     }
                 }
-            }
 
-            Imgproc.circle(image, new Point(x, y), size, penColor, Imgproc.FILLED);
-            Imgproc.circle(mask, new Point(x, y), size, maskColor, Imgproc.FILLED);
-            Imgproc.circle(maskOut, new Point(x, y), size, maskColor, Imgproc.FILLED);
+                Imgproc.circle(image, new Point(x, y), size, new Scalar(0, 255, 0), Imgproc.FILLED);
+                Imgproc.circle(mask, new Point(x, y), size, Scalar.all(255), Imgproc.FILLED);
+                Imgproc.circle(maskOut, new Point(x, y), size, Scalar.all(255), Imgproc.FILLED);
+            }
 
             Imgproc.drawContours(image, contours, -1, new Scalar(0, 0, 255), 2);
             Imgproc.drawContours(mask, contours, -1, Scalar.all(100), 2);

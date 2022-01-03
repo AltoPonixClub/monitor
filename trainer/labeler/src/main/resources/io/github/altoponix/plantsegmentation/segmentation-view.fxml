@@ -48,6 +48,8 @@
                 <TextField fx:id="ffBounds" text="30"/>
                 <Label text="Eraser" />
                 <CheckBox fx:id="eraser" />
+                <Label text="Opacity" />
+                <TextField fx:id="opacity" text="50"/>
             </HBox>
         </VBox>
     </top>
