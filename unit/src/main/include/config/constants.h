@@ -5,24 +5,12 @@
 #include <opencv2/aruco/dictionary.hpp>
 #include <opencv2/aruco.hpp>
 #include <string>
+#include <robot/state.h>
 
 // TODO: Need a source file?
 // TODO: doesnt follow clang style guide
 
 namespace constants {
-    namespace general {
-        const int kNumMeasurements = 8;
-        enum Measurements {
-            ATMOSPHERIC_TEMP,
-            RESERVOIR_TEMP,
-            LIGHT_INTENSITY,
-            SOIL_MOISTURE,
-            ELECTRICAL_CONDUCTIVITY,
-            PH,
-            DISSOLVED_OXYGEN,
-            AIRFLOW
-        };
-    }
     namespace physical {
         const cv::Size kPlatformDim = cv::Size(20.7, 19.7);
         const float kPeriod = 0.02; // TODO: fix
@@ -48,10 +36,9 @@ namespace constants {
         const cv::Scalar kBlack(0, 0, 0); // BGR
     }
     namespace uploader {
-        const int kUploadInterval = 1000 * 15;
         const std::string kMonitorId = "672ef79b4d0a4805bc529d1ae44bc26b";
         const std::string kUploadUrl = "http://altoponix-database.herokuapp.com/api/v1/monitors/update";
-        const std::string kMeasurementNames[general::kNumMeasurements] = {"atmospheric_temp", "reservoir_temp", "light_intensity", "soil_moisture", "electrical_conductivity", "ph", "dissolved_oxygen", "air_flow"};
+        const std::string kMeasurementNames[] = {"atmospheric_temp", "reservoir_temp", "light_intensity", "soil_moisture", "electrical_conductivity", "ph", "dissolved_oxygen", "air_flow"};
     }
 };
 

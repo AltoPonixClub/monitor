@@ -10,20 +10,27 @@ public:
 
     static Commands *instance();
 
-    // Vision
-
     enum VisionState {
         STREAMING, STOPPED
     };
     enum DisplayState {
         MESH, CAMERA_IMG, UNDISTORTED_IMG, PLOTTER
     };
+    enum UploadState {
+        ATMOSPHERIC_TEMP,
+        RESERVOIR_TEMP,
+        LIGHT_INTENSITY,
+        SOIL_MOISTURE,
+        ELECTRICAL_CONDUCTIVITY,
+        PH,
+        DISSOLVED_OXYGEN,
+        AIR_FLOW,
+    };
 
     VisionState visionWantedState;
     std::vector<DisplayState> displayWantedStates;
 
-    // Uploading
-    bool uploadValues[constants::general::kNumMeasurements] = { true, false, true, false, true, false, true, false };
+    std::vector<std::pair <UploadState, long long>> uploadWantedStates = {};
 
 private:
     static inline Commands *pInstance = nullptr;
