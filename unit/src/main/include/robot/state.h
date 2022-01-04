@@ -25,7 +25,6 @@ public:
     //Uploading
     long lastTimeS;
     bool doUpload = false;
-    bool uploadValues[constants::general::kNumMeasurements] = { true, false, true, false, true, false, true, false };
 
 private:
     static inline State *pInstance = nullptr;

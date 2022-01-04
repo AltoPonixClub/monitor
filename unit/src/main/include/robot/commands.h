@@ -2,12 +2,15 @@
 #define MONITOR_COMMANDS_H
 
 #include <vector>
+#include <config/constants.h>
 
 class Commands {
 public:
     Commands() {};
 
     static Commands *instance();
+
+    // Vision
 
     enum VisionState {
         STREAMING, STOPPED
@@ -18,6 +21,10 @@ public:
 
     VisionState visionWantedState;
     std::vector<DisplayState> displayWantedStates;
+
+    // Uploading
+    bool uploadValues[constants::general::kNumMeasurements] = { true, false, true, false, true, false, true, false };
+
 private:
     static inline Commands *pInstance = nullptr;
 };

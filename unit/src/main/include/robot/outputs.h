@@ -20,8 +20,8 @@ public:
     std::vector<Eigen::Matrix<float, 4, 1>> frustumVerts;
     float logVal;
 
-    //Uploader
-    std::string jsonString = "";
+    // Uploader
+    std::string jsonMeasurementData = "";
 private:
     static inline Outputs *pInstance = nullptr;
 };
