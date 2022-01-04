@@ -18,10 +18,28 @@ namespace constants {
         const cv::Size kImgSize = cv::Size(int(640), int(480));
         const int kFps = 60;
         const std::string kCalibPath = std::string("/home/aoberai/programming/altoponix/monitor/unit/outputs.yml");
-        const std::vector<std::vector<cv::Point3f>> kBoardArucoPts = {{cv::Point3f(0, 0, 0), cv::Point3f(0, 4.6,0), cv::Point3f(4.6, 4.6, 0), cv::Point3f(4.6, 0, 0)}, {cv::Point3f(16.1, 0, 0),    cv::Point3f(16.1,4.6,0), cv::Point3f(20.7, 4.6, 0),  cv::Point3f(20.7, 0, 0)},{cv::Point3f(0, 15.1, 0), cv::Point3f(0, 19.7,0), cv::Point3f(4.6, 19.7, 0),  cv::Point3f(4.6, 15.1,0)},{cv::Point3f(16.1, 15.1, 0), cv::Point3f(16.1,19.7,0), cv::Point3f(20.7, 19.7, 0), cv::Point3f(20.7, 15.1,0)}};
+        const std::vector<std::vector<cv::Point3f>> kBoardArucoPts = {{cv::Point3f(0, 0, 0),
+                                                                       cv::Point3f(0, 4.6,0),
+                                                                       cv::Point3f(4.6, 4.6, 0),
+                                                                       cv::Point3f(4.6, 0, 0)},
+
+                                                                      {cv::Point3f(16.1, 0, 0),
+                                                                       cv::Point3f(16.1,4.6,0),
+                                                                       cv::Point3f(20.7, 4.6, 0),
+                                                                       cv::Point3f(20.7, 0, 0)},
+
+                                                                       {cv::Point3f(0, 15.1, 0),
+                                                                        cv::Point3f(0, 19.7,0),
+                                                                        cv::Point3f(4.6, 19.7, 0),
+                                                                        cv::Point3f(4.6, 15.1,0)},
+
+                                                                        {cv::Point3f(16.1, 15.1, 0),
+                                                                         cv::Point3f(16.1,19.7,0),
+                                                                         cv::Point3f(20.7, 19.7, 0),
+                                                                         cv::Point3f(20.7, 15.1,0)}};
         const cv::Ptr<cv::aruco::Dictionary> kArucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
         const cv::Ptr<cv::aruco::DetectorParameters> kArucoParams = cv::aruco::DetectorParameters::create();
-        const std::vector<int> kArucoIds = {24, 42, 69, 48};
+        const std::vector<int> kArucoIds = {24, 42, 48, 69};
         const cv::Ptr<cv::aruco::Board> kBoard = cv::aruco::Board::create(kBoardArucoPts, kArucoDictionary, kArucoIds);
     };
     namespace display {
