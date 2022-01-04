@@ -12,7 +12,16 @@ public:
 
     // General
     float initTimeS, timeS;
-    float monitorMeasurements[constants::general::kNumMeasurements] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+    // Measurements
+    float atmosphericTemp = 1;
+    float reservoirTemp = 2;
+    float lightIntensity = 3;
+    float soilMoisture = 4;
+    float electricalConductivity = 5;
+    float pH = 6;
+    float dissolvedOxygen = 7;
+    float airFlow = 8;
 
     // Vision
     cv::Mat capFrame, undistortedFrame;
@@ -21,10 +30,6 @@ public:
     std::vector<std::vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
     std::vector<int> detectedArucoIds;
     std::vector<cv::Point2f> transform_dst;
-
-    //Uploading
-    long lastTimeS;
-    bool doUpload = false;
 
 private:
     static inline State *pInstance = nullptr;
