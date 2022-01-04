@@ -14,7 +14,7 @@ namespace constants {
         const float kPeriod = 0.02; // TODO: fix
     }
     namespace vision {
-        const int kCameraId = 0;
+        const int kCameraId = 4;
         const cv::Size kImgSize = cv::Size(int(640), int(480));
         const int kFps = 60;
         const std::string kCalibPath = std::string("/home/aoberai/programming/altoponix/monitor/unit/outputs.yml");
