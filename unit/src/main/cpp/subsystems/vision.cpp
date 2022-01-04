@@ -54,6 +54,7 @@ void Vision::read(State *state) {
                                      cameraMatrix,
                                      distCoeffs, state->camRvec,
                                      state->camTvec);
+        spdlog::info("Vision: Rvec: {}, Tvec: {} {} {}", *state->camRvec.val, state->camTvec.val[0], state->camTvec.val[1], state->camTvec.val[2]);
         // Sets up transform dst for findHomography
         for (int i = 0; i < state->detectedArucoIds.size(); i++)
             tmp_corners.emplace_back(state->detectedArucoIds[i], state->detectedArucoCorners[i]);

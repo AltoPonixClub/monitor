@@ -71,9 +71,9 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     */
     // TODO: fix this
     // TODO: check w element of matrix is 1
-    transformationMatrix << 1, 0, 0, state->camTvec[0] + constants::physical::kPlatformDim.height / 2,
-            0, 1, 0, state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
-            0, 0, 1, state->camTvec[2],
+    transformationMatrix << 1, 0, 0, state->camTvec[0] / 2 + constants::physical::kPlatformDim.height / 2,
+            0, 1, 0, state->camTvec[1] / 2 + constants::physical::kPlatformDim.width / 2,
+            0, 0, 1, state->camTvec[2] / 2,
             0, 0, 0, 1;
     outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1,
                                                       1); // TODO: this is atrocious, dont redo each loop smh
