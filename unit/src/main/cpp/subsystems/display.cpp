@@ -94,10 +94,14 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 //            0, 0, 0, 1;
     std::cout << state->camRotMat << std::endl;
     std::cout << state->camRotMat.at<double>(0, 0) << std::endl;
-    transformationMatrix << state->camRotMat.at<double>(0, 0), state->camRotMat.at<double>(0, 1), state->camRotMat.at<double>(0, 2), 0,
-            state->camRotMat.at<double>(1, 0), state->camRotMat.at<double>(1, 1), state->camRotMat.at<double>(1, 2), 0,
-            state->camRotMat.at<double>(2, 0), state->camRotMat.at<double>(2, 1), state->camRotMat.at<double>(2, 2), 0,
+    transformationMatrix << state->camRotMat.at<double>(0, 0), state->camRotMat.at<double>(0, 1), state->camRotMat.at<double>(0, 2), state->camTvec[0] + constants::physical::kPlatformDim.height / 2, // TODO: no divide by 2
+            state->camRotMat.at<double>(1, 0), state->camRotMat.at<double>(1, 1), state->camRotMat.at<double>(1, 2), state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
+            state->camRotMat.at<double>(2, 0), state->camRotMat.at<double>(2, 1), state->camRotMat.at<double>(2, 2), state->camTvec[2],
             0, 0, 0, 1;
+//    transformationMatrix << 1, 0, 0, 0, // TODO: no divide by 2
+//            0, 1, 0, 0,
+//            0, 0, 1, 0,
+//            0, 0, 0, 1;
 //    transformationMatrix << 1, 0, 0, 0,
 //            0, cos(Utils::deg2rad(90)), -sin(Utils::deg2rad(90)), 0,
 //            0, sin(Utils::deg2rad(90)), cos(Utils::deg2rad(90)), 0,
@@ -105,7 +109,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 
 
     outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1,
-                                                      1); // TODO: this is atrocious, dont redo each loop smh
+                                                      3); // TODO: this is atrocious, dont redo each loop smh
     for (auto &vertex: outputs->frustumVerts) {
         vertex = transformationMatrix * vertex;
     }
@@ -165,7 +169,28 @@ void Display::write(Outputs *outputs) {
 
         // Draws Camera Frustum
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-        Utils::drawFrustum(outputs->frustumVerts);
+        glBegin(GL_QUADS);
+        for (int i = 0; i < outputs->frustumVerts.size(); i++) {
+            for (int j = i+1; j < outputs->frustumVerts.size(); j++) {
+                for (int c = j + 1; c < outputs->frustumVerts.size(); c++) {
+                    glVertex3f(outputs->frustumVerts[i].data()[0], outputs->frustumVerts[i].data()[1],
+                               outputs->frustumVerts[i].data()[2]);
+
+                    glVertex3f(outputs->frustumVerts[j].data()[0], outputs->frustumVerts[j].data()[1],
+                               outputs->frustumVerts[j].data()[2]);
+
+                    glVertex3f(outputs->frustumVerts[c].data()[0], outputs->frustumVerts[c].data()[1],
+                               outputs->frustumVerts[c].data()[2]);
+                }
+            }
+        }
+        glEnd();
+        glPointSize(15);
+        glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+        glBegin(GL_POINTS);
+        glVertex3f(outputs->frustumVerts.back().data()[0], outputs->frustumVerts.back().data()[1],
+                   outputs->frustumVerts.back().data()[2]);
+        glEnd();
 
         for (int i = 0; i < outputs->meshLines.size(); i++) {
             glColor3ub(outputs->meshColor[i][2], outputs->meshColor[i][1], outputs->meshColor[i][0]);

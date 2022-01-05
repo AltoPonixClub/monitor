@@ -30,9 +30,6 @@ public:
 
     static std::vector<Eigen::Matrix<float, 4, 1>>
     getFrustumVertices(float u0, float v0, float fu, float fv, int w, int h, float scale);
-
-    static void drawFrustum(std::vector<Eigen::Matrix<float, 4, 1>> vertices);
-
 };
 
 
