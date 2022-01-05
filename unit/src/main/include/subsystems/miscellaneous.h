@@ -1,5 +1,5 @@
-#ifndef MONITOR_GENERAL_H
-#define MONITOR_GENERAL_H
+#ifndef MONITOR_MISCELLANEOUS_H
+#define MONITOR_MISCELLANEOUS_H
 
 #include <iostream>
 #include <subsystems/subsystemBase.h>
@@ -8,9 +8,9 @@
 #include <opencv2/aruco.hpp>
 #include <config/constants.h>
 
-class General : public SubsystemBase {
+class Miscellaneous : public SubsystemBase {
 public:
-    General(State *state);
+    Miscellaneous(State *state);
 
     void read(State *state);
 
@@ -18,12 +18,12 @@ public:
 
     void write(Outputs *outputs);
 
-    static General *instance(State *state);
+    static Miscellaneous *instance(State *state);
 
     std::string name();
 
 private:
-    static inline General *pInstance = nullptr;
+    static inline Miscellaneous *pInstance = nullptr;
 };
 
-#endif //MONITOR_GENERAL_H
+#endif //MONITOR_MISCELLANEOUS_H
