@@ -1,6 +1,7 @@
 #include <subsystems/display.h>
 #include <config/constants.h>
 #include <utils/utils.h>
+#include <opencv2/core/eigen.hpp>
 
 #include <pangolin/display/display.h>
 #include <pangolin/display/view.h>
@@ -15,6 +16,7 @@
 #include <pangolin/plot/plotter.h>
 
 #include <Eigen/Core>
+#include <spdlog/spdlog.h>
 
 // TODO: do based on commands wants
 Display::Display(State *state, Commands *commands, Outputs *outputs) {
@@ -25,8 +27,8 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
 
     // viewing state of virtual camera for rendering scene; intrinsics and extrinsics
     this->sCam = pangolin::OpenGlRenderState(
-            pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 100),
-            pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width / 2, -15, 10,
+            pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+            pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width / 2, -30, 75,
                                       constants::physical::kPlatformDim.width / 2,
                                       constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
 
@@ -69,12 +71,39 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     * [ 0 0 1 Z ]
     * [ 0 0 0 1 ]
     */
+//    Eigen::Matrix eigenMat;
+//    cv::cv2eigen(state->camRotMat, eigenMat);
+//    spdlog::info(Utils::matEig2str(eigenMat));
+
     // TODO: fix this
     // TODO: check w element of matrix is 1
-    transformationMatrix << 1, 0, 0, state->camTvec[0] / 2 + constants::physical::kPlatformDim.height / 2,
-            0, 1, 0, state->camTvec[1] / 2 + constants::physical::kPlatformDim.width / 2,
-            0, 0, 1, state->camTvec[2] / 2,
+//    transformationMatrix << 1, 0, 0, state->camTvec[0] + constants::physical::kPlatformDim.height / 2,
+//            0, 1, 0, state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
+//            0, 0, 1, state->camTvec[2],
+//            0, 0, 0, 1;
+
+//    transformationMatrix << 1, 0, 0, 0,
+//            0, 1, 0, 0,
+//            0, 0, 1, 0,
+//            0, 0, 0, 1;
+
+// TODO: more efficient to transform just one point and move all other corners around that
+//    transformationMatrix << state->camRotMat.at<float>(0, 0), state->camRotMat.at<float>(0, 1), state->camRotMat.at<float>(0, 2), state->camTvec[0] + constants::physical::kPlatformDim.height / 2,
+//            state->camRotMat.at<float>(1, 0), state->camRotMat.at<float>(1, 1), state->camRotMat.at<float>(1, 2), state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
+//            state->camRotMat.at<float>(2, 0), state->camRotMat.at<float>(2, 1), state->camRotMat.at<float>(2, 2), state->camTvec[2],
+//            0, 0, 0, 1;
+    std::cout << state->camRotMat << std::endl;
+    std::cout << state->camRotMat.at<double>(0, 0) << std::endl;
+    transformationMatrix << state->camRotMat.at<double>(0, 0), state->camRotMat.at<double>(0, 1), state->camRotMat.at<double>(0, 2), 0,
+            state->camRotMat.at<double>(1, 0), state->camRotMat.at<double>(1, 1), state->camRotMat.at<double>(1, 2), 0,
+            state->camRotMat.at<double>(2, 0), state->camRotMat.at<double>(2, 1), state->camRotMat.at<double>(2, 2), 0,
             0, 0, 0, 1;
+//    transformationMatrix << 1, 0, 0, 0,
+//            0, cos(Utils::deg2rad(90)), -sin(Utils::deg2rad(90)), 0,
+//            0, sin(Utils::deg2rad(90)), cos(Utils::deg2rad(90)), 0,
+//            0, 0, 0, 1;
+
+
     outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1,
                                                       1); // TODO: this is atrocious, dont redo each loop smh
     for (auto &vertex: outputs->frustumVerts) {

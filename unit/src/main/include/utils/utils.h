@@ -16,8 +16,14 @@
 
 class Utils {
 public:
+//    static float inline kPi = 3.1415;
+
     template<typename T>
     static std::string vec2str(std::vector<T> array);
+
+    static std::string matEig2str(Eigen::MatrixXd mat);
+
+    static float deg2rad(float num);
 
     static bool
     pairSortComparator(std::pair<int, std::vector<cv::Point2f>> a, std::pair<int, std::vector<cv::Point2f>> b);

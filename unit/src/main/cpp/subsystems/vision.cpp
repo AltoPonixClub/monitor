@@ -28,7 +28,7 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
 
     state->capFrame = state->undistortedFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
                                      constants::display::kGrey);
-
+    state->camRotMat = cv::Mat(3, 3, CV_8UC1);
     state->camRvec, state->camTvec = cv::Vec3d(0, 0, 0);
     state->depthMap = std::vector<std::vector<float>>(constants::vision::kImgSize.height, std::vector<float> (constants::vision::kImgSize.width, 0));
 }
@@ -54,6 +54,8 @@ void Vision::read(State *state) {
                                      cameraMatrix,
                                      distCoeffs, state->camRvec,
                                      state->camTvec);
+        cv::Rodrigues(state->camRvec, state->camRotMat);
+        state->camRotMat = state->camRotMat.inv();
         spdlog::info("Vision: Rvec: {}, Tvec: {} {} {}", *state->camRvec.val, state->camTvec.val[0], state->camTvec.val[1], state->camTvec.val[2]);
         // Sets up transform dst for findHomography
         for (int i = 0; i < state->detectedArucoIds.size(); i++)

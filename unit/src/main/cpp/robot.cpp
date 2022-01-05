@@ -4,7 +4,7 @@
 #include <subsystems/subsystemBase.h>
 #include <subsystems/vision.h>
 #include <subsystems/display.h>
-#include <subsystems/general.h>
+#include <subsystems/miscellaneous.h>
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
@@ -17,7 +17,7 @@ int main() {
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
     Control::configure(commands);
-    std::vector<SubsystemBase *> enabledSubsystems{General::instance(state), Vision::instance(state, commands, outputs), Display::instance(state, commands, outputs)};
+    std::vector<SubsystemBase *> enabledSubsystems{Miscellaneous::instance(state), Vision::instance(state, commands, outputs), Display::instance(state, commands, outputs)};
     spdlog::info("Finished initialization");
 
     while (true) {
