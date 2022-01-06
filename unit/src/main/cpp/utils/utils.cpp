@@ -4,6 +4,10 @@
 #include <fstream>
 #include <chrono>
 #include <thread>
+#include <QCoreApplication>
+#include <QtSerialPort/QSerialPort>
+#include <QSerialPortInfo>
+#include <unistd.h>
 
 template<typename T>
 std::string Utils::vec2str(std::vector<T> arr) {
@@ -49,11 +53,31 @@ template std::string Utils::vec2str<int>(std::vector<int>);
 template std::string Utils::vec2str<float>(std::vector<float>);
 
 void Utils::daq(std::string request) {
-    std::ofstream arduino;
-    arduino.open( "/dev/cu.usbmodem13301");
-    //arduino needs time to reboot before running stuff
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-    arduino << request;
-    arduino.close();
+
+    //QCoreApplication app(argc, argv); this is needed somewhere or it kind of works but throws an error
+
+    QSerialPort serial;
+    serial.setPortName("cu.usbmodem113301");    //changes
+    serial.open(QIODevice::ReadWrite);
+    serial.setBaudRate(QSerialPort::Baud9600);
+    serial.setDataBits(QSerialPort::Data8);
+    serial.setParity(QSerialPort::NoParity);
+    serial.setStopBits(QSerialPort::OneStop);
+    serial.setFlowControl(QSerialPort::HardwareControl);
+
+    QByteArray output(request.c_str(), request.length());
+    QByteArray input;
+
+    if (serial.isOpen() && serial.isWritable()) {
+        sleep(3);   //dependent on system (import and stuff may be different on Windows)
+        serial.write(output);
+        serial.waitForBytesWritten();
+        if (serial.waitForReadyRead()) {
+            while (serial.waitForReadyRead(10))
+                input += serial.readAll();
+        }
+        serial.close();
+    }
+    return input.toStdString();
 }
 
