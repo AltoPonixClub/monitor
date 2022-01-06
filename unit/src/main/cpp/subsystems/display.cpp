@@ -64,12 +64,15 @@ void Display::read(State *state) {
 
 void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     Eigen::Matrix4f transformationMatrix;
+    Eigen::Matrix4f reorientMatrix;
     /*
     * Translation Matrix
     * [ 1 0 0 X ]
     * [ 0 1 0 Y ]
     * [ 0 0 1 Z ]
     * [ 0 0 0 1 ]
+     *
+     * Upper 3 by 3 change to rodrigues for rotation
     */
 //    Eigen::Matrix eigenMat;
 //    cv::cv2eigen(state->camRotMat, eigenMat);
@@ -98,20 +101,20 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
             state->camRotMat.at<double>(1, 0), state->camRotMat.at<double>(1, 1), state->camRotMat.at<double>(1, 2), state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
             state->camRotMat.at<double>(2, 0), state->camRotMat.at<double>(2, 1), state->camRotMat.at<double>(2, 2), state->camTvec[2],
             0, 0, 0, 1;
+
+    reorientMatrix << 1, 0, 0, 0,
+            0, cos(Utils::deg2rad(180)), -sin(Utils::deg2rad(180)), 0,
+            0, sin(Utils::deg2rad(180)), cos(Utils::deg2rad(180)), 0,
+            0, 0, 0, 1;
 //    transformationMatrix << 1, 0, 0, 0, // TODO: no divide by 2
 //            0, 1, 0, 0,
 //            0, 0, 1, 0,
 //            0, 0, 0, 1;
-//    transformationMatrix << 1, 0, 0, 0,
-//            0, cos(Utils::deg2rad(90)), -sin(Utils::deg2rad(90)), 0,
-//            0, sin(Utils::deg2rad(90)), cos(Utils::deg2rad(90)), 0,
-//            0, 0, 0, 1;
-
 
     outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1,
-                                                      3); // TODO: this is atrocious, dont redo each loop smh
+                                                      2); // TODO: this is atrocious, dont redo each loop smh
     for (auto &vertex: outputs->frustumVerts) {
-        vertex = transformationMatrix * vertex;
+        vertex = transformationMatrix * (reorientMatrix * vertex);
     }
     cv::vconcat(outputs->editedCapFrame, state->undistortedFrame, outputs->displayFrame);
     cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
