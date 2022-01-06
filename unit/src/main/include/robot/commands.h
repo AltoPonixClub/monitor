@@ -10,7 +10,7 @@ public:
     static Commands *instance();
 
     enum VisionState {
-        STREAMING, STOPPED
+        MONOCULAR, STEREO, OFF
     };
     enum DisplayState {
         MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU

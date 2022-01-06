@@ -5,18 +5,30 @@
 
 // TODO: specify read only write only based on annotations
 Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
-    cap = cv::VideoCapture(constants::vision::kCameraId);
-    if (!cap.isOpened()) {
-        spdlog::error("Vision: Could not open camera");
-        return;
+    // Opens number of cameras based on wanted monocular, stereo, or none
+    switch (commands->visionWantedState) {
+        case Commands::VisionState::OFF:
+            break;
+        case Commands::VisionState::STEREO:
+            this->rightCap = cv::VideoCapture(constants::vision::kRightCamId);
+            this->rightCap.set(cv::CAP_PROP_FPS, constants::vision::kFps);
+            assert(this->rightCap.isOpened());
+        case Commands::VisionState::MONOCULAR: // TODO: how to enforce this because you dont actually need VisionState
+            this->leftCap = cv::VideoCapture(constants::vision::kLeftCamId);
+            this->leftCap.set(cv::CAP_PROP_FPS, constants::vision::kFps);
+            assert(this->leftCap.isOpened());
+            break;
     }
-    cap.set(cv::CAP_PROP_FPS, constants::vision::kFps);
-    spdlog::info("Vision: Camera opened");
+    spdlog::info("Vision: Successful Initialization");
+
+    // Load Single Cam Calibration (move this to constants)
     calibFile = cv::FileStorage(constants::vision::kCalibPath, cv::FileStorage::READ);
     assert(calibFile.isOpened());
     cameraMatrix = calibFile.operator[]("K").mat(); // extrinsics
     distCoeffs = calibFile.operator[]("D").mat(); // intrinsics
     calibFile.~FileStorage();
+
+    // TODO:  Mark constexpr to precalculate these value things ?? how this work
     for (const auto &i: constants::vision::kBoardArucoPts) {
         for (auto c: i) {
             transform_src.emplace_back(
@@ -26,16 +38,18 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
         }
     }
 
-    state->capFrame = state->undistortedFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
-                                     constants::display::kGrey);
+    state->capFrame = state->undistortedFrame = cv::Mat(constants::vision::kImgSize.height,
+                                                        constants::vision::kImgSize.width, CV_8UC3,
+                                                        constants::display::kGrey);
     state->camRotMat = cv::Mat(3, 3, CV_8UC1);
     state->camRvec, state->camTvec = cv::Vec3d(0, 0, 0);
-    state->depthMap = std::vector<std::vector<float>>(constants::vision::kImgSize.height, std::vector<float> (constants::vision::kImgSize.width, 0));
+    state->depthMap = std::vector<std::vector<float>>(constants::vision::kImgSize.height,
+                                                      std::vector<float>(constants::vision::kImgSize.width, 0));
 }
 
 void Vision::read(State *state) {
     cv::Mat frame;
-    cap >> frame;
+    leftCap >> frame;
     cv::resize(frame, frame, constants::vision::kImgSize);
     state->capFrame = frame;
 
@@ -48,7 +62,7 @@ void Vision::read(State *state) {
                                      cameraMatrix, distCoeffs);
 
     state->transform_dst.clear();
-    if (state->detectedArucoIds.size() == 4) {
+    if (state->detectedArucoIds.size() > 1) {
         std::vector<std::pair<int, std::vector<cv::Point2f>>> tmp_corners;
         cv::aruco::estimatePoseBoard(state->detectedArucoCorners, state->detectedArucoIds, constants::vision::kBoard,
                                      cameraMatrix,
@@ -56,7 +70,8 @@ void Vision::read(State *state) {
                                      state->camTvec);
         cv::Rodrigues(state->camRvec, state->camRotMat);
         state->camRotMat = state->camRotMat; // TODO: figure out inverse or not
-        spdlog::info("Vision: Rvec: {}, Tvec: {} {} {}", *state->camRvec.val, state->camTvec.val[0], state->camTvec.val[1], state->camTvec.val[2]);
+        spdlog::info("Vision: Rvec: {}, Tvec: {} {} {}", *state->camRvec.val, state->camTvec.val[0],
+                     state->camTvec.val[1], state->camTvec.val[2]);
         // Sets up transform dst for findHomography
         for (int i = 0; i < state->detectedArucoIds.size(); i++)
             tmp_corners.emplace_back(state->detectedArucoIds[i], state->detectedArucoCorners[i]);
@@ -82,9 +97,10 @@ void Vision::read(State *state) {
         // TODO: use rodrigues on rvec and tvec to turn into projection matrix
     }
     // TODO: stereo pointcloud
-    for(int i = 0;i < state->depthMap.size();i++){
-        for(int j = 0;j < state->depthMap[0].size();j++) {
-            state->depthMap[i][j] = sin(i/10+100*(state->timeS - state->initTimeS)) - cos(j/10-100*(state->timeS - state->initTimeS))/3+3;
+    for (int i = 0; i < state->depthMap.size(); i++) {
+        for (int j = 0; j < state->depthMap[0].size(); j++) {
+            state->depthMap[i][j] = sin(i / 10 + 100 * (state->timeS - state->initTimeS)) -
+                                    cos(j / 10 - 100 * (state->timeS - state->initTimeS)) / 3 + 3;
         }
     }
 }
