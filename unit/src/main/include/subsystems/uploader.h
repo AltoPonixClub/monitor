@@ -1,7 +1,3 @@
-//
-// Created by Lucas on 1/1/22.
-//
-
 #ifndef MONITOR_UPLOADER_H
 #define MONITOR_UPLOADER_H
 
@@ -25,9 +21,6 @@ private:
 
     static inline Uploader *pInstance = nullptr;
 
-    float State::*measurementPointers[8];
-
-    long lastUploadTimes[8] = { 0 };
 };
 
 #endif //MONITOR_UPLOADER_H

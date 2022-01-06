@@ -30,7 +30,7 @@ public:
     VisionState visionWantedState;
     std::vector<DisplayState> displayWantedStates;
 
-    std::vector<std::pair <UploadState, long long>> uploadWantedStates = {};
+    std::vector<std::pair <UploadState, long long>> uploadWantedStates;
 
 private:
     static inline Commands *pInstance = nullptr;
