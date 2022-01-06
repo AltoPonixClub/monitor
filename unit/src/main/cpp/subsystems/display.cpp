@@ -9,10 +9,7 @@
 #include <pangolin/gl/gl.h>
 #include <pangolin/gl/glinclude.h>
 #include <pangolin/gl/gldraw.h>
-#include <pangolin/video/video_input.h>
-#include <pangolin/gl/glformattraits.h>
 #include <pangolin/var/var.h>
-#include <pangolin/var/varextra.h>
 #include <pangolin/plot/plotter.h>
 
 #include <Eigen/Core>
@@ -20,7 +17,6 @@
 
 // TODO: do based on commands wants
 Display::Display(State *state, Commands *commands, Outputs *outputs) {
-    std::cout << "Display Hardware Initialized" << std::endl;
 
     pangolin::CreateWindowAndBind("Main", constants::display::kDispSize.width, constants::display::kDispSize.height);
     glEnable(GL_DEPTH_TEST);
@@ -45,23 +41,20 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
         plotter->SetBounds(0, 0.3, 0.0, 0.33);
         plotter->Track("$i");
         pangolin::DisplayBase().AddDisplay(*plotter);
-        std::cout << "entered" << "\n";
+        outputs->logVal = 0;
     }
 
     if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), commands->DISPLAY_IMG)) {
         this->dImg = &pangolin::Display("image").SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
-                                                          (float) constants::display::kImgDispSize.width /
-                                                          (float) constants::display::kImgDispSize.height).SetLock(
+                                                           (float) constants::display::kImgDispSize.width /
+                                                           (float) constants::display::kImgDispSize.height).SetLock(
                 pangolin::LockLeft, pangolin::LockTop);
         outputs->displayFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
                                         cv::Scalar(100, 100, 100));
-    }
-    else {
+    } else {
         this->dImg = nullptr;
     }
-
-    outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 1);
-    outputs->logVal = 0;
+    spdlog::info("Display: Successful Initialization");
 }
 
 void Display::read(State *state) {
@@ -100,11 +93,13 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 //            state->camRotMat.at<float>(1, 0), state->camRotMat.at<float>(1, 1), state->camRotMat.at<float>(1, 2), state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
 //            state->camRotMat.at<float>(2, 0), state->camRotMat.at<float>(2, 1), state->camRotMat.at<float>(2, 2), state->camTvec[2],
 //            0, 0, 0, 1;
-    std::cout << state->camRotMat << std::endl;
-    std::cout << state->camRotMat.at<double>(0, 0) << std::endl;
-    transformationMatrix << state->camRotMat.at<double>(0, 0), state->camRotMat.at<double>(0, 1), state->camRotMat.at<double>(0, 2), state->camTvec[0] + constants::physical::kPlatformDim.height / 2, // TODO: no divide by 2
-            state->camRotMat.at<double>(1, 0), state->camRotMat.at<double>(1, 1), state->camRotMat.at<double>(1, 2), state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
-            state->camRotMat.at<double>(2, 0), state->camRotMat.at<double>(2, 1), state->camRotMat.at<double>(2, 2), state->camTvec[2],
+    transformationMatrix << state->camRotMat.at<double>(0, 0), state->camRotMat.at<double>(0,
+                                                                                           1), state->camRotMat.at<double>(
+            0, 2), state->camTvec[0] + constants::physical::kPlatformDim.height / 2, // TODO: no divide by 2
+            state->camRotMat.at<double>(1, 0), state->camRotMat.at<double>(1, 1), state->camRotMat.at<double>(1, 2),
+            state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
+            state->camRotMat.at<double>(2, 0), state->camRotMat.at<double>(2, 1), state->camRotMat.at<double>(2,
+                                                                                                              2), state->camTvec[2],
             0, 0, 0, 1;
 
     reorientMatrix << 1, 0, 0, 0,
@@ -132,7 +127,10 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
         cv::resize(outputs->displayFrame, outputs->displayFrame, constants::display::kImgDispSize);
     }
 
-    outputs->logVal = state->camTvec[0];
+
+    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), commands->PLOTTER)) {
+        outputs->logVal = state->camTvec[0];
+    }
 
     // Mesh Creation
     outputs->meshColor.clear();
@@ -154,7 +152,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
                         constants::display::kMeshDensity, state->depthMap[int(
                         state->depthMap.size() * ((i + 1) / constants::display::kMeshDensity))][int(
                         state->depthMap[0].size() * ((j + 1) / constants::display::kMeshDensity))]).finished());
-                outputs->meshColor.push_back(tmp.at<cv::Vec3b>(
+                outputs->meshColor.emplace_back(tmp.at<cv::Vec3b>(
                         cv::Point(i, j)));
             }
         }
@@ -187,7 +185,7 @@ void Display::write(Outputs *outputs) {
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
         glBegin(GL_QUADS);
         for (int i = 0; i < outputs->frustumVerts.size(); i++) {
-            for (int j = i+1; j < outputs->frustumVerts.size(); j++) {
+            for (int j = i + 1; j < outputs->frustumVerts.size(); j++) {
                 for (int c = j + 1; c < outputs->frustumVerts.size(); c++) {
                     glVertex3f(outputs->frustumVerts[i].data()[0], outputs->frustumVerts[i].data()[1],
                                outputs->frustumVerts[i].data()[2]);
@@ -211,7 +209,8 @@ void Display::write(Outputs *outputs) {
 
         for (int i = 0; i < outputs->meshLines.size(); i++) {
             glColor3ub(outputs->meshColor[i][2], outputs->meshColor[i][1], outputs->meshColor[i][0]);
-            pangolin::glDrawLine(outputs->meshLines[i][0], outputs->meshLines[i][1], outputs->meshLines[i][2], outputs->meshLines[i][3], outputs->meshLines[i][4], outputs->meshLines[i][5]);
+            pangolin::glDrawLine(outputs->meshLines[i][0], outputs->meshLines[i][1], outputs->meshLines[i][2],
+                                 outputs->meshLines[i][3], outputs->meshLines[i][4], outputs->meshLines[i][5]);
         }
 
         glColor3f(1, 1, 1);

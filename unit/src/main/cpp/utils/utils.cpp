@@ -12,7 +12,7 @@ std::string Utils::vec2str(std::vector<T> arr) {
 }
 
 // TODO: not sure this works
-std::string matEig2str(Eigen::MatrixXd mat){
+std::string matEig2str(Eigen::MatrixXd mat) {
     std::stringstream ss;
     ss << mat;
     return ss.str();

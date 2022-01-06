@@ -17,7 +17,9 @@ int main() {
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
     Control::configure(commands);
-    std::vector<SubsystemBase *> enabledSubsystems{Miscellaneous::instance(state), Vision::instance(state, commands, outputs), Display::instance(state, commands, outputs)};
+    std::vector<SubsystemBase *> enabledSubsystems{Miscellaneous::instance(state),
+                                                   Vision::instance(state, commands, outputs),
+                                                   Display::instance(state, commands, outputs)};
     spdlog::info("Finished initialization");
 
     while (true) {
