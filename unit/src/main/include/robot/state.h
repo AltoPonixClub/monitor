@@ -31,6 +31,10 @@ public:
     std::vector<int> detectedArucoIds;
     std::vector<cv::Point2f> transform_dst;
 
+    // Uploader
+    std::vector<float*> measurementPointers;
+    std::vector<long> lastUploadTimes;
+
 private:
     static inline State *pInstance = nullptr;
 };

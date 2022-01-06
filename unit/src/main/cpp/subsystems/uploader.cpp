@@ -2,17 +2,15 @@
 #include <utils/utils.h>
 #include <spdlog/spdlog.h>
 #include <subsystems/uploader.h>
+#include <vector>
 #include "restclient-cpp/restclient.h"
 
 Uploader::Uploader(State *state, Commands *commands, Outputs *outputs) {
-    measurementPointers[0] = &State::atmosphericTemp;
-    measurementPointers[1] = &State::reservoirTemp;
-    measurementPointers[2] = &State::lightIntensity;
-    measurementPointers[3] = &State::soilMoisture;
-    measurementPointers[4] = &State::electricalConductivity;
-    measurementPointers[5] = &State::pH;
-    measurementPointers[6] = &State::dissolvedOxygen;
-    measurementPointers[7] = &State::airFlow;
+    state->measurementPointers = std::vector<float *>{
+            &state->atmosphericTemp, &state->reservoirTemp, &state->lightIntensity, &state->soilMoisture,
+            &state->electricalConductivity, &state->pH, &state->dissolvedOxygen, &state->airFlow
+    };
+    state->lastUploadTimes = std::vector<long>(state->measurementPointers.size(), 0);
 }
 
 void Uploader::read(State *state) {
@@ -23,11 +21,11 @@ void Uploader::calculate(State *state, Commands *commands, Outputs *outputs) {
     long now = Utils::getUnixTimestamp();
     int valuesUploaded = 0;
     for ( auto wantedState : commands->uploadWantedStates) {
-        if (now - lastUploadTimes[wantedState.first] > wantedState.second) {
-            lastUploadTimes[wantedState.first] = now;
+        if (now - state->lastUploadTimes[wantedState.first] > wantedState.second) {
+            state->lastUploadTimes[wantedState.first] = now;
             valuesUploaded++;
             outputs->jsonMeasurementData += "\"" + constants::uploader::kMeasurementNames[wantedState.first] + "\": " +
-                                            std::to_string(*state.*measurementPointers[wantedState.first]) + ",";
+                                            std::to_string(*state->measurementPointers[wantedState.first]) + ",";
         }
     }
     outputs->jsonMeasurementData.pop_back();
