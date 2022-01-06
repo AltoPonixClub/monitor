@@ -7,10 +7,12 @@
 #include <subsystems/general.h>
 #include <subsystems/uploader.h>
 #include <spdlog/spdlog.h>
+#include <utils/utils.h>
 
 // TODO: threading
 // TODO: friend class cpp
 int main() {
+    Utils::configureLogger();
     spdlog::info("Starting robot");
     State *state = State::instance();
     Commands *commands = Commands::instance();
