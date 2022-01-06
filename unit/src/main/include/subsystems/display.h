@@ -25,7 +25,7 @@ private:
     pangolin::OpenGlRenderState sCam;
     pangolin::View dCam;
     pangolin::DataLog log;
-    pangolin::View dImg;
+    pangolin::View* dImg;
     pangolin::Plotter* plotter;
 
     static inline Display *pInstance = nullptr;

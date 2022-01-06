@@ -13,7 +13,7 @@ public:
         STREAMING, STOPPED
     };
     enum DisplayState {
-        MESH, CAMERA_IMG, UNDISTORTED_IMG, PLOTTER
+        MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU
     };
 
     VisionState visionWantedState;

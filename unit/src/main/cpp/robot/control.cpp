@@ -3,7 +3,7 @@
 // TODO : clean up vectors
 void Control::configure(Commands *commands) {
     commands->visionWantedState = commands->STOPPED;
-    commands->displayWantedStates = std::vector<Commands::DisplayState> {commands->MESH, commands->CAMERA_IMG, commands->UNDISTORTED_IMG};
+    commands->displayWantedStates = std::vector<Commands::DisplayState> {commands->MESH, commands->CAMERA_POS, commands->DISPLAY_IMG};
 }
 
 void Control::update(Commands *commands) {
