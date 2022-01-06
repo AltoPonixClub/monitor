@@ -55,7 +55,7 @@ void Vision::read(State *state) {
                                      distCoeffs, state->camRvec,
                                      state->camTvec);
         cv::Rodrigues(state->camRvec, state->camRotMat);
-        state->camRotMat = state->camRotMat.inv(); // TODO: is this needed
+        state->camRotMat = state->camRotMat; // TODO: figure out inverse or not
         spdlog::info("Vision: Rvec: {}, Tvec: {} {} {}", *state->camRvec.val, state->camTvec.val[0], state->camTvec.val[1], state->camTvec.val[2]);
         // Sets up transform dst for findHomography
         for (int i = 0; i < state->detectedArucoIds.size(); i++)
