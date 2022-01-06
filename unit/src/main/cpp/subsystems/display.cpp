@@ -48,13 +48,18 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
         std::cout << "entered" << "\n";
     }
 
-    this->dImg = pangolin::Display("image").SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
-                                                      (float) constants::display::kImgDispSize.width /
-                                                      (float) constants::display::kImgDispSize.height).SetLock(
-            pangolin::LockLeft, pangolin::LockTop);
+    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), commands->DISPLAY_IMG)) {
+        this->dImg = &pangolin::Display("image").SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
+                                                          (float) constants::display::kImgDispSize.width /
+                                                          (float) constants::display::kImgDispSize.height).SetLock(
+                pangolin::LockLeft, pangolin::LockTop);
+        outputs->displayFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
+                                        cv::Scalar(100, 100, 100));
+    }
+    else {
+        this->dImg = nullptr;
+    }
 
-    outputs->displayFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
-                                 cv::Scalar(100, 100, 100));
     outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1, 1);
     outputs->logVal = 0;
 }
@@ -106,44 +111,52 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
             0, cos(Utils::deg2rad(180)), -sin(Utils::deg2rad(180)), 0,
             0, sin(Utils::deg2rad(180)), cos(Utils::deg2rad(180)), 0,
             0, 0, 0, 1;
+
 //    transformationMatrix << 1, 0, 0, 0, // TODO: no divide by 2
 //            0, 1, 0, 0,
 //            0, 0, 1, 0,
 //            0, 0, 0, 1;
 
-    outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1,
-                                                      2); // TODO: this is atrocious, dont redo each loop smh
-    for (auto &vertex: outputs->frustumVerts) {
-        vertex = transformationMatrix * (reorientMatrix * vertex);
+    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), commands->CAMERA_POS)) {
+        outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1,
+                                                          2); // TODO: this is atrocious, dont redo each loop smh
+        for (auto &vertex: outputs->frustumVerts) {
+            vertex = transformationMatrix * (reorientMatrix * vertex);
+        }
     }
-    cv::vconcat(outputs->editedCapFrame, state->undistortedFrame, outputs->displayFrame);
-    cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
-    cv::resize(outputs->displayFrame, outputs->displayFrame, constants::display::kImgDispSize);
+
+
+    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), commands->DISPLAY_IMG)) {
+        cv::vconcat(outputs->editedCapFrame, state->undistortedFrame, outputs->displayFrame);
+        cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
+        cv::resize(outputs->displayFrame, outputs->displayFrame, constants::display::kImgDispSize);
+    }
 
     outputs->logVal = state->camTvec[0];
 
     // Mesh Creation
-
-    // TODO: Only needs to happen once in a while, scheduling thing would be nice
     outputs->meshColor.clear();
     outputs->meshLines.clear();
-    cv::Mat tmp; // TODO: clean up
-    cv::resize(state->undistortedFrame, tmp, cv::Size(constants::display::kMeshDensity, constants::display::kMeshDensity));
-    for (int i = 0; i < constants::display::kMeshDensity - 1; i++) {
-        for (int j = 0; j < constants::display::kMeshDensity - 1; j++) { // TODO: this wrong
-            outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>()
-                    << constants::physical::kPlatformDim.width * i / constants::display::kMeshDensity,
-                    constants::physical::kPlatformDim.height * j /
-                    constants::display::kMeshDensity, state->depthMap[int(
-                    state->depthMap.size() * (i / constants::display::kMeshDensity))][int(
-                    state->depthMap[0].size() * (j / constants::display::kMeshDensity))],
-                    constants::physical::kPlatformDim.width * (i + 1) / constants::display::kMeshDensity,
-                    constants::physical::kPlatformDim.height * (j + 1) /
-                    constants::display::kMeshDensity, state->depthMap[int(
-                    state->depthMap.size() * ((i + 1) / constants::display::kMeshDensity))][int(
-                    state->depthMap[0].size() * ((j + 1) / constants::display::kMeshDensity))]).finished());
-            outputs->meshColor.push_back(tmp.at<cv::Vec3b>(
-                    cv::Point(i, j)));
+    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), commands->MESH)) {
+        cv::Mat tmp; // TODO: clean up
+        cv::resize(state->undistortedFrame, tmp,
+                   cv::Size(constants::display::kMeshDensity, constants::display::kMeshDensity));
+        for (int i = 0; i < constants::display::kMeshDensity - 1; i++) {
+            for (int j = 0; j < constants::display::kMeshDensity - 1; j++) { // TODO: this wrong
+                outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>()
+                        << constants::physical::kPlatformDim.width * i / constants::display::kMeshDensity,
+                        constants::physical::kPlatformDim.height * j /
+                        constants::display::kMeshDensity, state->depthMap[int(
+                        state->depthMap.size() * (i / constants::display::kMeshDensity))][int(
+                        state->depthMap[0].size() * (j / constants::display::kMeshDensity))],
+                        constants::physical::kPlatformDim.width * (i + 1) / constants::display::kMeshDensity,
+                        constants::physical::kPlatformDim.height * (j + 1) /
+                        constants::display::kMeshDensity, state->depthMap[int(
+                        state->depthMap.size() * ((i + 1) / constants::display::kMeshDensity))][int(
+                        state->depthMap[0].size() * ((j + 1) / constants::display::kMeshDensity))]).finished());
+                outputs->meshColor.push_back(tmp.at<cv::Vec3b>(
+                        cv::Point(i, j)));
+            }
         }
     }
 }
@@ -188,6 +201,7 @@ void Display::write(Outputs *outputs) {
             }
         }
         glEnd();
+        // TODO: a lot of this shouldnt be configured here
         glPointSize(15);
         glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
         glBegin(GL_POINTS);
@@ -201,10 +215,13 @@ void Display::write(Outputs *outputs) {
         }
 
         glColor3f(1, 1, 1);
-        imgTex.Upload(outputs->displayFrame.data, GL_BGR,
-                      GL_UNSIGNED_BYTE);
-        this->dImg.Activate();
-        imgTex.RenderToViewport();
+
+        if (this->dImg != nullptr) {
+            imgTex.Upload(outputs->displayFrame.data, GL_BGR,
+                          GL_UNSIGNED_BYTE);
+            this->dImg->Activate();
+            imgTex.RenderToViewport();
+        }
 
         // Plotter log
         log.Log(outputs->logVal); // TODO: outputs since tvec is an output to show
