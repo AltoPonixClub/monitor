@@ -29,6 +29,8 @@ public:
 
     static long getUnixTimestamp();
 
+    static void configureLogger();
+
 };
 
 

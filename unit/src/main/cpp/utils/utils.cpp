@@ -48,6 +48,11 @@ long Utils::getUnixTimestamp() {
            std::chrono::milliseconds(1);
 }
 
+void Utils::configureLogger() {
+    auto logger = spdlog::stdout_color_mt("console");
+    spdlog::set_default_logger(logger);
+}
+
 template std::string Utils::vec2str<int>(std::vector<int>);
 
 template std::string Utils::vec2str<float>(std::vector<float>);
