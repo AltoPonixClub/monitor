@@ -24,9 +24,9 @@ public:
     std::string name();
 
 private:
-    cv::VideoCapture cap;
+    cv::VideoCapture leftCap, rightCap;
 
-    // TODO: constants
+    // TODO: constants remove
     cv::FileStorage calibFile;
     cv::Mat cameraMatrix; // extrinsics
     cv::Mat distCoeffs; // intrinsics
