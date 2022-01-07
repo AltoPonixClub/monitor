@@ -28,6 +28,7 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
                                       constants::physical::kPlatformDim.width / 2,
                                       constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
 
+
 //    pangolin::View& dCam = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f).SetHandler(new pangolin::Handler3D(this->sCam));
     this->dCam = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f).SetHandler(
             new pangolin::Handler3D(this->sCam));
@@ -59,8 +60,9 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
 
 void Display::read(State *state) {
 }
-
+double d = 0.01;
 void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
+    d += 0.01;
     Eigen::Matrix4f transformationMatrix;
     Eigen::Matrix4f reorientMatrix;
     /*
@@ -157,8 +159,9 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
             }
         }
     }
-}
 
+}
+double dd = 1;
 void Display::write(Outputs *outputs) {
     if (!pangolin::ShouldQuit()) {
         glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
@@ -170,7 +173,14 @@ void Display::write(Outputs *outputs) {
                                                          GL_UNSIGNED_BYTE); // TODO: MOVE THIS OUT MAKES SLOWER PRLLY
         // Clear screen and activate view to render into
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        this->sCam = pangolin::OpenGlRenderState(
+                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+                pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width / 2, -30, 75 + dd,
+                                          constants::physical::kPlatformDim.width / 2,
+                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+        dd -= 1;
         this->dCam.Activate(this->sCam);
+
 
         // Draws Platform
         glColor4f(1, 1, 1, 1);
