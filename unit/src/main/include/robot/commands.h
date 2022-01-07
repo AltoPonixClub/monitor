@@ -11,10 +11,10 @@ public:
     static Commands *instance();
 
     enum VisionState {
-        STREAMING, STOPPED
+        MONOCULAR, STEREO, OFF
     };
     enum DisplayState {
-        MESH, CAMERA_IMG, UNDISTORTED_IMG, PLOTTER
+        MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU
     };
     enum UploadState {
         ATMOSPHERIC_TEMP,

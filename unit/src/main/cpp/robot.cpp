@@ -4,10 +4,11 @@
 #include <subsystems/subsystemBase.h>
 #include <subsystems/vision.h>
 #include <subsystems/display.h>
-#include <subsystems/general.h>
 #include <subsystems/uploader.h>
-#include <spdlog/spdlog.h>
 #include <utils/utils.h>
+#include <subsystems/miscellaneous.h>
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 // TODO: threading
 // TODO: friend class cpp
@@ -17,8 +18,11 @@ int main() {
     State *state = State::instance();
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
-    Control::configure(state, commands);
-    std::vector<SubsystemBase *> enabledSubsystems{General::instance(state), Vision::instance(state, commands, outputs), Display::instance(state, commands, outputs), Uploader::instance(state, commands, outputs)};
+    Control::configure(commands);
+    std::vector<SubsystemBase *> enabledSubsystems{Miscellaneous::instance(state),
+                                                   Vision::instance(state, commands, outputs),
+                                                   Display::instance(state, commands, outputs), 
+                                                   Uploader::instance(state, commands, outputs)};
     spdlog::info("Finished initialization");
 
     while (true) {

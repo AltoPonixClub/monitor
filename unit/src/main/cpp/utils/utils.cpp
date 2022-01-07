@@ -14,6 +14,13 @@ std::string Utils::vec2str(std::vector<T> arr) {
     return ot;
 }
 
+// TODO: not sure this works
+std::string matEig2str(Eigen::MatrixXd mat) {
+    std::stringstream ss;
+    ss << mat;
+    return ss.str();
+}
+
 bool Utils::pairSortComparator(std::pair<int, std::vector<cv::Point2f>> a, std::pair<int, std::vector<cv::Point2f>> b) {
     return (a.first < b.first);
 }
@@ -34,13 +41,9 @@ Utils::getFrustumVertices(float u0, float v0, float fu, float fv, int w, int h, 
     return homogVerts;
 }
 
-void Utils::drawFrustum(std::vector<Eigen::Matrix<float, 4, 1>> vertices) {
-    for (int i = 0; i < vertices.size(); i++) {
-        for (int j = i; j < vertices.size(); j++) {
-            pangolin::glDrawLine(vertices[i].data()[0], vertices[i].data()[1], vertices[i].data()[2],
-                                 vertices[j].data()[0], vertices[j].data()[1], vertices[j].data()[2]);
-        }
-    }
+
+float Utils::deg2rad(float num) {
+    return num * 3.1415 / 180;
 }
 
 long Utils::getUnixTimestamp() {
