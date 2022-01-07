@@ -18,7 +18,7 @@ int main() {
     State *state = State::instance();
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
-    Control::configure(commands);
+    Control::configure(state, commands);
     std::vector<SubsystemBase *> enabledSubsystems{Miscellaneous::instance(state),
                                                    Vision::instance(state, commands, outputs),
                                                    Display::instance(state, commands, outputs), 
