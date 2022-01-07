@@ -173,15 +173,14 @@ void Display::write(Outputs *outputs) {
                                                          GL_UNSIGNED_BYTE); // TODO: MOVE THIS OUT MAKES SLOWER PRLLY
         // Clear screen and activate view to render into
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        this->sCam = pangolin::OpenGlRenderState(
-                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
-                pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width / 2, -30, 75 + dd,
-                                          constants::physical::kPlatformDim.width / 2,
-                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
-        dd -= 1;
+//        this->sCam = pangolin::OpenGlRenderState(
+//                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+//                pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width / 2, -30, 75 + dd,
+//                                          constants::physical::kPlatformDim.width / 2,
+//                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+//        dd -= 1;
+        this->sCam = constants::vision::side3;
         this->dCam.Activate(this->sCam);
-
-
         // Draws Platform
         glColor4f(1, 1, 1, 1);
         pangolin::glDrawLine(0, 0, 0, constants::physical::kPlatformDim.width, 0, 0);

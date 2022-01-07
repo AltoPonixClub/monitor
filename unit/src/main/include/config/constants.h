@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco/dictionary.hpp>
 #include <opencv2/aruco.hpp>
+#include <pangolin/gl/opengl_render_state.h>
 
 // TODO: Need a source file?
 // TODO: doesnt follow clang style guide
@@ -35,6 +36,48 @@ namespace constants {
                                                                          cv::Point3f(16.1,19.7,0),
                                                                          cv::Point3f(20.7, 19.7, 0),
                                                                          cv::Point3f(20.7, 15.1,0)}};
+        const pangolin::OpenGlRenderState corner1  = pangolin::OpenGlRenderState(
+                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+                pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width*1.5, constants::physical::kPlatformDim.width*1.5, constants::physical::kPlatformDim.width,
+                                          constants::physical::kPlatformDim.width / 2,
+                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+        const pangolin::OpenGlRenderState corner2  = pangolin::OpenGlRenderState(
+                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+                pangolin::ModelViewLookAt(-constants::physical::kPlatformDim.width*0.5, -constants::physical::kPlatformDim.width*0.5, constants::physical::kPlatformDim.width,
+                                          constants::physical::kPlatformDim.width / 2,
+                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+        const pangolin::OpenGlRenderState corner3  = pangolin::OpenGlRenderState(
+                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+                pangolin::ModelViewLookAt(-constants::physical::kPlatformDim.width*0.5, constants::physical::kPlatformDim.width*1.5, constants::physical::kPlatformDim.width,
+                                          constants::physical::kPlatformDim.width / 2,
+                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+        const pangolin::OpenGlRenderState corner4  = pangolin::OpenGlRenderState(
+                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+                pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width*1.5, -constants::physical::kPlatformDim.width*0.5, constants::physical::kPlatformDim.width,
+                                          constants::physical::kPlatformDim.width / 2,
+                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+
+        const pangolin::OpenGlRenderState side1  = pangolin::OpenGlRenderState(
+                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+                pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width*0.5, 0, constants::physical::kPlatformDim.width,
+                                          constants::physical::kPlatformDim.width / 2,
+                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+        const pangolin::OpenGlRenderState side2  = pangolin::OpenGlRenderState(
+                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+                pangolin::ModelViewLookAt(0, constants::physical::kPlatformDim.width*0.5, constants::physical::kPlatformDim.width,
+                                          constants::physical::kPlatformDim.width / 2,
+                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+        const pangolin::OpenGlRenderState side3  = pangolin::OpenGlRenderState(
+                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+                pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width*0.5, constants::physical::kPlatformDim.width*1.5, constants::physical::kPlatformDim.width,
+                                          constants::physical::kPlatformDim.width / 2,
+                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+        const pangolin::OpenGlRenderState side4  = pangolin::OpenGlRenderState(
+                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+                pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width*1.5, constants::physical::kPlatformDim.width*0.5, constants::physical::kPlatformDim.width,
+                                          constants::physical::kPlatformDim.width / 2,
+                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+
         const cv::Ptr<cv::aruco::Dictionary> kArucoDictionary = cv::aruco::Dictionary::get(cv::aruco::DICT_5X5_100);
         const cv::Ptr<cv::aruco::DetectorParameters> kArucoParams = cv::aruco::DetectorParameters::create();
         const std::vector<int> kArucoIds = {24, 42, 48, 69};
