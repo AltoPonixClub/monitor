@@ -1,9 +1,6 @@
 #include <string>
 #include <utils/utils.h>
 #include <iostream>
-#include <fstream>
-#include <chrono>
-#include <thread>
 #include <QCoreApplication>
 #include <QtSerialPort/QSerialPort>
 #include <QSerialPortInfo>
@@ -52,12 +49,15 @@ template std::string Utils::vec2str<int>(std::vector<int>);
 
 template std::string Utils::vec2str<float>(std::vector<float>);
 
-void Utils::daq(std::string request) {
+std::string Utils::daq(std::string request) {
 
-    //QCoreApplication app(argc, argv); this is needed somewhere or it kind of works but throws an error
+// print available ports (could put port in config or something)
+//    foreach (const QSerialPortInfo &serialPortInfo, QSerialPortInfo::availablePorts()){
+//        std::cout << serialPortInfo.portName().toStdString();
+//    }
 
     QSerialPort serial;
-    serial.setPortName("cu.usbmodem113301");    //changes
+    serial.setPortName("cu.usbmodem13301");    //changes
     serial.open(QIODevice::ReadWrite);
     serial.setBaudRate(QSerialPort::Baud9600);
     serial.setDataBits(QSerialPort::Data8);
@@ -69,6 +69,7 @@ void Utils::daq(std::string request) {
     QByteArray input;
 
     if (serial.isOpen() && serial.isWritable()) {
+        //give arduino time to reboot before sending request
         sleep(3);   //dependent on system (import and stuff may be different on Windows)
         serial.write(output);
         serial.waitForBytesWritten();
@@ -77,6 +78,8 @@ void Utils::daq(std::string request) {
                 input += serial.readAll();
         }
         serial.close();
+    } else {
+        std::cout << "Invalid Serial Port";
     }
     return input.toStdString();
 }
