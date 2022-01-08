@@ -13,8 +13,6 @@
 #include <map>
 #include <cstdlib>
 
-#include "restclient-cpp/version.h"
-
 /**
  * @brief namespace for all RestClient definitions
  */

@@ -14,9 +14,8 @@
 #include <map>
 #include <cstdlib>
 
-#include "restclient-cpp/restclient.h"
-#include "restclient-cpp/version.h"
-
+#include "utils/restclient.h"
+#define RESTCLIENT_VERSION "M4_RESTCLIENT_VERSION"
 /**
  * @brief namespace for all RestClient definitions
  */

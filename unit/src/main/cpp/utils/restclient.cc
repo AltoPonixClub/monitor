@@ -11,15 +11,14 @@
  * @author Daniel Schauenberg <d@unwiredcouch.com>
  */
 
-#include "restclient-cpp/restclient.h"
+#include "utils/restclient.h"
 
 #include <curl/curl.h>
 #if __cplusplus >= 201402L
 #include <memory>
 #endif
 
-#include "restclient-cpp/version.h"
-#include "restclient-cpp/connection.h"
+#include "utils/connection.h"
 
 /**
  * @brief global init function. Call this before you start any threads.
