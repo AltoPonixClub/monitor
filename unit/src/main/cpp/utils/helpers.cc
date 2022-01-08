@@ -4,11 +4,11 @@
  * @author Daniel Schauenberg <d@unwiredcouch.com>
  */
 
-#include "restclient-cpp/helpers.h"
+#include "utils/helpers.h"
 
 #include <cstring>
 
-#include "restclient-cpp/restclient.h"
+#include "utils/restclient.h"
 
 /**
  * @brief write callback function for libcurl
