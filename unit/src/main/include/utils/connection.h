@@ -15,7 +15,7 @@
 #include <cstdlib>
 
 #include "utils/restclient.h"
-#define RESTCLIENT_VERSION "M4_RESTCLIENT_VERSION"
+#define RESTCLIENT_VERSION ""
 /**
  * @brief namespace for all RestClient definitions
  */
