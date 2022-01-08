@@ -7,10 +7,13 @@
 #include <subsystems/general.h>
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include <QCoreApplication>
 
-int main() {
+int main(int argc, char** argv) {
     auto logger = spdlog::stdout_color_mt("console");
     spdlog::set_default_logger(logger);
+
+    QCoreApplication app(argc, argv);
 
     spdlog::info("Starting robot");
     State *state = State::instance();

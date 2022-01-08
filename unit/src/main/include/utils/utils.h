@@ -27,6 +27,7 @@ public:
 
     static void drawFrustum(std::vector<Eigen::Matrix<float, 4, 1>> vertices);
 
+    static std::string daq(std::string request);
 };
 
 
