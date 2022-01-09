@@ -161,7 +161,12 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     }
 
 }
+int shifts = 240;
+int currentMoveIndex = 0;
 double dd = 1;
+std::vector<double> currectVector = constants::vision::corner1Vec;
+std::vector<int> moveVector;
+std::vector<double> targetVector = constants::vision::corner3Vec;
 void Display::write(Outputs *outputs) {
     if (!pangolin::ShouldQuit()) {
         glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
@@ -179,7 +184,22 @@ void Display::write(Outputs *outputs) {
 //                                          constants::physical::kPlatformDim.width / 2,
 //                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
 //        dd -= 1;
-        this->sCam = constants::vision::side3;
+        double newX = (((targetVector.at(0) - currectVector.at(0))/100.0) * dd) + currectVector.at(0);
+        double newY = (((targetVector.at(1) - currectVector.at(1))/100.0) * dd) + currectVector.at(1);
+        double newZ = (((targetVector.at(2) - currectVector.at(2))/100.0) * dd) + currectVector.at(2);
+
+        this->sCam = pangolin::OpenGlRenderState(
+                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+                pangolin::ModelViewLookAt(newX, newY, newZ,
+                                          constants::physical::kPlatformDim.width / 2,
+                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+        if(std::abs(targetVector.at(0) - newX)>1
+        || std::abs(targetVector.at(2) - newZ)>1){
+            dd++;
+        }else{
+        }
+
+
         this->dCam.Activate(this->sCam);
         // Draws Platform
         glColor4f(1, 1, 1, 1);

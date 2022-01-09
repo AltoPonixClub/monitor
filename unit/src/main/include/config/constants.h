@@ -41,21 +41,41 @@ namespace constants {
                 pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width*1.5, constants::physical::kPlatformDim.width*1.5, constants::physical::kPlatformDim.width,
                                           constants::physical::kPlatformDim.width / 2,
                                           constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
-        const pangolin::OpenGlRenderState corner2  = pangolin::OpenGlRenderState(
+
+        const std::vector<double> corner1Vec = {constants::physical::kPlatformDim.width*1.5,
+                                        constants::physical::kPlatformDim.width*1.5,
+                                        constants::physical::kPlatformDim.width*1.0};
+        
+            const pangolin::OpenGlRenderState corner2  = pangolin::OpenGlRenderState(
                 pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
                 pangolin::ModelViewLookAt(-constants::physical::kPlatformDim.width*0.5, -constants::physical::kPlatformDim.width*0.5, constants::physical::kPlatformDim.width,
                                           constants::physical::kPlatformDim.width / 2,
                                           constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+
+        const std::vector<double> corner2Vec = {-constants::physical::kPlatformDim.width*0.5,
+                                        -constants::physical::kPlatformDim.width*0.5,
+                                        constants::physical::kPlatformDim.width*1.0};
+
         const pangolin::OpenGlRenderState corner3  = pangolin::OpenGlRenderState(
                 pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
                 pangolin::ModelViewLookAt(-constants::physical::kPlatformDim.width*0.5, constants::physical::kPlatformDim.width*1.5, constants::physical::kPlatformDim.width,
                                           constants::physical::kPlatformDim.width / 2,
                                           constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+
+        const std::vector<double> corner3Vec = {-constants::physical::kPlatformDim.width*0.5,
+                                        constants::physical::kPlatformDim.width*1.5,
+                                        constants::physical::kPlatformDim.width*1.0};
+
         const pangolin::OpenGlRenderState corner4  = pangolin::OpenGlRenderState(
                 pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
                 pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width*1.5, -constants::physical::kPlatformDim.width*0.5, constants::physical::kPlatformDim.width,
                                           constants::physical::kPlatformDim.width / 2,
                                           constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+
+        const std::vector<double> corner4Vec = {constants::physical::kPlatformDim.width*1.5,
+                                        -constants::physical::kPlatformDim.width*0.5,
+                                        constants::physical::kPlatformDim.width*1.0};
+
 
         const pangolin::OpenGlRenderState side1  = pangolin::OpenGlRenderState(
                 pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
@@ -86,7 +106,7 @@ namespace constants {
     namespace display {
         const cv::Size kDispSize = cv::Size(int(640 * 2), int(480 * 2));
         const cv::Size kImgDispSize = cv::Size(int(640), int(2 * 480));
-        const float kMeshDensity = 250.0; // must be float
+        const float kMeshDensity = 50.0; // must be float
         const int kArucoCircRadius = 7;
         const cv::Scalar kAqua(255, 255, 0); // BGR
         const cv::Scalar kGrey(100, 100, 100); // BGR
