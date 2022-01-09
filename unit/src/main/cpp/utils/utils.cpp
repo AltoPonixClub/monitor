@@ -1,10 +1,5 @@
 #include <string>
 #include <utils/utils.h>
-#include <iostream>
-#include <QCoreApplication>
-#include <QtSerialPort/QSerialPort>
-#include <QSerialPortInfo>
-#include <unistd.h>
 
 template<typename T>
 std::string Utils::vec2str(std::vector<T> arr) {
@@ -48,39 +43,3 @@ void Utils::drawFrustum(std::vector<Eigen::Matrix<float, 4, 1>> vertices) {
 template std::string Utils::vec2str<int>(std::vector<int>);
 
 template std::string Utils::vec2str<float>(std::vector<float>);
-
-std::string Utils::daq(std::string request) {
-
-// print available ports (could put port in config or something)
-//    foreach (const QSerialPortInfo &serialPortInfo, QSerialPortInfo::availablePorts()){
-//        std::cout << serialPortInfo.portName().toStdString();
-//    }
-
-    QSerialPort serial;
-    serial.setPortName("cu.usbmodem13301");    //changes
-    serial.open(QIODevice::ReadWrite);
-    serial.setBaudRate(QSerialPort::Baud9600);
-    serial.setDataBits(QSerialPort::Data8);
-    serial.setParity(QSerialPort::NoParity);
-    serial.setStopBits(QSerialPort::OneStop);
-    serial.setFlowControl(QSerialPort::HardwareControl);
-
-    QByteArray output(request.c_str(), request.length());
-    QByteArray input;
-
-    if (serial.isOpen() && serial.isWritable()) {
-        //give arduino time to reboot before sending request
-        sleep(3);   //dependent on system (import and stuff may be different on Windows)
-        serial.write(output);
-        serial.waitForBytesWritten();
-        if (serial.waitForReadyRead()) {
-            while (serial.waitForReadyRead(10))
-                input += serial.readAll();
-        }
-        serial.close();
-    } else {
-        std::cout << "Invalid Serial Port";
-    }
-    return input.toStdString();
-}
-
