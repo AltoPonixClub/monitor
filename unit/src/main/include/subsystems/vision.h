@@ -6,7 +6,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco/dictionary.hpp>
 #include <opencv2/aruco.hpp>
-#include <config/constants.h>
+#include <config/configs.h>
 
 // TODO: prevent data being read or uploaded from sensor in calculate func
 class Vision : public SubsystemBase {
@@ -24,9 +24,9 @@ public:
     std::string name();
 
 private:
-    cv::VideoCapture cap;
+    cv::VideoCapture leftCap, rightCap;
 
-    // TODO: constants
+    // TODO: constants remove
     cv::FileStorage calibFile;
     cv::Mat cameraMatrix; // extrinsics
     cv::Mat distCoeffs; // intrinsics
