@@ -1,5 +1,5 @@
 #include <subsystems/display.h>
-#include <config/constants.h>
+#include <config/configs.h>
 #include <utils/utils.h>
 #include <opencv2/core/eigen.hpp>
 
@@ -18,15 +18,15 @@
 // TODO: do based on commands wants
 Display::Display(State *state, Commands *commands, Outputs *outputs) {
 
-    pangolin::CreateWindowAndBind("Main", constants::display::kDispSize.width, constants::display::kDispSize.height);
+    pangolin::CreateWindowAndBind("Main", Configs::Display::kDispSize.width, Configs::Display::kDispSize.height);
     glEnable(GL_DEPTH_TEST);
 
     // viewing state of virtual camera for rendering scene; intrinsics and extrinsics
     this->sCam = pangolin::OpenGlRenderState(
             pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
-            pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width / 2, -30, 75,
-                                      constants::physical::kPlatformDim.width / 2,
-                                      constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+            pangolin::ModelViewLookAt(Configs::Physical::kPlatformDim.width / 2, -30, 75,
+                                      Configs::Physical::kPlatformDim.width / 2,
+                                      Configs::Physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
 
 //    pangolin::View& dCam = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f).SetHandler(new pangolin::Handler3D(this->sCam));
     this->dCam = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f).SetHandler(
@@ -46,10 +46,10 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
 
     if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), commands->DISPLAY_IMG)) {
         this->dImg = &pangolin::Display("image").SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
-                                                           (float) constants::display::kImgDispSize.width /
-                                                           (float) constants::display::kImgDispSize.height).SetLock(
+                                                           (float) Configs::Display::kImgDispSize.width /
+                                                           (float) Configs::Display::kImgDispSize.height).SetLock(
                 pangolin::LockLeft, pangolin::LockTop);
-        outputs->displayFrame = cv::Mat(constants::vision::kImgSize.height, constants::vision::kImgSize.width, CV_8UC3,
+        outputs->displayFrame = cv::Mat(Configs::Vision::kImgSize.height, Configs::Vision::kImgSize.width, CV_8UC3,
                                         cv::Scalar(100, 100, 100));
     } else {
         this->dImg = nullptr;
@@ -78,8 +78,8 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 
     // TODO: fix this
     // TODO: check w element of matrix is 1
-//    transformationMatrix << 1, 0, 0, state->camTvec[0] + constants::physical::kPlatformDim.height / 2,
-//            0, 1, 0, state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
+//    transformationMatrix << 1, 0, 0, state->camTvec[0] + Configs::Physical::kPlatformDim.height / 2,
+//            0, 1, 0, state->camTvec[1] + Configs::Physical::kPlatformDim.width / 2,
 //            0, 0, 1, state->camTvec[2],
 //            0, 0, 0, 1;
 
@@ -89,15 +89,15 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 //            0, 0, 0, 1;
 
 // TODO: more efficient to transform just one point and move all other corners around that
-//    transformationMatrix << state->camRotMat.at<float>(0, 0), state->camRotMat.at<float>(0, 1), state->camRotMat.at<float>(0, 2), state->camTvec[0] + constants::physical::kPlatformDim.height / 2,
-//            state->camRotMat.at<float>(1, 0), state->camRotMat.at<float>(1, 1), state->camRotMat.at<float>(1, 2), state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
+//    transformationMatrix << state->camRotMat.at<float>(0, 0), state->camRotMat.at<float>(0, 1), state->camRotMat.at<float>(0, 2), state->camTvec[0] + Configs::Physical::kPlatformDim.height / 2,
+//            state->camRotMat.at<float>(1, 0), state->camRotMat.at<float>(1, 1), state->camRotMat.at<float>(1, 2), state->camTvec[1] + Configs::Physical::kPlatformDim.width / 2,
 //            state->camRotMat.at<float>(2, 0), state->camRotMat.at<float>(2, 1), state->camRotMat.at<float>(2, 2), state->camTvec[2],
 //            0, 0, 0, 1;
     transformationMatrix << state->camRotMat.at<double>(0, 0), state->camRotMat.at<double>(0,
                                                                                            1), state->camRotMat.at<double>(
-            0, 2), state->camTvec[0] + constants::physical::kPlatformDim.height / 2, // TODO: no divide by 2
+            0, 2), state->camTvec[0] + Configs::Physical::kPlatformDim.height / 2, // TODO: no divide by 2
             state->camRotMat.at<double>(1, 0), state->camRotMat.at<double>(1, 1), state->camRotMat.at<double>(1, 2),
-            state->camTvec[1] + constants::physical::kPlatformDim.width / 2,
+            state->camTvec[1] + Configs::Physical::kPlatformDim.width / 2,
             state->camRotMat.at<double>(2, 0), state->camRotMat.at<double>(2, 1), state->camRotMat.at<double>(2,
                                                                                                               2), state->camTvec[2],
             0, 0, 0, 1;
@@ -124,7 +124,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), commands->DISPLAY_IMG)) {
         cv::vconcat(outputs->editedCapFrame, state->undistortedFrame, outputs->displayFrame);
         cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
-        cv::resize(outputs->displayFrame, outputs->displayFrame, constants::display::kImgDispSize);
+        cv::resize(outputs->displayFrame, outputs->displayFrame, Configs::Display::kImgDispSize);
     }
 
 
@@ -138,20 +138,20 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), commands->MESH)) {
         cv::Mat tmp; // TODO: clean up
         cv::resize(state->undistortedFrame, tmp,
-                   cv::Size(constants::display::kMeshDensity, constants::display::kMeshDensity));
-        for (int i = 0; i < constants::display::kMeshDensity - 1; i++) {
-            for (int j = 0; j < constants::display::kMeshDensity - 1; j++) { // TODO: this wrong
+                   cv::Size(Configs::Display::kMeshDensity, Configs::Display::kMeshDensity));
+        for (int i = 0; i < Configs::Display::kMeshDensity - 1; i++) {
+            for (int j = 0; j < Configs::Display::kMeshDensity - 1; j++) { // TODO: this wrong
                 outputs->meshLines.push_back((Eigen::Matrix<float, 6, 1>()
-                        << constants::physical::kPlatformDim.width * i / constants::display::kMeshDensity,
-                        constants::physical::kPlatformDim.height * j /
-                        constants::display::kMeshDensity, state->depthMap[int(
-                        state->depthMap.size() * (i / constants::display::kMeshDensity))][int(
-                        state->depthMap[0].size() * (j / constants::display::kMeshDensity))],
-                        constants::physical::kPlatformDim.width * (i + 1) / constants::display::kMeshDensity,
-                        constants::physical::kPlatformDim.height * (j + 1) /
-                        constants::display::kMeshDensity, state->depthMap[int(
-                        state->depthMap.size() * ((i + 1) / constants::display::kMeshDensity))][int(
-                        state->depthMap[0].size() * ((j + 1) / constants::display::kMeshDensity))]).finished());
+                        << Configs::Physical::kPlatformDim.width * i / Configs::Display::kMeshDensity,
+                        Configs::Physical::kPlatformDim.height * j /
+                        Configs::Display::kMeshDensity, state->depthMap[int(
+                        state->depthMap.size() * (i / Configs::Display::kMeshDensity))][int(
+                        state->depthMap[0].size() * (j / Configs::Display::kMeshDensity))],
+                        Configs::Physical::kPlatformDim.width * (i + 1) / Configs::Display::kMeshDensity,
+                        Configs::Physical::kPlatformDim.height * (j + 1) /
+                        Configs::Display::kMeshDensity, state->depthMap[int(
+                        state->depthMap.size() * ((i + 1) / Configs::Display::kMeshDensity))][int(
+                        state->depthMap[0].size() * ((j + 1) / Configs::Display::kMeshDensity))]).finished());
                 outputs->meshColor.emplace_back(tmp.at<cv::Vec3b>(
                         cv::Point(i, j)));
             }
@@ -164,8 +164,8 @@ void Display::write(Outputs *outputs) {
         glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
         glLineWidth(3);
         // TODO: why does split declaration and assignment here not work!!? haunted? yes
-        pangolin::GlTexture imgTex = pangolin::GlTexture(constants::display::kImgDispSize.width,
-                                                         constants::display::kImgDispSize.height, GL_RGB, false, 0,
+        pangolin::GlTexture imgTex = pangolin::GlTexture(Configs::Display::kImgDispSize.width,
+                                                         Configs::Display::kImgDispSize.height, GL_RGB, false, 0,
                                                          GL_RGB,
                                                          GL_UNSIGNED_BYTE); // TODO: MOVE THIS OUT MAKES SLOWER PRLLY
         // Clear screen and activate view to render into
@@ -174,12 +174,12 @@ void Display::write(Outputs *outputs) {
 
         // Draws Platform
         glColor4f(1, 1, 1, 1);
-        pangolin::glDrawLine(0, 0, 0, constants::physical::kPlatformDim.width, 0, 0);
-        pangolin::glDrawLine(0, 0, 0, 0, constants::physical::kPlatformDim.height, 0);
-        pangolin::glDrawLine(constants::physical::kPlatformDim.width, 0, 0, constants::physical::kPlatformDim.width,
-                             constants::physical::kPlatformDim.height, 0);
-        pangolin::glDrawLine(0, constants::physical::kPlatformDim.height, 0, constants::physical::kPlatformDim.width,
-                             constants::physical::kPlatformDim.height, 0);
+        pangolin::glDrawLine(0, 0, 0, Configs::Physical::kPlatformDim.width, 0, 0);
+        pangolin::glDrawLine(0, 0, 0, 0, Configs::Physical::kPlatformDim.height, 0);
+        pangolin::glDrawLine(Configs::Physical::kPlatformDim.width, 0, 0, Configs::Physical::kPlatformDim.width,
+                             Configs::Physical::kPlatformDim.height, 0);
+        pangolin::glDrawLine(0, Configs::Physical::kPlatformDim.height, 0, Configs::Physical::kPlatformDim.width,
+                             Configs::Physical::kPlatformDim.height, 0);
 
         // Draws Camera Frustum
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
@@ -240,6 +240,6 @@ Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
 }
 
 std::string Display::name() {
-    return std::string("display");
+    return std::string("Display");
 }
 
