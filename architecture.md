@@ -15,13 +15,13 @@ Each subsystem has 3 functions and an initializer. These 3 functions are the rea
 Each subsystem has their own variables organized in State, Commands, and Outputs. 
 
 ### Read
-This function takes in the current State and initializes the subsystem. You can only read from the State and cannot write to it. For most subsystems, this function won't be used.
+This function updates state variables every cycle from physical hardware. It does not write to hardware.
 
 ### Calculate
-This function takes in the current State and Command and writes to Outputs. You can only read from the State and Command and cannot write to them. For example, the uploader subsystem uses the calculate function to generate the string to be uploaded. This string is stored in Outputs.
+This function takes in the current State and Commands and writes to Outputs. You can only read from the State and Command and cannot write to them. For example, the uploader subsystem uses the calculate function to generate the string to be uploaded. This string is stored in Outputs. Do not write to physical hardware here.
 
 ### Write 
-This function reads the Outputs and applies them. For example, the uploader subsystem uses the write function to upload the data string to the database.
+This function reads the Outputs and applies them to the physical hardware. For example, the uploader subsystem uses the write function to upload the data string to the database.
 
 ## Other things
 ### Control
@@ -34,7 +34,7 @@ robot.cpp shouldn't be edited. Don't do it :)
 Here is the layout for one cycle of the monitor:
 
  1. Control runs (uses user input to update Commands)
- 2. Run subsystem functions
+ 2. Forever: Run subsystem functions
 	 3. Read (state)
 	 4. Calculate (state, commands, outputs)
 	 5. Write (outputs)
