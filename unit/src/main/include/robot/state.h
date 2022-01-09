@@ -2,7 +2,8 @@
 #define MONITOR_STATE_H
 
 #include <opencv2/opencv.hpp>
-#include <config/constants.h>
+#include <Eigen/Core>
+#include <config/configs.h>
 
 class State {
 public:
@@ -10,12 +11,13 @@ public:
 
     static State *instance();
 
-    // General
+    // Miscellaneous
     float initTimeS, timeS;
 
     // Vision
     cv::Mat capFrame, undistortedFrame;
     cv::Vec3d camRvec, camTvec;
+    cv::Mat camRotMat;
     std::vector<std::vector<float>> depthMap;
     std::vector<std::vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
     std::vector<int> detectedArucoIds;
