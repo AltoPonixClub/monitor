@@ -60,7 +60,9 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
 
 void Display::read(State *state) {
 }
+
 double d = 0.01;
+
 void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     d += 0.01;
     Eigen::Matrix4f transformationMatrix;
@@ -161,12 +163,11 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     }
 
 }
-int shifts = 240;
-int currentMoveIndex = 0;
+
 double dd = 1;
 std::vector<double> currectVector = constants::vision::corner1Vec;
-std::vector<int> moveVector;
 std::vector<double> targetVector = constants::vision::corner3Vec;
+
 void Display::write(Outputs *outputs) {
     if (!pangolin::ShouldQuit()) {
         glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
@@ -178,27 +179,20 @@ void Display::write(Outputs *outputs) {
                                                          GL_UNSIGNED_BYTE); // TODO: MOVE THIS OUT MAKES SLOWER PRLLY
         // Clear screen and activate view to render into
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//        this->sCam = pangolin::OpenGlRenderState(
-//                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
-//                pangolin::ModelViewLookAt(constants::physical::kPlatformDim.width / 2, -30, 75 + dd,
-//                                          constants::physical::kPlatformDim.width / 2,
-//                                          constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
-//        dd -= 1;
-        double newX = (((targetVector.at(0) - currectVector.at(0))/100.0) * dd) + currectVector.at(0);
-        double newY = (((targetVector.at(1) - currectVector.at(1))/100.0) * dd) + currectVector.at(1);
-        double newZ = (((targetVector.at(2) - currectVector.at(2))/100.0) * dd) + currectVector.at(2);
+
+        double newX = (((targetVector.at(0) - currectVector.at(0)) / 100.0) * dd) + currectVector.at(0);
+        double newY = (((targetVector.at(1) - currectVector.at(1)) / 100.0) * dd) + currectVector.at(1);
+        double newZ = (((targetVector.at(2) - currectVector.at(2)) / 100.0) * dd) + currectVector.at(2);
 
         this->sCam = pangolin::OpenGlRenderState(
                 pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
                 pangolin::ModelViewLookAt(newX, newY, newZ,
                                           constants::physical::kPlatformDim.width / 2,
                                           constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
-        if(std::abs(targetVector.at(0) - newX)>1
-        || std::abs(targetVector.at(2) - newZ)>1){
+        if (std::abs(targetVector.at(0) - newX) > 1
+            || std::abs(targetVector.at(2) - newZ) > 1) {
             dd++;
-        }else{
         }
-
 
         this->dCam.Activate(this->sCam);
         // Draws Platform
