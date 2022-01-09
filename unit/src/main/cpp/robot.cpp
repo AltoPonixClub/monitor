@@ -1,4 +1,3 @@
-#include <iostream>
 #include <robot/state.h>
 #include <robot/control.h>
 #include <subsystems/subsystemBase.h>
@@ -16,10 +15,11 @@ int main() {
     State *state = State::instance();
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
+    Configs::configure();
     Control::configure(commands);
-    std::vector<SubsystemBase *> enabledSubsystems{Miscellaneous::instance(state),
-                                                   Vision::instance(state, commands, outputs),
-                                                   Display::instance(state, commands, outputs)};
+    std::vector<SubsystemBase *> enabledSubsystems{ Miscellaneous::instance(state),
+                                                    Vision::instance(state, commands, outputs),
+                                                    Display::instance(state, commands, outputs) };
     spdlog::info("Finished initialization");
 
     while (true) {

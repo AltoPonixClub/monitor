@@ -6,7 +6,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco/dictionary.hpp>
 #include <opencv2/aruco.hpp>
-#include <config/constants.h>
+#include <config/configs.h>
 
 class Miscellaneous : public SubsystemBase {
 public:

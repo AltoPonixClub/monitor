@@ -3,7 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <pangolin/gl/gl.h>
-#include <config/constants.h>
+#include <config/configs.h>
 
 // TODO: organize between subsystems
 class Outputs {
