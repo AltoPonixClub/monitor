@@ -166,7 +166,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 
 double dd = 1;
 std::vector<double> currectVector = constants::vision::corner1Vec;
-std::vector<double> targetVector = constants::vision::corner3Vec;
+std::vector<double> targetVector = constants::vision::corner2Vec;
 
 void Display::write(Outputs *outputs) {
     if (!pangolin::ShouldQuit()) {
@@ -180,9 +180,13 @@ void Display::write(Outputs *outputs) {
         // Clear screen and activate view to render into
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        double newX = (((targetVector.at(0) - currectVector.at(0)) / 100.0) * dd) + currectVector.at(0);
-        double newY = (((targetVector.at(1) - currectVector.at(1)) / 100.0) * dd) + currectVector.at(1);
-        double newZ = (((targetVector.at(2) - currectVector.at(2)) / 100.0) * dd) + currectVector.at(2);
+        double sigmoidDD = 100 * -(std::cos(3.1415926535 * (dd/100.0)) - 1)/2;
+        std::cout << sigmoidDD << std::endl;
+//        double sigmoidDD = 50 * (1.0 /  (1 + (std::pow(1.178, -(50*(dd/300.0) -30)))));
+
+        double newX = (((targetVector.at(0) - currectVector.at(0)) / 100.0) * sigmoidDD) + currectVector.at(0);
+        double newY = (((targetVector.at(1) - currectVector.at(1)) / 100.0) * sigmoidDD) + currectVector.at(1);
+        double newZ = (((targetVector.at(2) - currectVector.at(2)) / 100.0) * sigmoidDD) + currectVector.at(2);
 
         this->sCam = pangolin::OpenGlRenderState(
                 pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
