@@ -1,4 +1,4 @@
-#include <robot/daq.h>
+#include "utils/daq.h"
 #include <iostream>
 #include <QCoreApplication>
 #include <QtSerialPort/QSerialPort>
