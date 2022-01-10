@@ -16,7 +16,12 @@ public:
         MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU
     };
 
+    enum LEDState {
+        NOENERGY, SLOW, MEDIUM, FAST
+    };
+
     VisionState visionWantedState;
+    LEDState ledWantedState;
     std::vector<DisplayState> displayWantedStates;
 private:
     static inline Commands *pInstance = nullptr;
