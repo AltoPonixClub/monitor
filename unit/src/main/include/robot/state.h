@@ -1,13 +1,13 @@
 #ifndef MONITOR_STATE_H
 #define MONITOR_STATE_H
 
-#include <opencv2/opencv.hpp>
 #include <Eigen/Core>
-#include <config/constants.h>
+#include <config/configs.h>
+#include <opencv2/opencv.hpp>
 
 class State {
-public:
-    State() {};
+  public:
+    State(){};
 
     static State *instance();
 
@@ -15,21 +15,22 @@ public:
     float initTimeS, timeS;
 
     // Measurements
-    float atmosphericTemp = 1;
-    float reservoirTemp = 2;
-    float lightIntensity = 3;
-    float soilMoisture = 4;
-    float electricalConductivity = 5;
+    float atmosphericTemp = 0;
+    float reservoirTemp = 0;
+    float lightIntensity = 0;
+    float soilMoisture = 0;
+    float electricalConductivity = 0;
     float pH = 6;
-    float dissolvedOxygen = 7;
-    float airFlow = 8;
+    float dissolvedOxygen = 0;
+    float airFlow = 0;
 
     // Vision
     cv::Mat capFrame, undistortedFrame;
     cv::Vec3d camRvec, camTvec;
     cv::Mat camRotMat;
     std::vector<std::vector<float>> depthMap;
-    std::vector<std::vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
+    std::vector<std::vector<cv::Point2f>> detectedArucoCorners,
+        rejectedArucoCorners;
     std::vector<int> detectedArucoIds;
     std::vector<cv::Point2f> transform_dst;
 
@@ -41,4 +42,4 @@ private:
     static inline State *pInstance = nullptr;
 };
 
-#endif //MONITOR_STATE_H
+#endif // MONITOR_STATE_H

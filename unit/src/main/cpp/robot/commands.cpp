@@ -6,5 +6,3 @@ Commands *Commands::instance() {
     }
     return Commands::pInstance;
 }
-
-

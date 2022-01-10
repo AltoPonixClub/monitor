@@ -2,14 +2,14 @@
 #define MONITOR_OUTPUTS_H
 
 #include <string>
+#include <config/configs.h>
 #include <opencv2/opencv.hpp>
 #include <pangolin/gl/gl.h>
-#include <config/constants.h>
 
 // TODO: organize between subsystems
 class Outputs {
-public:
-    Outputs() {};
+  public:
+    Outputs(){};
 
     static Outputs *instance();
 
@@ -26,4 +26,4 @@ private:
     static inline Outputs *pInstance = nullptr;
 };
 
-#endif //MONITOR_OUTPUTS_H
+#endif // MONITOR_OUTPUTS_H

@@ -5,10 +5,10 @@
 #include <robot/commands.h>
 
 class Control {
-public:
-    static void configure(State *state, Commands *commands);
+  public:
+    static void configure(Commands *commands);
 
-    static void update(State *state, Commands *commands);
+    static void update(Commands *commands);
 };
 
-#endif //MONITOR_CONTROL_H
+#endif // MONITOR_CONTROL_H
