@@ -54,8 +54,11 @@ public class SegmentationController {
     private TextField ffBounds;
     @FXML
     private TextField opacity;
+    @FXML
+    private Label maskExists;
 
     private String filePath;
+    private String maskPath;
     private Mat original = new Mat();
     private Mat image = new Mat();
     private ArrayList<Mat> oldImage = new ArrayList<>();
@@ -102,6 +105,13 @@ public class SegmentationController {
         if(file != null) {
             //set this 6 to a 5 on mac
             filePath = file.toURI().toString().substring(6);
+            maskPath = outputPath.getText() + filePath.substring(folderPath.getText().length(), filePath.indexOf(".")) + "_mask.png";
+            File maskFile = new File(maskPath);
+            if (maskFile.exists()) {
+                maskExists.setText("Mask Already Exists");
+            } else {
+                maskExists.setText("Mask Doesn't Exist Yet");
+            }
             image = Imgcodecs.imread(filePath);
             original = Imgcodecs.imread(filePath);
             mask = new Mat(image.rows(), image.cols(), CvType.CV_8U, Scalar.all(0));
@@ -151,9 +161,8 @@ public class SegmentationController {
 
     @FXML
     public void save() {
-        String filename = outputPath.getText() + filePath.substring(folderPath.getText().length(), filePath.indexOf(".")) + "_mask.png";
-        Imgcodecs.imwrite(filename, maskOut);
-        System.out.println("Image saved at " + filename);
+        Imgcodecs.imwrite(maskPath, maskOut);
+        System.out.println("Image saved at " + maskPath);
     }
 
     @FXML
