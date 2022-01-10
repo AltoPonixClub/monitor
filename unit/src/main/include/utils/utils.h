@@ -33,7 +33,6 @@ class Utils {
                        float scale);
 
     static long getUnixTimestamp();
-
 };
 
 #endif // MONITOR_UTILS_H

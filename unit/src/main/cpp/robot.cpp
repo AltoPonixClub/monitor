@@ -5,8 +5,8 @@
 #include <subsystems/display.h>
 #include <subsystems/miscellaneous.h>
 #include <subsystems/subsystemBase.h>
-#include <subsystems/vision.h>
 #include <subsystems/uploader.h>
+#include <subsystems/vision.h>
 
 int main() {
     auto logger = spdlog::stdout_color_mt("console");

@@ -35,10 +35,10 @@ class State {
     std::vector<cv::Point2f> transform_dst;
 
     // Uploader
-    std::vector<float*> measurementPointers;
+    std::vector<float *> measurementPointers;
     std::vector<long> lastUploadTimes;
 
-private:
+  private:
     static inline State *pInstance = nullptr;
 };
 
