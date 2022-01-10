@@ -21,3 +21,28 @@ BlinkingLights::BlinkingLights(State *state, Commands *commands, Outputs *output
     }
     spdlog::info("Blinking LEDs: Successful Initialization");
 }
+
+void BlinkingLights::read(State *state) {
+  //    state->timeS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+  // TODO: dont do this
+  state->timeS += 1;
+}
+
+void BlinkingLights::calculate(State *state, Commands *commands, Outputs *outputs) {
+}
+
+void BlinkingLights::write(Outputs *outputs) {
+}
+
+BlinkingLights *BlinkingLights::instance(State *state) {
+  if (BlinkingLights::pInstance == nullptr) {
+    BlinkingLights::pInstance = new BlinkingLights(state);
+  }
+  return BlinkingLights::pInstance;
+}
+
+std::string BlinkingLights::name() {
+  return std::string("blinkingLights");
+}
+
+
