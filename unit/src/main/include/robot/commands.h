@@ -33,4 +33,4 @@ private:
     static inline Commands *pInstance = nullptr;
 };
 
-#endif //MONITOR_COMMANDS_H
+#endif // MONITOR_COMMANDS_H

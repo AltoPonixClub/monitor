@@ -9,7 +9,4 @@ void Control::configure(Commands *commands) {
     commands->uploadWantedStates.push_back(std::make_pair(Commands::UploadState::PH, 1000 * 15));
 }
 
-void Control::update(Commands *commands) {
-}
-
-
+void Control::update(Commands *commands) {}

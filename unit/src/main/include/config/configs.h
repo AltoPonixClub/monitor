@@ -50,7 +50,7 @@ class Configs {
             cv::Size(int(640 * 2), int(480 * 2));
         static inline const cv::Size kImgDispSize =
             cv::Size(int(640), int(2 * 480));
-        static inline const float kMeshDensity = 450.0; // must be float
+        static inline const float kMeshDensity = 250.0; // must be float
         static inline const int kArucoCircRadius = 7;
         static inline const cv::Scalar kAqua{255, 255, 0};   // BGR
         static inline const cv::Scalar kGrey{100, 100, 100}; // BGR
