@@ -20,12 +20,11 @@ void Uploader::read(State *state) {}
 void Uploader::calculate(State *state, Commands *commands, Outputs *outputs) {
     outputs->jsonMeasurementData =
         "{\"monitor_id\": \"" + Configs::Uploader::kMonitorId + "\",";
-    long now = Utils::getUnixTimestamp();
     int valuesUploaded = 0;
     for (auto wantedState : commands->uploadWantedStates) {
-        if (now - state->lastUploadTimes[wantedState.first] >
+        if (state->timeS - state->lastUploadTimes[wantedState.first] >
             wantedState.second) {
-            state->lastUploadTimes[wantedState.first] = now;
+            state->lastUploadTimes[wantedState.first] = state->timeS;
             valuesUploaded++;
             outputs->jsonMeasurementData +=
                 "\"" + Configs::Uploader::kMeasurementNames[wantedState.first] +
@@ -44,6 +43,7 @@ void Uploader::calculate(State *state, Commands *commands, Outputs *outputs) {
 
 void Uploader::write(Outputs *outputs) {
     if (outputs->jsonMeasurementData != "") {
+        // TODO: async uploading so that it doesn't stall the system
         spdlog::info("Uploader: Uploading " + outputs->jsonMeasurementData);
         RestClient::Response r =
             RestClient::post(Configs::Uploader::kUploadUrl, "application/json",
