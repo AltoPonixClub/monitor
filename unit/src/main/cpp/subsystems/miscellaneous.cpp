@@ -1,18 +1,15 @@
 #include <config/configs.h>
 #include <subsystems/miscellaneous.h>
+#include <utils/utils.h>
 
 Miscellaneous::Miscellaneous(State *state) {
     //    state->initTimeS =
     //    std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    state->initTimeS = 0;
+    state->initTimeS = Utils::getUnixTimestamp();
 }
 
 void Miscellaneous::read(State *state) {
-    //    state->timeS =
-    //    std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    // TODO: dont do this
-    state->timeS += 1;
-    // do fps etc
+    state->timeS = Utils::getUnixTimestamp();
 }
 
 void Miscellaneous::calculate(State *state, Commands *commands,
