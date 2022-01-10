@@ -1,8 +1,8 @@
 #ifndef MONITOR_COMMANDS_H
 #define MONITOR_COMMANDS_H
 
-#include <vector>
 #include <config/configs.h>
+#include <vector>
 
 class Commands {
   public:
@@ -22,14 +22,13 @@ class Commands {
         DISSOLVED_OXYGEN,
         AIR_FLOW,
     };
-    
 
     VisionState visionWantedState;
     std::vector<DisplayState> displayWantedStates;
 
-    std::vector<std::pair <UploadState, long long>> uploadWantedStates;
+    std::vector<std::pair<UploadState, long long>> uploadWantedStates;
 
-private:
+  private:
     static inline Commands *pInstance = nullptr;
 };
 

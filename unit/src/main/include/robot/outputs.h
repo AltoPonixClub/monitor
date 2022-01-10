@@ -1,10 +1,10 @@
 #ifndef MONITOR_OUTPUTS_H
 #define MONITOR_OUTPUTS_H
 
-#include <string>
 #include <config/configs.h>
 #include <opencv2/opencv.hpp>
 #include <pangolin/gl/gl.h>
+#include <string>
 
 // TODO: organize between subsystems
 class Outputs {
@@ -22,7 +22,8 @@ class Outputs {
 
     // Uploader
     std::string jsonMeasurementData = "";
-private:
+
+  private:
     static inline Outputs *pInstance = nullptr;
 };
 
