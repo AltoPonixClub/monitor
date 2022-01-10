@@ -22,11 +22,11 @@
  */
 size_t RestClient::Helpers::write_callback(void *data, size_t size,
                                            size_t nmemb, void *userdata) {
-  RestClient::Response* r;
-  r = reinterpret_cast<RestClient::Response*>(userdata);
-  r->body.append(reinterpret_cast<char*>(data), size*nmemb);
+    RestClient::Response *r;
+    r = reinterpret_cast<RestClient::Response *>(userdata);
+    r->body.append(reinterpret_cast<char *>(data), size * nmemb);
 
-  return (size * nmemb);
+    return (size * nmemb);
 }
 
 /**
@@ -40,26 +40,26 @@ size_t RestClient::Helpers::write_callback(void *data, size_t size,
  */
 size_t RestClient::Helpers::header_callback(void *data, size_t size,
                                             size_t nmemb, void *userdata) {
-  RestClient::Response* r;
-  r = reinterpret_cast<RestClient::Response*>(userdata);
-  std::string header(reinterpret_cast<char*>(data), size*nmemb);
-  size_t seperator = header.find_first_of(':');
-  if ( std::string::npos == seperator ) {
-    // roll with non seperated headers...
-    trim(header);
-    if (0 == header.length()) {
-      return (size * nmemb);  // blank line;
+    RestClient::Response *r;
+    r = reinterpret_cast<RestClient::Response *>(userdata);
+    std::string header(reinterpret_cast<char *>(data), size * nmemb);
+    size_t seperator = header.find_first_of(':');
+    if (std::string::npos == seperator) {
+        // roll with non seperated headers...
+        trim(header);
+        if (0 == header.length()) {
+            return (size * nmemb); // blank line;
+        }
+        r->headers[header] = "present";
+    } else {
+        std::string key = header.substr(0, seperator);
+        trim(key);
+        std::string value = header.substr(seperator + 1);
+        trim(value);
+        r->headers[key] = value;
     }
-    r->headers[header] = "present";
-  } else {
-    std::string key = header.substr(0, seperator);
-    trim(key);
-    std::string value = header.substr(seperator + 1);
-    trim(value);
-    r->headers[key] = value;
-  }
 
-  return (size * nmemb);
+    return (size * nmemb);
 }
 
 /**
@@ -72,19 +72,19 @@ size_t RestClient::Helpers::header_callback(void *data, size_t size,
  *
  * @return (size * nmemb)
  */
-size_t RestClient::Helpers::read_callback(void *data, size_t size,
-                                          size_t nmemb, void *userdata) {
-  /** get upload struct */
-  RestClient::Helpers::UploadObject* u;
-  u = reinterpret_cast<RestClient::Helpers::UploadObject*>(userdata);
-  /** set correct sizes */
-  size_t curl_size = size * nmemb;
-  size_t copy_size = (u->length < curl_size) ? u->length : curl_size;
-  /** copy data to buffer */
-  std::memcpy(data, u->data, copy_size);
-  /** decrement length and increment data pointer */
-  u->length -= copy_size;
-  u->data += copy_size;
-  /** return copied size */
-  return copy_size;
+size_t RestClient::Helpers::read_callback(void *data, size_t size, size_t nmemb,
+                                          void *userdata) {
+    /** get upload struct */
+    RestClient::Helpers::UploadObject *u;
+    u = reinterpret_cast<RestClient::Helpers::UploadObject *>(userdata);
+    /** set correct sizes */
+    size_t curl_size = size * nmemb;
+    size_t copy_size = (u->length < curl_size) ? u->length : curl_size;
+    /** copy data to buffer */
+    std::memcpy(data, u->data, copy_size);
+    /** decrement length and increment data pointer */
+    u->length -= copy_size;
+    u->data += copy_size;
+    /** return copied size */
+    return copy_size;
 }

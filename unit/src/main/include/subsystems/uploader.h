@@ -4,7 +4,7 @@
 #include <subsystems/subsystemBase.h>
 
 class Uploader : public SubsystemBase {
-public:
+  public:
     Uploader(State *state, Commands *commands, Outputs *outputs);
 
     void read(State *state);
@@ -13,14 +13,13 @@ public:
 
     void write(Outputs *outputs);
 
-    static Uploader *instance(State *state, Commands *commands, Outputs *outputs);
+    static Uploader *instance(State *state, Commands *commands,
+                              Outputs *outputs);
 
     std::string name();
 
-private:
-
+  private:
     static inline Uploader *pInstance = nullptr;
-
 };
 
-#endif //MONITOR_UPLOADER_H
+#endif // MONITOR_UPLOADER_H

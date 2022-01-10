@@ -1,8 +1,8 @@
-#include <string>
 #include <chrono>
-#include <utils/utils.h>
-#include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
+#include <string>
+#include <utils/utils.h>
 
 template <typename T> std::string Utils::vec2str(std::vector<T> arr) {
     std::string ot = std::string("[");
