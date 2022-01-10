@@ -193,6 +193,7 @@ void Display::write(Outputs *outputs) {
                 pangolin::ModelViewLookAt(newX, newY, newZ,
                                           constants::physical::kPlatformDim.width / 2,
                                           constants::physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+
         if (std::abs(targetVector.at(0) - newX) > 1
             || std::abs(targetVector.at(2) - newZ) > 1) {
             dd++;
