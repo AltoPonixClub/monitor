@@ -2,6 +2,7 @@
 #define MONITOR_CONTROL_H
 
 #include <robot/commands.h>
+#include <robot/state.h>
 
 class Control {
   public:

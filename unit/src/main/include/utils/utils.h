@@ -28,8 +28,11 @@ class Utils {
                                    std::pair<int, std::vector<cv::Point2f>> b);
 
     static std::vector<Eigen::Matrix<float, 4, 1>>
+
     getFrustumVertices(float u0, float v0, float fu, float fv, int w, int h,
                        float scale);
+
+    static long getUnixTimestamp();
 };
 
 #endif // MONITOR_UTILS_H
