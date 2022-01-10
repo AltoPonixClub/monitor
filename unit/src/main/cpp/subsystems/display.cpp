@@ -1,6 +1,6 @@
-#include <config/configs.h>
 #include <Eigen/Core>
 #include <opencv2/core/eigen.hpp>
+#include <config/configs.h>
 #include <subsystems/display.h>
 #include <utils/utils.h>
 
