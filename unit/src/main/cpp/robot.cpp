@@ -5,6 +5,7 @@
 #include <subsystems/display.h>
 #include <subsystems/miscellaneous.h>
 #include <subsystems/subsystemBase.h>
+#include <subsystems/uploader.h>
 #include <subsystems/vision.h>
 
 int main() {
@@ -20,7 +21,8 @@ int main() {
     std::vector<SubsystemBase *> enabledSubsystems{
         Miscellaneous::instance(state),
         Vision::instance(state, commands, outputs),
-        Display::instance(state, commands, outputs)};
+        Display::instance(state, commands, outputs),
+        Uploader::instance(state, commands, outputs)};
     spdlog::info("Finished initialization");
 
     while (true) {
