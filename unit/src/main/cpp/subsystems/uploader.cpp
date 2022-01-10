@@ -3,7 +3,7 @@
 #include <spdlog/spdlog.h>
 #include <subsystems/uploader.h>
 #include <vector>
-#include "restclient-cpp/restclient.h"
+#include "utils/restclient.h"
 
 Uploader::Uploader(State *state, Commands *commands, Outputs *outputs) {
     state->measurementPointers = std::vector<float *>{
