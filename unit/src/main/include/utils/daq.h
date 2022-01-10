@@ -2,7 +2,6 @@
 #define MONITOR_DAQ_H
 
 #include <iostream>
-#include "config/constants.h"
 #include <QtSerialPort/QSerialPort>
 
 class DAQ{

@@ -5,7 +5,7 @@
 #include <subsystems/vision.h>
 #include <subsystems/display.h>
 #include <subsystems/miscellaneous.h>
-#include <robot/daq.h>
+#include "utils/daq.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include <QCoreApplication>
