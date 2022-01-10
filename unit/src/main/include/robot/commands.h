@@ -4,22 +4,19 @@
 #include <vector>
 
 class Commands {
-public:
-    Commands() {};
+  public:
+    Commands(){};
 
     static Commands *instance();
 
-    enum VisionState {
-        MONOCULAR, STEREO, OFF
-    };
-    enum DisplayState {
-        MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU
-    };
+    enum VisionState { MONOCULAR, STEREO, OFF };
+    enum DisplayState { MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU };
 
     VisionState visionWantedState;
     std::vector<DisplayState> displayWantedStates;
-private:
+
+  private:
     static inline Commands *pInstance = nullptr;
 };
 
-#endif //MONITOR_COMMANDS_H
+#endif // MONITOR_COMMANDS_H
