@@ -14,7 +14,11 @@
 
 class BlinkingLights : public SubsystemBase {
 public:
-  BlinkingLights(State *state, Commands *commands, Outputs *outputs)
+  BlinkingLights(State *state, Commands *commands, Outputs *outputs);
+
+  void read(State *state);
+
+  void calculate(State *state, Commands *commands, Outputs *outputs);
 
   void write(Outputs *outputs);
 
