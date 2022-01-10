@@ -1,4 +1,5 @@
 #include <config/configs.h>
+#include <Eigen/Core>
 #include <opencv2/core/eigen.hpp>
 #include <subsystems/display.h>
 #include <utils/utils.h>
@@ -11,8 +12,6 @@
 #include <pangolin/handler/handler.h>
 #include <pangolin/plot/plotter.h>
 #include <pangolin/var/var.h>
-
-#include <Eigen/Core>
 #include <spdlog/spdlog.h>
 
 // TODO: do based on commands wants
