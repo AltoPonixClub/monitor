@@ -1,4 +1,4 @@
-#include <config/constants.h>
+#include <config/configs.h>
 #include <utils/utils.h>
 #include <spdlog/spdlog.h>
 #include <subsystems/uploader.h>
@@ -17,14 +17,14 @@ void Uploader::read(State *state) {
 }
 
 void Uploader::calculate(State *state, Commands *commands, Outputs *outputs) {
-    outputs->jsonMeasurementData = "{\"monitor_id\": \"" + constants::uploader::kMonitorId + "\",";
+    outputs->jsonMeasurementData = "{\"monitor_id\": \"" + Configs::Uploader::kMonitorId + "\",";
     long now = Utils::getUnixTimestamp();
     int valuesUploaded = 0;
     for ( auto wantedState : commands->uploadWantedStates) {
         if (now - state->lastUploadTimes[wantedState.first] > wantedState.second) {
             state->lastUploadTimes[wantedState.first] = now;
             valuesUploaded++;
-            outputs->jsonMeasurementData += "\"" + constants::uploader::kMeasurementNames[wantedState.first] + "\": " +
+            outputs->jsonMeasurementData += "\"" + Configs::Uploader::kMeasurementNames[wantedState.first] + "\": " +
                                             std::to_string(*state->measurementPointers[wantedState.first]) + ",";
         }
     }
@@ -39,7 +39,8 @@ void Uploader::calculate(State *state, Commands *commands, Outputs *outputs) {
 void Uploader::write(Outputs *outputs) {
     if (outputs->jsonMeasurementData != "") {
         spdlog::info("Uploader: Uploading " + outputs->jsonMeasurementData);
-        RestClient::Response r = RestClient::post(constants::uploader::kUploadUrl, "application/json", outputs->jsonMeasurementData);
+        RestClient::Response r = RestClient::post(Configs::Uploader::kUploadUrl,
+                                                  "application/json", outputs->jsonMeasurementData);
         if (r.code != 200)
             spdlog::error("Uploader: Upload to database failed with code " + std::to_string(r.code) + "!");
     }

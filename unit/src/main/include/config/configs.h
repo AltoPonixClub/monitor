@@ -56,6 +56,12 @@ class Configs {
         static inline const cv::Scalar kGrey{100, 100, 100}; // BGR
         static inline const cv::Scalar kBlack{0, 0, 0};      // BGR
     };
+    class Uploader {
+      public:
+        static inline const std::string kMonitorId = "672ef79b4d0a4805bc529d1ae44bc26b";
+        static inline const std::string kUploadUrl = "http://altoponix-database.herokuapp.com/api/v1/monitors/update";
+        static inline const std::string kMeasurementNames[8] = {"atmospheric_temp", "reservoir_temp", "light_intensity", "soil_moisture", "electrical_conductivity", "ph", "dissolved_oxygen", "air_flow"};
+    };
 };
 
 #endif // MONITOR_CONFIGS_H
