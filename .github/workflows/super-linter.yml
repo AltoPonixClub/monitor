@@ -26,7 +26,7 @@ jobs:
         env:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_CPP: false
-          VALIDATE_CLANG_FORMAT: true
+          # VALIDATE_CLANG_FORMAT: true
           FILTER_REGEX_INCLUDE: .*unit/.*
           FILTER_REGEX_EXCLUDE: .*trainer/.*
           DEFAULT_BRANCH: main
