@@ -25,5 +25,8 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_ALL_CODEBASE: false
+          VALIDATE_ALL_CPP: true
+          FILTER_REGEX_INCLUDE: .*unit/.*
+          FILTER_REGEX_EXCLUDE: .*trainer/.*
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
