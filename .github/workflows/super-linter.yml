@@ -11,4 +11,5 @@ jobs:
       with:
         clang-format-version: '13'
         check-path: 'unit'
+        exclude-regex: '(ino)'
         fallback-style: 'llvm' # optional
