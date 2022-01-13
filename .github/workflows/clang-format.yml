@@ -13,3 +13,13 @@ jobs:
         check-path: 'unit'
         exclude-regex: '(ino)'
         fallback-style: 'llvm' # optional
+    # - uses: sarisia/actions-status-discord@v1
+    #   if: always()
+    #   with:
+    #     webhook: ${{ secrets.DISCORD_WEBHOOK }}
+    #     title: "CI"
+    #     description: "Code Quality"
+    #     image: ${{ secrets.EMBED_IMAGE }}
+    #     color: 0x0000ff
+    #     username: GitHub Actions
+    #     avatar_url: ${{ secrets.AVATAR_URL }}
