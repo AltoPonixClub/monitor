@@ -1,33 +1,14 @@
-# This workflow executes several linters on changed files based on languages used in your code base whenever
-# you push a code or open a pull request.
-#
-# You can adjust the behavior by modifying this file.
-# For more information, see:
-# https://github.com/github/super-linter
-name: Lint Code Base
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+name: clang-format Check
+on: [push, pull_request]
 jobs:
-  run-lint:
+  formatting-check:
+    name: Formatting Check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
-          fetch-depth: 0
-
-      - name: Lint Code Base
-        uses: github/super-linter@v4
-        env:
-          VALIDATE_ALL_CODEBASE: false
-          VALIDATE_CPP: false
-          # VALIDATE_CLANG_FORMAT: true
-          FILTER_REGEX_INCLUDE: .*unit/.*
-          FILTER_REGEX_EXCLUDE: .*trainer/.*
-          DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v2
+    - name: Run clang-format style check for C/C++/Protobuf programs.
+      uses: jidicula/clang-format-action@v4.4.1
+      with:
+        clang-format-version: '13'
+        check-path: 'unit'
+        fallback-style: 'llvm' # optional
