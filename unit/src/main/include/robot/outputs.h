@@ -20,7 +20,7 @@ class Outputs {
     std::vector<Eigen::Matrix<float, 4, 1>> frustumVerts;
     float logVal;
 
-    //BlinkingLED
+    // BlinkingLED
     std::string ledCommand;
 
     // Uploader

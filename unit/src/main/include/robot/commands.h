@@ -10,21 +10,12 @@ class Commands {
 
     static Commands *instance();
 
-    enum class VisionState {
-        MONOCULAR, STEREO, OFF
-    };
-    enum class DisplayState {
-        MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU
-    };
+    enum class VisionState { MONOCULAR, STEREO, OFF };
+    enum class DisplayState { MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU };
 
-    enum class LEDState {
-        OFF,
-        SLOW,
-        MEDIUM,
-        FAST
-    };
+    enum class LEDState { OFF, SLOW, MEDIUM, FAST };
 
-    //TODO: convert this to enum class
+    // TODO: convert this to enum class
     enum UploadState {
         ATMOSPHERIC_TEMP,
         RESERVOIR_TEMP,
