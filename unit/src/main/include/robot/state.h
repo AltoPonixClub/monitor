@@ -36,6 +36,8 @@ class State {
 
     // BlinkingLights
     int delayLED;
+    bool ledIsOn;
+    int nextToggleTime;
 
     // Uploader
     std::vector<float *> measurementPointers;
