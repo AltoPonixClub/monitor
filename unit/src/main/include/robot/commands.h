@@ -9,15 +9,15 @@ public:
 
     static Commands *instance();
 
-    enum VisionState {
+    enum class VisionState {
         MONOCULAR, STEREO, OFF
     };
-    enum DisplayState {
+    enum class DisplayState {
         MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU
     };
 
-    enum LEDState {
-        NOENERGY, SLOW, MEDIUM, FAST
+    enum class LEDState {
+        OFF, SLOW, MEDIUM, FAST
     };
 
     VisionState visionWantedState;

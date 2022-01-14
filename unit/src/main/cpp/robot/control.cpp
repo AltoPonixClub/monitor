@@ -2,12 +2,14 @@
 
 // TODO : clean up vectors
 void Control::configure(Commands *commands) {
-    commands->visionWantedState = commands->MONOCULAR;
-    commands->displayWantedStates = std::vector<Commands::DisplayState>{commands->MESH, commands->CAMERA_POS,
-                                                                        commands->DISPLAY_IMG};
+    commands->visionWantedState = Commands::VisionState::MONOCULAR;
+    commands->displayWantedStates = std::vector<Commands::DisplayState>{Commands::DisplayState::MESH, Commands::DisplayState::CAMERA_POS,
+                                                                        Commands::DisplayState::DISPLAY_IMG};
+    commands->ledWantedState = Commands::LEDState::MEDIUM;
 }
 
 void Control::update(Commands *commands) {
+
 }
 
 

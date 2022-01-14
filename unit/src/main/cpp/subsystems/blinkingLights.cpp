@@ -7,36 +7,42 @@
 #include <utils/utils.h>
 #include <spdlog/spdlog.h>
 #include "subsystems/blinkingLights.h"
+#include "utils/daq.h"
 
 BlinkingLights::BlinkingLights(State *state, Commands *commands, Outputs *outputs) {
-    switch (commands->ledWantedState) {
-    case Commands::LEDState::NOENERGY:
-        break;
-    case Commands::LEDState::SLOW:
-        break;
-    case Commands::LEDState::MEDIUM:
-        break;
-    case Commands::LEDState::FAST:
-        break;
-    }
+    outputs->ledCommand = "/post?pin(A0,255)";
+    state->prevJunctionTime = 0;
     spdlog::info("Blinking LEDs: Successful Initialization");
 }
 
 void BlinkingLights::read(State *state) {
-  //    state->timeS = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-  // TODO: dont do this
-  state->timeS += 1;
 }
 
 void BlinkingLights::calculate(State *state, Commands *commands, Outputs *outputs) {
+  switch (commands->ledWantedState) {
+      case Commands::LEDState::OFF:
+        state->delayLED = 100;
+        break;
+      case Commands::LEDState::SLOW:
+        state->delayLED = 20;
+        break;
+      case Commands::LEDState::MEDIUM:
+        state->delayLED = 10;
+        break;
+      case Commands::LEDState::FAST:
+        state->delayLED = 5;
+        break;
+  }
+  if (state->prevJunctionTime + state->delayLED <= state->timeS) {}
 }
 
 void BlinkingLights::write(Outputs *outputs) {
+  DAQ::instance(Configs::DAQ::kArduinoPort)->request(outputs->ledCommand);
 }
 
-BlinkingLights *BlinkingLights::instance(State *state) {
+BlinkingLights *BlinkingLights::instance(State *state, Commands *commands, Outputs *outputs) {
   if (BlinkingLights::pInstance == nullptr) {
-    BlinkingLights::pInstance = new BlinkingLights(state);
+    BlinkingLights::pInstance = new BlinkingLights(state, commands, outputs);
   }
   return BlinkingLights::pInstance;
 }

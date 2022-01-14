@@ -5,6 +5,9 @@
 #include <subsystems/vision.h>
 #include <subsystems/display.h>
 #include <subsystems/miscellaneous.h>
+#include "subsystems/blinkingLights.h"
+//TODO: check if this is legit
+#include "config/configs.cpp"
 #include "utils/daq.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -20,12 +23,12 @@ int main(int argc, char** argv) {
     State *state = State::instance();
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
-    DAQ *daq = DAQ::instance("cu.usbmodem13401");
     Configs::configure();
     Control::configure(commands);
-    std::vector<SubsystemBase *> enabledSubsystems{ Miscellaneous::instance(state),
-                                                    Vision::instance(state, commands, outputs),
-                                                    Display::instance(state, commands, outputs) };
+    std::vector<SubsystemBase *> enabledSubsystems{ //Miscellaneous::instance(state),
+                                                    //Vision::instance(state, commands, outputs),
+                                                    //Display::instance(state, commands, outputs),
+                                                    BlinkingLights::instance(state, commands, outputs) };
     spdlog::info("Finished initialization");
 
     while (true) {

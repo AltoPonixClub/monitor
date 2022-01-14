@@ -28,7 +28,7 @@ std::string DAQ::request(std::string request) {
             while (serial.waitForReadyRead(10))
                 input += serial.readAll();
         }
-        serial.close();
+//        serial.close();
     } else {
         std::cout << "Invalid Serial Port";
     }
