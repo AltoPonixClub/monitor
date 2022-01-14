@@ -13,7 +13,7 @@ class Commands {
     enum class VisionState { MONOCULAR, STEREO, OFF };
     enum class DisplayState { MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU };
 
-    enum class LEDState { OFF, SLOW, MEDIUM, FAST };
+    enum class LEDState { OFF, SLOW, MEDIUM, FAST, SUPERFAST };
 
     // TODO: convert this to enum class
     enum UploadState {
