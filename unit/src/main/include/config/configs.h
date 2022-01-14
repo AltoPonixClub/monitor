@@ -20,11 +20,12 @@ class Configs {
       public:
         static inline const int kLeftCamId = 0, kRightCamId = 1, kFps = 60;
         static inline const cv::Size kImgSize = cv::Size(int(640), int(480));
-        static inline const std::string kCalibPath = std::string("/Users/maxwellzhang/Desktop/Altoponix/monitor/unit/outputs.yml");
-        static inline const std::vector<std::vector<cv::Point3f>> kBoardArucoPts = {{cv::Point3f(0, 0, 0),
-                                                                       cv::Point3f(0, 4.6,0),
-                                                                       cv::Point3f(4.6, 4.6, 0),
-                                                                       cv::Point3f(4.6, 0, 0)},
+        static inline const std::string kCalibPath = std::string(
+            "/Users/maxwellzhang/Desktop/Altoponix/monitor/unit/outputs.yml");
+        static inline const std::vector<std::vector<cv::Point3f>>
+            kBoardArucoPts = {
+                {cv::Point3f(0, 0, 0), cv::Point3f(0, 4.6, 0),
+                 cv::Point3f(4.6, 4.6, 0), cv::Point3f(4.6, 0, 0)},
 
                 {cv::Point3f(16.1, 0, 0), cv::Point3f(16.1, 4.6, 0),
                  cv::Point3f(20.7, 4.6, 0), cv::Point3f(20.7, 0, 0)},
@@ -45,9 +46,11 @@ class Configs {
     };
     class Display {
 
-    public:
-        static inline const cv::Size kDispSize = cv::Size(int(640 * 2), int(480 * 2));
-        static inline const cv::Size kImgDispSize = cv::Size(int(640), int(2 * 480));
+      public:
+        static inline const cv::Size kDispSize =
+            cv::Size(int(640 * 2), int(480 * 2));
+        static inline const cv::Size kImgDispSize =
+            cv::Size(int(640), int(2 * 480));
         static inline const float kMeshDensity = 100.0; // must be float
 
         static inline const int kArucoCircRadius = 7;
@@ -56,8 +59,8 @@ class Configs {
         static inline const cv::Scalar kBlack{0, 0, 0};      // BGR
     };
     class DAQ {
-        public:
-            static inline const std::string kArduinoPort = "cu.usbmodem14101";
+      public:
+        static inline const std::string kArduinoPort = "cu.usbmodem14101";
     };
     class Uploader {
       public:

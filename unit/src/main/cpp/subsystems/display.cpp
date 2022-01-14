@@ -37,8 +37,10 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
                      .SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f)
                      .SetHandler(new pangolin::Handler3D(this->sCam));
 
-//     Set up plotter
-    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), Commands::DisplayState::PLOTTER)) {
+    //     Set up plotter
+    if (std::count(commands->displayWantedStates.begin(),
+                   commands->displayWantedStates.end(),
+                   Commands::DisplayState::PLOTTER)) {
         const float tinc = 0.01f; // TODO: move this out
         std::vector<std::string> labels{"tvec[0]"};
         this->log.SetLabels(labels);
@@ -50,13 +52,18 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
         outputs->logVal = 0;
     }
 
-    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), Commands::DisplayState::DISPLAY_IMG)) {
-        this->dImg = &pangolin::Display("image").SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
-                                                           (float) Configs::Display::kImgDispSize.width /
-                                                           (float) Configs::Display::kImgDispSize.height).SetLock(
-                pangolin::LockLeft, pangolin::LockTop);
-        outputs->displayFrame = cv::Mat(Configs::Vision::kImgSize.height, Configs::Vision::kImgSize.width, CV_8UC3,
-                                        cv::Scalar(100, 100, 100));
+    if (std::count(commands->displayWantedStates.begin(),
+                   commands->displayWantedStates.end(),
+                   Commands::DisplayState::DISPLAY_IMG)) {
+        this->dImg =
+            &pangolin::Display("image")
+                 .SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
+                            (float)Configs::Display::kImgDispSize.width /
+                                (float)Configs::Display::kImgDispSize.height)
+                 .SetLock(pangolin::LockLeft, pangolin::LockTop);
+        outputs->displayFrame = cv::Mat(Configs::Vision::kImgSize.height,
+                                        Configs::Vision::kImgSize.width,
+                                        CV_8UC3, cv::Scalar(100, 100, 100));
     } else {
         this->dImg = nullptr;
     }
@@ -126,29 +133,39 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     //            0, 0, 1, 0,
     //            0, 0, 0, 1;
 
-    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), Commands::DisplayState::CAMERA_POS)) {
-        outputs->frustumVerts = Utils::getFrustumVertices(-0.5, -0.5, 1, 1, 1, 1,
-                                                          2); // TODO: this is atrocious, dont redo each loop smh
-        for (auto &vertex: outputs->frustumVerts) {
+    if (std::count(commands->displayWantedStates.begin(),
+                   commands->displayWantedStates.end(),
+                   Commands::DisplayState::CAMERA_POS)) {
+        outputs->frustumVerts = Utils::getFrustumVertices(
+            -0.5, -0.5, 1, 1, 1, 1,
+            2); // TODO: this is atrocious, dont redo each loop smh
+        for (auto &vertex : outputs->frustumVerts) {
             vertex = transformationMatrix * (reorientMatrix * vertex);
         }
     }
 
-    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), Commands::DisplayState::DISPLAY_IMG)) {
-        cv::vconcat(outputs->editedCapFrame, state->undistortedFrame, outputs->displayFrame);
+    if (std::count(commands->displayWantedStates.begin(),
+                   commands->displayWantedStates.end(),
+                   Commands::DisplayState::DISPLAY_IMG)) {
+        cv::vconcat(outputs->editedCapFrame, state->undistortedFrame,
+                    outputs->displayFrame);
         cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
         cv::resize(outputs->displayFrame, outputs->displayFrame,
                    Configs::Display::kImgDispSize);
     }
 
-    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), Commands::DisplayState::PLOTTER)) {
+    if (std::count(commands->displayWantedStates.begin(),
+                   commands->displayWantedStates.end(),
+                   Commands::DisplayState::PLOTTER)) {
         outputs->logVal = state->camTvec[0];
     }
 
     // Mesh Creation
     outputs->meshColor.clear();
     outputs->meshLines.clear();
-    if (std::count(commands->displayWantedStates.begin(), commands->displayWantedStates.end(), Commands::DisplayState::MESH)) {
+    if (std::count(commands->displayWantedStates.begin(),
+                   commands->displayWantedStates.end(),
+                   Commands::DisplayState::MESH)) {
         cv::Mat tmp; // TODO: clean up
         cv::resize(state->undistortedFrame, tmp,
                    cv::Size(Configs::Display::kMeshDensity,

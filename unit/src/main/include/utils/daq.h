@@ -1,11 +1,11 @@
 #ifndef MONITOR_DAQ_H
 #define MONITOR_DAQ_H
 
-#include <iostream>
 #include <QtSerialPort/QSerialPort>
+#include <iostream>
 
-class DAQ{
-public:
+class DAQ {
+  public:
     DAQ(std::string port);
 
     std::string request(std::string request);
@@ -14,8 +14,8 @@ public:
 
     static DAQ *instance(std::string port);
 
-private:
+  private:
     static inline DAQ *pInstance = nullptr;
 };
 
-#endif //MONITOR_DAQ_H
+#endif // MONITOR_DAQ_H

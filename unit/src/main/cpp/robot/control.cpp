@@ -4,8 +4,9 @@
 // TODO : clean up vectors
 void Control::configure(Commands *commands) {
     commands->visionWantedState = Commands::VisionState::MONOCULAR;
-    commands->displayWantedStates = std::vector<Commands::DisplayState>{Commands::DisplayState::MESH, Commands::DisplayState::CAMERA_POS,
-                                                                        Commands::DisplayState::DISPLAY_IMG};
+    commands->displayWantedStates = std::vector<Commands::DisplayState>{
+        Commands::DisplayState::MESH, Commands::DisplayState::CAMERA_POS,
+        Commands::DisplayState::DISPLAY_IMG};
     commands->ledWantedState = Commands::LEDState::MEDIUM;
     commands->uploadWantedStates =
         std::vector<std::pair<Commands::UploadState, long long>>{
@@ -15,6 +16,4 @@ void Control::configure(Commands *commands) {
         };
 }
 
-void Control::update(Commands *commands) {
-}
-
+void Control::update(Commands *commands) {}
