@@ -9,7 +9,5 @@ void Control::configure(Commands *commands) {
 }
 
 void Control::update(Commands *commands) {
-
 }
-
 

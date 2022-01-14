@@ -4,8 +4,8 @@
 #include <vector>
 
 class Commands {
-public:
-    Commands() {};
+  public:
+    Commands(){};
 
     static Commands *instance();
 
@@ -23,8 +23,9 @@ public:
     VisionState visionWantedState;
     LEDState ledWantedState;
     std::vector<DisplayState> displayWantedStates;
-private:
+
+  private:
     static inline Commands *pInstance = nullptr;
 };
 
-#endif //MONITOR_COMMANDS_H
+#endif // MONITOR_COMMANDS_H
