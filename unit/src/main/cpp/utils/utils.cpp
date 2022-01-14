@@ -1,3 +1,6 @@
+#include <chrono>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 #include <string>
 #include <utils/utils.h>
 
@@ -46,6 +49,9 @@ Utils::getFrustumVertices(float u0, float v0, float fu, float fv, int w, int h,
 
 float Utils::deg2rad(float num) { return num * 3.1415 / 180; }
 
-template std::string Utils::vec2str<int>(std::vector<int>);
+long Utils::getUnixTimestamp() {
+    return std::chrono::system_clock::now().time_since_epoch() /
+           std::chrono::milliseconds(1);
+}
 
 template std::string Utils::vec2str<float>(std::vector<float>);
