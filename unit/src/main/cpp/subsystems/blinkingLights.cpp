@@ -12,6 +12,9 @@
 BlinkingLights::BlinkingLights(State *state, Commands *commands,
                                Outputs *outputs) {
     outputs->ledCommand = "/post?pin(A0,255)";
+    state->delayLED = 0;
+    state->ledIsOn = false;
+    state->nextToggleTime = 0;
     spdlog::info("Blinking LEDs: Successful Initialization");
 }
 
@@ -36,12 +39,15 @@ void BlinkingLights::calculate(State *state, Commands *commands,
         state->delayLED = 1;
         break;
     }
-
-    if ((int) (((state->timeS-state->initTimeS)/1000)/state->delayLED) % 2 == 0) {
-        outputs->ledCommand = "/post?pin(A0,255)";
-    }
-    else {
-        outputs->ledCommand = "/post?pin(A0,0)";
+    if ((state->timeS-state->initTimeS)/1000 >= state->nextToggleTime) {
+        state->nextToggleTime += state->delayLED;
+        if (state->ledIsOn) {
+            state->ledIsOn = false;
+            outputs->ledCommand = "/post?pin(A0,0)";
+        } else {
+            state->ledIsOn = true;
+            outputs->ledCommand = "/post?pin(A0,255)";
+        }
     }
 }
 
