@@ -6,5 +6,3 @@ State *State::instance() {
     }
     return State::pInstance;
 }
-
-
