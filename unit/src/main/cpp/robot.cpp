@@ -10,7 +10,7 @@
 #include <subsystems/vision.h>
 
 int main() {
-    // TODO: read https://www.ybliu.com/2020/06/pangolin-2-use-threads.html
+    // TODO: read https://github.com/stevenlovegrove/Pangolin/blob/master/examples/HelloPangolinThreads/main.cpp
     spdlog::set_default_logger(spdlog::stdout_color_mt("console"));
 
     spdlog::info("Starting robot");

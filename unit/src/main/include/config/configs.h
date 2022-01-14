@@ -56,6 +56,7 @@ class Configs {
         static inline const cv::Scalar kAqua{255, 255, 0};   // BGR
         static inline const cv::Scalar kGrey{100, 100, 100}; // BGR
         static inline const cv::Scalar kBlack{0, 0, 0};      // BGR
+        static inline const std::string kWindowName = "Main";
     };
     class Uploader {
       public:

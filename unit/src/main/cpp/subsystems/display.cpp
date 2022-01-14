@@ -17,7 +17,7 @@
 // TODO: do based on commands wants
 Display::Display(State *state, Commands *commands, Outputs *outputs) {
 
-    pangolin::CreateWindowAndBind("Main", Configs::Display::kDispSize.width,
+    pangolin::CreateWindowAndBind(Configs::Display::kWindowName, Configs::Display::kDispSize.width,
                                   Configs::Display::kDispSize.height);
     glEnable(GL_DEPTH_TEST);
 
@@ -66,6 +66,9 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
     } else {
         this->dImg = nullptr;
     }
+
+    // unset the current context from the main thread
+    pangolin::GetBoundWindow()->RemoveCurrent();
     spdlog::info("Display: Successful Initialization");
 }
 
@@ -197,6 +200,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 }
 
 void Display::write(Outputs *outputs) {
+    pangolin::BindToContext(Configs::Display::kWindowName); // TODO: constants
     if (!pangolin::ShouldQuit()) {
         glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
         glLineWidth(3);
@@ -277,6 +281,7 @@ void Display::write(Outputs *outputs) {
         // Swap frames and Process Events
         pangolin::FinishFrame();
     }
+    pangolin::GetBoundWindow()->RemoveCurrent();
 }
 
 Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
@@ -286,4 +291,4 @@ Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
     return Display::pInstance;
 }
 
-std::string Display::name() { return std::string("Display"); }
+std::string Display::name() { return "Display"; }
