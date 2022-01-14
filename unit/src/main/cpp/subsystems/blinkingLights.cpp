@@ -20,6 +20,7 @@ void BlinkingLights::read(State *state) {}
 
 void BlinkingLights::calculate(State *state, Commands *commands,
                                Outputs *outputs) {
+    state->prevJunctionTime ++;
     switch (commands->ledWantedState) {
     case Commands::LEDState::OFF:
         state->delayLED = 100;
@@ -34,8 +35,14 @@ void BlinkingLights::calculate(State *state, Commands *commands,
         state->delayLED = 5;
         break;
     }
-    if (state->prevJunctionTime + state->delayLED <= state->timeS) {
-        state->prevJunctionTime = state->timeS;
+    spdlog::info(state->prevJunctionTime);
+//    spdlog::info((int) (state->timeS/state->delayLED));
+    //if ((int) ((state->timeS-state->initTimeS)/state->delayLED) % 2 == 0) {
+    if ((int) ((state->prevJunctionTime)) % 2 == 0) {
+        outputs->ledCommand = "/post?pin(A0,255)";
+    }
+    else {
+        outputs->ledCommand = "/post?pin(A0,0)";
     }
 }
 
