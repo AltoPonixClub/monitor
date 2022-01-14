@@ -62,5 +62,13 @@ sudo make install
 
 pkg-config --modversion opencv4
 ```
+## For Development 
+
+### Install clang-format
+
+```
+sudo apt install clang-format
+```
+
 
 
