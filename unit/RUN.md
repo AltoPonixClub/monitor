@@ -2,7 +2,7 @@
 
 ```
 ./BUILD.sh # to compile
-./RUN.sh # to run
+./RUN.sh # to loop
 ```
 
 # For First Time Lib Install

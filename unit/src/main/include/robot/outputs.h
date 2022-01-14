@@ -9,8 +9,6 @@
 // TODO: organize between subsystems
 class Outputs {
   public:
-    Outputs(){};
-
     static Outputs *instance();
 
     // TODO: put in namespace?
@@ -25,6 +23,7 @@ class Outputs {
 
   private:
     static inline Outputs *pInstance = nullptr;
+    Outputs(){};
 };
 
 #endif // MONITOR_OUTPUTS_H
