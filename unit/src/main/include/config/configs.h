@@ -18,7 +18,8 @@ class Configs {
     };
     class Vision {
       public:
-        static inline const int kLeftCamId = 0, kRightCamId = 1, kFps = 60;
+        static inline const int kLeftCamId = -1, kRightCamId = 1,
+                                kFps = 60; // switch index
         static inline const cv::Size kImgSize = cv::Size(int(640), int(480));
         static inline const std::string kCalibPath = std::string(
             "/home/aoberai/programming/altoponix/monitor/unit/outputs.yml");
