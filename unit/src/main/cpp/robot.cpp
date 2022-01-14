@@ -31,8 +31,8 @@ int main(int argc, char **argv) {
         Display::instance(state, commands, outputs),
         BlinkingLights::instance(
             state, commands,
-            outputs) // Uploader::instance(state, commands, outputs)
-    };
+            outputs)//,  Uploader::instance(state, commands, outputs)
+                          };
     spdlog::info("Finished initialization");
 
     while (true) {
