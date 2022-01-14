@@ -12,7 +12,7 @@ class State {
     static State *instance();
 
     // Miscellaneous
-    float initTimeS, timeS;
+    long initTimeS, timeS;
 
     // Measurements
     float atmosphericTemp = 0;
@@ -36,7 +36,6 @@ class State {
 
     // BlinkingLights
     int delayLED;
-    int prevJunctionTime;
 
     // Uploader
     std::vector<float *> measurementPointers;

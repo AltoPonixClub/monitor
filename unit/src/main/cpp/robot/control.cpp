@@ -7,7 +7,7 @@ void Control::configure(Commands *commands) {
     commands->displayWantedStates = std::vector<Commands::DisplayState>{
         Commands::DisplayState::MESH, Commands::DisplayState::CAMERA_POS,
         Commands::DisplayState::DISPLAY_IMG};
-    commands->ledWantedState = Commands::LEDState::MEDIUM;
+    commands->ledWantedState = Commands::LEDState::SUPERFAST;
     commands->uploadWantedStates =
         std::vector<std::pair<Commands::UploadState, long long>>{
             // std::make_pair(Commands::UploadState::PH, 1000 * 15),

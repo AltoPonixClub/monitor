@@ -12,7 +12,6 @@
 BlinkingLights::BlinkingLights(State *state, Commands *commands,
                                Outputs *outputs) {
     outputs->ledCommand = "/post?pin(A0,255)";
-    state->prevJunctionTime = 0;
     spdlog::info("Blinking LEDs: Successful Initialization");
 }
 
@@ -20,7 +19,6 @@ void BlinkingLights::read(State *state) {}
 
 void BlinkingLights::calculate(State *state, Commands *commands,
                                Outputs *outputs) {
-    state->prevJunctionTime ++;
     switch (commands->ledWantedState) {
     case Commands::LEDState::OFF:
         state->delayLED = 100;
@@ -34,11 +32,12 @@ void BlinkingLights::calculate(State *state, Commands *commands,
     case Commands::LEDState::FAST:
         state->delayLED = 5;
         break;
+    case Commands::LEDState::SUPERFAST:
+        state->delayLED = 1;
+        break;
     }
-    spdlog::info(state->prevJunctionTime);
-//    spdlog::info((int) (state->timeS/state->delayLED));
-    //if ((int) ((state->timeS-state->initTimeS)/state->delayLED) % 2 == 0) {
-    if ((int) ((state->prevJunctionTime)) % 2 == 0) {
+
+    if ((int) (((state->timeS-state->initTimeS)/1000)/state->delayLED) % 2 == 0) {
         outputs->ledCommand = "/post?pin(A0,255)";
     }
     else {
