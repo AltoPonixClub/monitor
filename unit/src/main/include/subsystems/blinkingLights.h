@@ -2,8 +2,8 @@
 // Created by Maxwell Zhang on 1/9/22.
 //
 
-#ifndef MONITOR_MISCELLANEOUS_H
-#define MONITOR_MISCELLANEOUS_H
+#ifndef MONITOR_BLINKINGLED_H
+#define MONITOR_BLINKINGLED_H
 
 #include <iostream>
 #include <subsystems/subsystemBase.h>
@@ -22,7 +22,7 @@ public:
 
   void write(Outputs *outputs);
 
-  static BlinkingLights *instance(State *state);
+  static BlinkingLights *instance(State *state, Commands *commands, Outputs *outputs);
 
   std::string name();
 
@@ -30,5 +30,4 @@ private:
   static inline BlinkingLights *pInstance = nullptr;
 };
 
-
-#endif // MONITOR_BLINKINGLIGHTS_H
+#endif //MONITOR_BLINKINGLED_H

@@ -22,6 +22,10 @@ public:
     std::vector<std::vector<cv::Point2f>> detectedArucoCorners, rejectedArucoCorners;
     std::vector<int> detectedArucoIds;
     std::vector<cv::Point2f> transform_dst;
+
+    // BlinkingLights
+    int delayLED;
+    int prevJunctionTime;
 private:
     static inline State *pInstance = nullptr;
 };
