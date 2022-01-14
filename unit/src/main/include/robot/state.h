@@ -12,7 +12,7 @@ class State {
     static State *instance();
 
     // Miscellaneous
-    float initTimeS, timeS;
+    long initTimeS, timeS;
 
     // Measurements
     float atmosphericTemp = 0;
