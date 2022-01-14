@@ -127,7 +127,10 @@ void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
     }
 }
 
-void Vision::write(Outputs *outputs) {}
+void Vision::write(Outputs *outputs) {
+    //    cv::imshow("hello", outputs->editedCapFrame);
+    //    cv::waitKey(1);
+}
 
 Vision *Vision::instance(State *state, Commands *commands, Outputs *outputs) {
     if (Vision::pInstance == nullptr) {
