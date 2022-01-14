@@ -1,6 +1,7 @@
 #ifndef MONITOR_COMMANDS_H
 #define MONITOR_COMMANDS_H
 
+#include <config/configs.h>
 #include <vector>
 
 class Commands {
@@ -17,12 +18,29 @@ class Commands {
     };
 
     enum class LEDState {
-        OFF, SLOW, MEDIUM, FAST
+        OFF,
+        SLOW,
+        MEDIUM,
+        FAST
+    };
+
+    //TODO: convert this to enum class
+    enum UploadState {
+        ATMOSPHERIC_TEMP,
+        RESERVOIR_TEMP,
+        LIGHT_INTENSITY,
+        SOIL_MOISTURE,
+        ELECTRICAL_CONDUCTIVITY,
+        PH,
+        DISSOLVED_OXYGEN,
+        AIR_FLOW,
     };
 
     VisionState visionWantedState;
     LEDState ledWantedState;
     std::vector<DisplayState> displayWantedStates;
+
+    std::vector<std::pair<UploadState, long long>> uploadWantedStates;
 
   private:
     static inline Commands *pInstance = nullptr;

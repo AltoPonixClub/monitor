@@ -14,6 +14,16 @@ class State {
     // Miscellaneous
     float initTimeS, timeS;
 
+    // Measurements
+    float atmosphericTemp = 0;
+    float reservoirTemp = 0;
+    float lightIntensity = 0;
+    float soilMoisture = 0;
+    float electricalConductivity = 0;
+    float pH = 6;
+    float dissolvedOxygen = 0;
+    float airFlow = 0;
+
     // Vision
     cv::Mat capFrame, undistortedFrame;
     cv::Vec3d camRvec, camTvec;
@@ -27,7 +37,12 @@ class State {
     // BlinkingLights
     int delayLED;
     int prevJunctionTime;
-private:
+
+    // Uploader
+    std::vector<float *> measurementPointers;
+    std::vector<long> lastUploadTimes;
+
+  private:
     static inline State *pInstance = nullptr;
 };
 

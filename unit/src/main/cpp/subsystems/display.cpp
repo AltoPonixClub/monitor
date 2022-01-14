@@ -12,7 +12,6 @@
 #include <pangolin/handler/handler.h>
 #include <pangolin/plot/plotter.h>
 #include <pangolin/var/var.h>
-
 #include <spdlog/spdlog.h>
 
 // TODO: do based on commands wants

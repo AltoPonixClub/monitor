@@ -4,6 +4,7 @@
 #include <config/configs.h>
 #include <opencv2/opencv.hpp>
 #include <pangolin/gl/gl.h>
+#include <string>
 
 // TODO: organize between subsystems
 class Outputs {
@@ -22,7 +23,10 @@ class Outputs {
     //BlinkingLED
     std::string ledCommand;
 
-private:
+    // Uploader
+    std::string jsonMeasurementData = "";
+
+  private:
     static inline Outputs *pInstance = nullptr;
 };
 

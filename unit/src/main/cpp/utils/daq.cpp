@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QtSerialPort/QSerialPort>
 #include <QSerialPortInfo>
+#include <spdlog/spdlog.h>
 
 QSerialPort serial;
 
@@ -30,7 +31,7 @@ std::string DAQ::request(std::string request) {
         }
 //        serial.close();
     } else {
-        std::cout << "Invalid Serial Port";
+        spdlog::info("Invalid Serial Port");
     }
     return input.toStdString();
 }

@@ -33,7 +33,11 @@ void BlinkingLights::calculate(State *state, Commands *commands, Outputs *output
         state->delayLED = 5;
         break;
   }
-  if (state->prevJunctionTime + state->delayLED <= state->timeS) {}
+  if (state->prevJunctionTime + state->delayLED <= state->timeS) {
+      state->prevJunctionTime = state->timeS;
+
+  }
+
 }
 
 void BlinkingLights::write(Outputs *outputs) {
