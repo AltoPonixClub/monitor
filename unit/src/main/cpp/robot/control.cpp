@@ -10,9 +10,9 @@ void Control::configure(Commands *commands) {
         std::vector<Commands::DisplayState>{commands->MESH};
     commands->uploadWantedStates =
         std::vector<std::pair<Commands::UploadState, long long>>{
-            // std::make_pair(Commands::UploadState::PH, 1000 * 15),
-            // std::make_pair(Commands::UploadState::LIGHT_INTENSITY,
-            // 100 * 15)
+//             std::make_pair(Commands::UploadState::PH, 1000 * 15),
+             std::make_pair(Commands::UploadState::LIGHT_INTENSITY,
+             1)
         };
 }
 
