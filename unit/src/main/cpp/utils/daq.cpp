@@ -1,8 +1,9 @@
 #include "utils/daq.h"
-#include <iostream>
 #include <QCoreApplication>
-#include <QtSerialPort/QSerialPort>
 #include <QSerialPortInfo>
+#include <QtSerialPort/QSerialPort>
+#include <iostream>
+#include <spdlog/spdlog.h>
 
 QSerialPort serial;
 
@@ -28,16 +29,17 @@ std::string DAQ::request(std::string request) {
             while (serial.waitForReadyRead(10))
                 input += serial.readAll();
         }
-        serial.close();
+        //        serial.close();
     } else {
-        std::cout << "Invalid Serial Port";
+        spdlog::info("Invalid Serial Port");
     }
     return input.toStdString();
 }
 
 void DAQ::availablePorts() {
     // print available ports (could put port in config or something)
-    foreach (const QSerialPortInfo &serialPortInfo, QSerialPortInfo::availablePorts()){
+    foreach (const QSerialPortInfo &serialPortInfo,
+             QSerialPortInfo::availablePorts()) {
         std::cout << serialPortInfo.portName().toStdString();
     }
 }
