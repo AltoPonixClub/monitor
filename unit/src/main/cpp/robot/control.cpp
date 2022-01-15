@@ -12,7 +12,7 @@ void Control::configure(Commands *commands) {
         std::vector<std::pair<Commands::UploadState, long long>>{
 //             std::make_pair(Commands::UploadState::PH, 1000 * 15),
              std::make_pair(Commands::UploadState::LIGHT_INTENSITY,
-             1)
+             15 * 1000)
         };
 }
 
