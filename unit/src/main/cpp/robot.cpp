@@ -23,7 +23,7 @@ int main() {
         Miscellaneous::instance(state),
         Vision::instance(state, commands, outputs),
         //        Display::instance(state, commands, outputs)
-        //        Uploader::instance(state, commands, outputs)
+        Uploader::instance(state, commands, outputs)
     };
     spdlog::info("Finished initialization");
 

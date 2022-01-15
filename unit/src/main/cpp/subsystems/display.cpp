@@ -68,7 +68,7 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
     }
 
     // unset the current context from the main thread
-    pangolin::GetBoundWindow()->RemoveCurrent();
+//    pangolin::GetBoundWindow()->RemoveCurrent();
     spdlog::info("Display: Successful Initialization");
 }
 
@@ -281,7 +281,7 @@ void Display::write(Outputs *outputs) {
         // Swap frames and Process Events
         pangolin::FinishFrame();
     }
-    pangolin::GetBoundWindow()->RemoveCurrent();
+//    pangolin::GetBoundWindow()->RemoveCurrent();
 }
 
 Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
