@@ -16,6 +16,7 @@ class DAQ {
 
   private:
     static inline DAQ *pInstance = nullptr;
+    QSerialPort serial;
 };
 
 #endif // MONITOR_DAQ_H

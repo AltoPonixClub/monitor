@@ -27,8 +27,8 @@ int main(int argc, char **argv) {
     Control::configure(commands);
     std::vector<SubsystemBase *> enabledSubsystems{
         Miscellaneous::instance(state),
-        Vision::instance(state, commands, outputs),
-        Display::instance(state, commands, outputs),
+//        Vision::instance(state, commands, outputs),
+//        Display::instance(state, commands, outputs),
         BlinkingLights::instance(
             state, commands,
             outputs),  Uploader::instance(state, commands, outputs)
