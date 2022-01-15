@@ -5,7 +5,6 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 
-QSerialPort serial;
 
 DAQ::DAQ(std::string port) {
     serial.setPortName(QString::fromStdString(port));
