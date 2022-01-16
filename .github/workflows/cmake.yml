@@ -22,10 +22,10 @@ jobs:
     
     - name: Install Dependencies
       run: |
-        apt-get install libeigen3-dev libopencv-dev
+        sudo apt-get install libeigen3-dev libopencv-dev
         git clone --recursive https://github.com/stevenlovegrove/Pangolin.git
         cd Pangolin
-        ./scripts/install_prerequisites.sh recommended
+        sudo ./scripts/install_prerequisites.sh recommended
         mkdir build && cd build
         cmake ..
         cmake --build .
