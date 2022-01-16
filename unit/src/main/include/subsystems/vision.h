@@ -19,6 +19,8 @@ class Vision : public SubsystemBase {
 
     void write(Outputs *outputs);
 
+    bool threaded();
+
     static Vision *instance(State *state, Commands *commands, Outputs *outputs);
 
     std::string name();

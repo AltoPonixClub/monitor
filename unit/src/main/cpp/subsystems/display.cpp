@@ -17,7 +17,8 @@
 // TODO: do based on commands wants
 Display::Display(State *state, Commands *commands, Outputs *outputs) {
 
-    pangolin::CreateWindowAndBind(Configs::Display::kWindowName, Configs::Display::kDispSize.width,
+    pangolin::CreateWindowAndBind(Configs::Display::kWindowName,
+                                  Configs::Display::kDispSize.width,
                                   Configs::Display::kDispSize.height);
     glEnable(GL_DEPTH_TEST);
 
@@ -68,7 +69,7 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
     }
 
     // unset the current context from the main thread
-//    pangolin::GetBoundWindow()->RemoveCurrent();
+    //    pangolin::GetBoundWindow()->RemoveCurrent();
     spdlog::info("Display: Successful Initialization");
 }
 
@@ -281,7 +282,7 @@ void Display::write(Outputs *outputs) {
         // Swap frames and Process Events
         pangolin::FinishFrame();
     }
-//    pangolin::GetBoundWindow()->RemoveCurrent();
+    //    pangolin::GetBoundWindow()->RemoveCurrent();
 }
 
 Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
@@ -291,4 +292,8 @@ Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
     return Display::pInstance;
 }
 
-std::string Display::name() { return "Display"; }
+std::string Display::name() { return "display"; }
+
+bool Display::threaded() {
+    return false;
+}
