@@ -27,6 +27,7 @@ void Threader::start(State *state, Commands *commands, Outputs *outputs) {
                                           commands, outputs));
         if(threads.back()->joinable()) {
             threads.back()->detach(); // TODO: detach prevents out of scope
+            spdlog::info(subsystem->name() + " thread joined!");
         }
         else {
             spdlog::error(subsystem->name() + " thread not joinable!");
