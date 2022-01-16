@@ -26,6 +26,4 @@ Miscellaneous *Miscellaneous::instance(State *state) {
 
 std::string Miscellaneous::name() { return "general"; }
 
-bool Miscellaneous::threaded() {
-    return true;
-}
+bool Miscellaneous::threaded() { return true; }

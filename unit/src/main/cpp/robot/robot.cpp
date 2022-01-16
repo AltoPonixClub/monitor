@@ -1,13 +1,13 @@
+#include "robot/control.h"
+#include "robot/state.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
+#include "subsystems/display.h"
+#include "subsystems/miscellaneous.h"
+#include "subsystems/subsystemBase.h"
 #include "subsystems/threaderer.h"
-#include <robot/control.h>
-#include <robot/state.h>
-#include <subsystems/display.h>
-#include <subsystems/miscellaneous.h>
-#include <subsystems/subsystemBase.h>
-#include <subsystems/uploader.h>
-#include <subsystems/vision.h>
+#include "subsystems/uploader.h"
+#include "subsystems/vision.h"
 
 int main() {
     // TODO: read
@@ -23,12 +23,13 @@ int main() {
     std::vector<SubsystemBase *> enabledSubsystems{
         Miscellaneous::instance(state),
         Vision::instance(state, commands, outputs),
-//        Display::instance(state, commands, outputs),
-        Uploader::instance(state, commands, outputs) // TODO: why cant uploader be threaded
+        Display::instance(state, commands, outputs),
+        Uploader::instance(state, commands,
+                           outputs) // TODO: why cant uploader be threaded
     };
 
     std::vector<SubsystemBase *> threadedSubsystems, nonThreadedSubsystems;
-    for (SubsystemBase* subsystem : enabledSubsystems) {
+    for (SubsystemBase *subsystem : enabledSubsystems) {
         if (subsystem->threaded())
             threadedSubsystems.push_back(subsystem);
         else
