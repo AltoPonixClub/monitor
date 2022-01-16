@@ -26,14 +26,21 @@ cmake --build .
 
 ```
 sudo apt install libeigen3-dev
+sudo pacman -S eigen
 ```
 
 ### Install [spdlog](https://github.com/gabime/spdlog) (for logging math)
 
 ```
 sudo apt install libspdlog-dev
+sudo pacman -S spdlog
 ```
 
+### Install [libcurl](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html)
+```
+sudo apt install libcurl4-openssl-dev
+sudo pacman -S libcurl-openssl
+```
 
 ### Install [OpenCV](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html) (for computer vision stuffs)
 
@@ -76,11 +83,4 @@ pkg-config --modversion opencv4
 ```
 sudo apt install clang-format
 ```
-
-
-### Install [libcurl](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html)
-```
-sudo apt install libcurl4-openssl-dev
-```
-
 
