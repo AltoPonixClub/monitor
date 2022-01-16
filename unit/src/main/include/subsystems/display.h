@@ -17,6 +17,8 @@ class Display : public SubsystemBase {
 
     void write(Outputs *outputs);
 
+    bool threaded();
+
     static Display *instance(State *state, Commands *commands,
                              Outputs *outputs);
 
