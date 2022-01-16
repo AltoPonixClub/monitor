@@ -257,7 +257,7 @@ void Display::write(Outputs *outputs) {
 
         glBegin(GL_POINTS);
 
-        spdlog::info("reached"); // TODO: segfault around here
+        // TODO: segfault around here when plain
         glVertex3f(outputs->frustumVerts.back().data()[0],
                    outputs->frustumVerts.back().data()[1],
                    outputs->frustumVerts.back().data()[2]);
@@ -271,7 +271,6 @@ void Display::write(Outputs *outputs) {
                 outputs->meshLines[i][0], outputs->meshLines[i][1],
                 outputs->meshLines[i][2], outputs->meshLines[i][3],
                 outputs->meshLines[i][4], outputs->meshLines[i][5]);
-
         }
 
         glColor3f(1, 1, 1);
@@ -303,10 +302,6 @@ std::string Display::name() { return "display"; }
 
 bool Display::threaded() { return false; }
 
-void Display::initState(State *state) {
+void Display::initState(State *state) {}
 
-}
-
-void Display::initOutputs(Outputs *outputs) {
-
-}
+void Display::initOutputs(Outputs *outputs) {}

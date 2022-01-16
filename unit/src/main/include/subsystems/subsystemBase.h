@@ -20,6 +20,7 @@ class SubsystemBase {
     static SubsystemBase *instance(State *state);
 
     virtual std::string name() = 0;
+
   private:
     virtual void initState(State *state) = 0;
     virtual void initOutputs(Outputs *outputs) = 0;

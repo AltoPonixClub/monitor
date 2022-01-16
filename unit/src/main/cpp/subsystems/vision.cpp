@@ -143,10 +143,6 @@ std::string Vision::name() { return "vision"; }
 
 bool Vision::threaded() { return false; }
 
-void Vision::initState(State *state) {
+void Vision::initState(State *state) {}
 
-}
-
-void Vision::initOutputs(Outputs *outputs) {
-
-}
+void Vision::initOutputs(Outputs *outputs) {}

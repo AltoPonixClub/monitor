@@ -36,7 +36,6 @@ class Vision : public SubsystemBase {
 
     static inline Vision *pInstance = nullptr;
 
-
     void initState(State *state);
     void initOutputs(Outputs *outputs);
 };
