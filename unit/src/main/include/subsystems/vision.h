@@ -35,6 +35,10 @@ class Vision : public SubsystemBase {
     std::vector<cv::Point2f> transform_src;
 
     static inline Vision *pInstance = nullptr;
+
+
+    void initState(State *state);
+    void initOutputs(Outputs *outputs);
 };
 
 #endif // MONITOR_VISION_H

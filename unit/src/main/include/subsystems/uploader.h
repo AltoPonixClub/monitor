@@ -22,6 +22,9 @@ class Uploader : public SubsystemBase {
 
   private:
     static inline Uploader *pInstance = nullptr;
+
+    void initState(State *state);
+    void initOutputs(Outputs *outputs);
 };
 
 #endif // MONITOR_UPLOADER_H

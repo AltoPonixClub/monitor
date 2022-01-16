@@ -65,3 +65,11 @@ Uploader *Uploader::instance(State *state, Commands *commands,
 std::string Uploader::name() { return std::string("uploader"); }
 
 bool Uploader::threaded() { return false; }
+
+void Uploader::initState(State *state) {
+
+}
+
+void Uploader::initOutputs(Outputs *outputs) {
+
+}
