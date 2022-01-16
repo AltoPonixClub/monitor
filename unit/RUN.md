@@ -28,6 +28,13 @@ cmake --build .
 sudo apt install libeigen3-dev
 ```
 
+### Install [spdlog](https://github.com/gabime/spdlog) (for logging math)
+
+```
+sudo apt install libspdlog-dev
+```
+
+
 ### Install [OpenCV](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html) (for computer vision stuffs)
 
 ```
