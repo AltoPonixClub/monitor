@@ -142,7 +142,3 @@ Vision *Vision::instance(State *state, Commands *commands, Outputs *outputs) {
 std::string Vision::name() { return "vision"; }
 
 bool Vision::threaded() { return false; }
-
-void Vision::initState(State *state) {}
-
-void Vision::initOutputs(Outputs *outputs) {}

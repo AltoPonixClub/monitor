@@ -32,9 +32,6 @@ class Display : public SubsystemBase {
     pangolin::Plotter *plotter;
 
     static inline Display *pInstance = nullptr;
-
-    void initState(State *state);
-    void initOutputs(Outputs *outputs);
 };
 
 #endif // MONITOR_DISPLAY_H
