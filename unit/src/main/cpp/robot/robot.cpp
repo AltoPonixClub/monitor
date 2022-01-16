@@ -36,7 +36,8 @@ int main() {
             nonThreadedSubsystems.push_back(subsystem);
     }
 
-    spdlog::info("X Threaded Started: " + std::to_string(threadedSubsystems.size()));
+    spdlog::info("X Threaded Started: " +
+                 std::to_string(threadedSubsystems.size()));
 
     spdlog::info("Finished initialization");
 

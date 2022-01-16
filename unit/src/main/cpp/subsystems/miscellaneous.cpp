@@ -3,8 +3,6 @@
 #include <utils/utils.h>
 
 Miscellaneous::Miscellaneous(State *state) {
-    //    state->initTimeS =
-    //    std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     state->initTimeS = Utils::getUnixTimestamp();
 }
 
@@ -26,12 +24,8 @@ Miscellaneous *Miscellaneous::instance(State *state) {
 
 std::string Miscellaneous::name() { return "general"; }
 
-bool Miscellaneous::threaded() { return false; }
+bool Miscellaneous::threaded() { return true; }
 
-void Miscellaneous::initState(State *state) {
+void Miscellaneous::initState(State *state) {}
 
-}
-
-void Miscellaneous::initOutputs(Outputs *outputs) {
-
-}
+void Miscellaneous::initOutputs(Outputs *outputs) {}
