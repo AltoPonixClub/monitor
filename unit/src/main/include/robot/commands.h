@@ -6,8 +6,6 @@
 
 class Commands {
   public:
-    Commands(){};
-
     static Commands *instance();
 
     enum VisionState { MONOCULAR, STEREO, OFF };
@@ -29,6 +27,7 @@ class Commands {
     std::vector<std::pair<UploadState, long long>> uploadWantedStates;
 
   private:
+    Commands(){};
     static inline Commands *pInstance = nullptr;
 };
 
