@@ -26,9 +26,6 @@ class Miscellaneous : public SubsystemBase {
 
   private:
     static inline Miscellaneous *pInstance = nullptr;
-
-    void initState(State *state);
-    void initOutputs(Outputs *outputs);
 };
 
 #endif // MONITOR_MISCELLANEOUS_H

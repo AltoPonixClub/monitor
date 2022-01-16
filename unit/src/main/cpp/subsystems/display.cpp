@@ -301,7 +301,3 @@ Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
 std::string Display::name() { return "display"; }
 
 bool Display::threaded() { return false; }
-
-void Display::initState(State *state) {}
-
-void Display::initOutputs(Outputs *outputs) {}
