@@ -76,6 +76,7 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
 void Display::read(State *state) {}
 
 void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
+
     Eigen::Matrix4f transformationMatrix;
     Eigen::Matrix4f reorientMatrix;
     /*
@@ -201,8 +202,8 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 }
 
 void Display::write(Outputs *outputs) {
-    pangolin::BindToContext(Configs::Display::kWindowName); // TODO: constants
     if (!pangolin::ShouldQuit()) {
+
         glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
         glLineWidth(3);
         // TODO: why does split declaration and assignment here not work!!?
@@ -248,14 +249,19 @@ void Display::write(Outputs *outputs) {
                 }
             }
         }
+
         glEnd();
         // TODO: a lot of this shouldnt be configured here
         glPointSize(15);
         glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+
         glBegin(GL_POINTS);
+
+        spdlog::info("reached"); // TODO: segfault around here
         glVertex3f(outputs->frustumVerts.back().data()[0],
                    outputs->frustumVerts.back().data()[1],
                    outputs->frustumVerts.back().data()[2]);
+
         glEnd();
 
         for (int i = 0; i < outputs->meshLines.size(); i++) {
@@ -265,6 +271,7 @@ void Display::write(Outputs *outputs) {
                 outputs->meshLines[i][0], outputs->meshLines[i][1],
                 outputs->meshLines[i][2], outputs->meshLines[i][3],
                 outputs->meshLines[i][4], outputs->meshLines[i][5]);
+
         }
 
         glColor3f(1, 1, 1);
@@ -294,6 +301,4 @@ Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
 
 std::string Display::name() { return "display"; }
 
-bool Display::threaded() {
-    return false;
-}
+bool Display::threaded() { return false; }

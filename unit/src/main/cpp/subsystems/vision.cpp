@@ -128,8 +128,8 @@ void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
 }
 
 void Vision::write(Outputs *outputs) {
-//    cv::imshow("hello", outputs->editedCapFrame);
-//    cv::waitKey(1);
+    //    cv::imshow("hello", outputs->editedCapFrame);
+    //    cv::waitKey(1);
 }
 
 Vision *Vision::instance(State *state, Commands *commands, Outputs *outputs) {
@@ -141,6 +141,4 @@ Vision *Vision::instance(State *state, Commands *commands, Outputs *outputs) {
 
 std::string Vision::name() { return "vision"; }
 
-bool Vision::threaded() {
-    return true;
-}
+bool Vision::threaded() { return true; }

@@ -25,11 +25,10 @@ void Threader::start(State *state, Commands *commands, Outputs *outputs) {
     for (SubsystemBase *subsystem : subsystems) {
         threads.push_back(new std::thread(&Threader::loop, subsystem, state,
                                           commands, outputs));
-        if(threads.back()->joinable()) {
+        if (threads.back()->joinable()) {
             threads.back()->detach(); // TODO: detach prevents out of scope
             spdlog::info(subsystem->name() + " thread joined!");
-        }
-        else {
+        } else {
             spdlog::error(subsystem->name() + " thread not joinable!");
         }
     }
