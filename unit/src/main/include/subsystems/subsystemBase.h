@@ -15,6 +15,8 @@ class SubsystemBase {
 
     virtual void write(Outputs *outputs) = 0;
 
+    virtual bool threaded() = 0;
+
     static SubsystemBase *instance(State *state);
 
     virtual std::string name() = 0;

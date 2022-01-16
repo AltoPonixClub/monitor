@@ -10,7 +10,8 @@
 #include <subsystems/vision.h>
 
 int main() {
-    // TODO: read https://github.com/stevenlovegrove/Pangolin/blob/master/examples/HelloPangolinThreads/main.cpp
+    // TODO: read
+    // https://github.com/stevenlovegrove/Pangolin/blob/master/examples/HelloPangolinThreads/main.cpp
     spdlog::set_default_logger(spdlog::stdout_color_mt("console"));
 
     spdlog::info("Starting robot");
@@ -22,20 +23,29 @@ int main() {
     std::vector<SubsystemBase *> enabledSubsystems{
         Miscellaneous::instance(state),
         Vision::instance(state, commands, outputs),
-        //        Display::instance(state, commands, outputs)
-        Uploader::instance(state, commands, outputs)
+//        Display::instance(state, commands, outputs),
+//        Uploader::instance(state, commands, outputs) // TODO: why cant uploader be threaded
     };
+
+    std::vector<SubsystemBase *> threadedSubsystems, nonThreadedSubsystems;
+    for (SubsystemBase* subsystem : enabledSubsystems) {
+        if (subsystem->threaded())
+            threadedSubsystems.push_back(subsystem);
+        else
+            nonThreadedSubsystems.push_back(subsystem);
+    }
+
     spdlog::info("Finished initialization");
 
     Threader *threader = Threader::instance(enabledSubsystems);
     threader->start(state, commands, outputs);
     // TODO: update control in separate thread
-    //    while (true) {
-    //        Control::update(commands);
-    //        for (SubsystemBase *subsystem : enabledSubsystems) {
-    //            subsystem->read(state);
-    //            subsystem->calculate(state, commands, outputs);
-    //            subsystem->write(outputs);
-    //        }
-    //    }
+    while (true) {
+        Control::update(commands);
+        for (SubsystemBase *subsystem : enabledSubsystems) {
+            subsystem->read(state);
+            subsystem->calculate(state, commands, outputs);
+            subsystem->write(outputs);
+        }
+    }
 }

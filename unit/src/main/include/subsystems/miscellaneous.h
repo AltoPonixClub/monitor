@@ -18,6 +18,8 @@ class Miscellaneous : public SubsystemBase {
 
     void write(Outputs *outputs);
 
+    bool threaded();
+
     static Miscellaneous *instance(State *state);
 
     std::string name();
