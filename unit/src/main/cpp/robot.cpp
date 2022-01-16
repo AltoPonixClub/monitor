@@ -24,7 +24,7 @@ int main() {
         Miscellaneous::instance(state),
         Vision::instance(state, commands, outputs),
 //        Display::instance(state, commands, outputs),
-//        Uploader::instance(state, commands, outputs) // TODO: why cant uploader be threaded
+        Uploader::instance(state, commands, outputs) // TODO: why cant uploader be threaded
     };
 
     std::vector<SubsystemBase *> threadedSubsystems, nonThreadedSubsystems;
@@ -37,12 +37,12 @@ int main() {
 
     spdlog::info("Finished initialization");
 
-    Threader *threader = Threader::instance(enabledSubsystems);
+    Threader *threader = Threader::instance(threadedSubsystems);
     threader->start(state, commands, outputs);
     // TODO: update control in separate thread
     while (true) {
         Control::update(commands);
-        for (SubsystemBase *subsystem : enabledSubsystems) {
+        for (SubsystemBase *subsystem : nonThreadedSubsystems) {
             subsystem->read(state);
             subsystem->calculate(state, commands, outputs);
             subsystem->write(outputs);
