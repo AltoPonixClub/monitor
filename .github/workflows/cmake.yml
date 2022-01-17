@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: docker://lmanolache/altoponix-builder:latest
+      image: docker://altoponix/monitor:latest
     steps:
     - uses: actions/checkout@v2
     - name: Build
