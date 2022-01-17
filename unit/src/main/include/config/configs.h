@@ -22,7 +22,7 @@ class Configs {
                                 kFps = 60; // switch index
         static inline const cv::Size kImgSize = cv::Size(int(640), int(480));
         static inline const std::string kCalibPath = std::string(
-            "/home/aoberai/programming/altoponix/monitor/unit/outputs.yml");
+            "/Users/lucas/Documents/GitHub/monitor/unit/outputs.yml");
         static inline const std::vector<std::vector<cv::Point3f>>
             kBoardArucoPts = {
                 {cv::Point3f(0, 0, 0), cv::Point3f(0, 4.6, 0),
@@ -66,8 +66,10 @@ class Configs {
       public:
         static inline const std::string kMonitorId =
             "672ef79b4d0a4805bc529d1ae44bc26b";
-        static inline const std::string kUploadUrl =
-            "http://altoponix-database.herokuapp.com/api/v1/monitors/update";
+        static inline const std::string kEndpoint =
+            "https://altoponix-database.herokuapp.com/api/v1";
+        static inline const std::string kUploadMethod = "/monitors/update";
+        static inline const std::string kLoginMethod = "/login/monitor";
         static inline const std::string kMeasurementNames[8] = {
             "atmospheric_temp",        "reservoir_temp",
             "light_intensity",         "soil_moisture",

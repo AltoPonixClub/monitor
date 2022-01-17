@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <pangolin/gl/gl.h>
 #include <string>
+#include <utils/json.h>
 
 // TODO: organize between subsystems
 class Outputs {
@@ -22,7 +23,7 @@ class Outputs {
     std::string ledCommand;
 
     // Uploader
-    std::string jsonMeasurementData = "";
+    std::string jsonMeasurementData;
 
   private:
     static inline Outputs *pInstance = nullptr;

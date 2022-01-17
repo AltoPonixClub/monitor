@@ -20,7 +20,7 @@ class State {
     float lightIntensity = 0;
     float soilMoisture = 0;
     float electricalConductivity = 0;
-    float pH = 6;
+    float pH = 0;
     float dissolvedOxygen = 0;
     float airFlow = 0;
 
@@ -42,6 +42,7 @@ class State {
     // Uploader
     std::vector<float *> measurementPointers;
     std::vector<long> lastUploadTimes;
+    std::string authToken;
 
   private:
     State(){};
