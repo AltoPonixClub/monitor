@@ -25,19 +25,6 @@ jobs:
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: | 
-        pwd
-        ls -l
-        cd ${{github.workspace}}
-        ls -l
-        cd ${{github.workspace}}/unit
+        cd unit
         cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         cmake --build build --config ${{env.BUILD_TYPE}}
-
-    - name: Test
-      working-directory: ${{github.workspace}}/unit/build
-      # Execute tests defined by the CMake configuration.  
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: |
-        cd ${{github.workspace}}/unit
-        ctest -C ${{env.BUILD_TYPE}}
-      
