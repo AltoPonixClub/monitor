@@ -40,7 +40,8 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
 
     //     Set up plotter
     if (std::count(commands->displayWantedStates.begin(),
-                   commands->displayWantedStates.end(), commands->PLOTTER)) {
+                   commands->displayWantedStates.end(),
+                   Commands::DisplayState::PLOTTER)) {
         const float tinc = 0.01f; // TODO: move this out
         std::vector<std::string> labels{"tvec[0]"};
         this->log.SetLabels(labels);
@@ -54,7 +55,7 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
 
     if (std::count(commands->displayWantedStates.begin(),
                    commands->displayWantedStates.end(),
-                   commands->DISPLAY_IMG)) {
+                   Commands::DisplayState::DISPLAY_IMG)) {
         this->dImg =
             &pangolin::Display("image")
                  .SetBounds(2.0 / 3, 1.0, 0, 3 / 10.f,
@@ -138,7 +139,8 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     //            0, 0, 0, 1;
 
     if (std::count(commands->displayWantedStates.begin(),
-                   commands->displayWantedStates.end(), commands->CAMERA_POS)) {
+                   commands->displayWantedStates.end(),
+                   Commands::DisplayState::CAMERA_POS)) {
         outputs->frustumVerts = Utils::getFrustumVertices(
             -0.5, -0.5, 1, 1, 1, 1,
             2); // TODO: this is atrocious, dont redo each loop smh
@@ -149,7 +151,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 
     if (std::count(commands->displayWantedStates.begin(),
                    commands->displayWantedStates.end(),
-                   commands->DISPLAY_IMG)) {
+                   Commands::DisplayState::DISPLAY_IMG)) {
         cv::vconcat(outputs->editedCapFrame, state->undistortedFrame,
                     outputs->displayFrame);
         cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
@@ -158,7 +160,8 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     }
 
     if (std::count(commands->displayWantedStates.begin(),
-                   commands->displayWantedStates.end(), commands->PLOTTER)) {
+                   commands->displayWantedStates.end(),
+                   Commands::DisplayState::PLOTTER)) {
         outputs->logVal = state->camTvec[0];
     }
 
@@ -166,7 +169,8 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     outputs->meshColor.clear();
     outputs->meshLines.clear();
     if (std::count(commands->displayWantedStates.begin(),
-                   commands->displayWantedStates.end(), commands->MESH)) {
+                   commands->displayWantedStates.end(),
+                   Commands::DisplayState::MESH)) {
         cv::Mat tmp; // TODO: clean up
         cv::resize(state->undistortedFrame, tmp,
                    cv::Size(Configs::Display::kMeshDensity,

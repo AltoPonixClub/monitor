@@ -8,8 +8,12 @@ class Commands {
   public:
     static Commands *instance();
 
-    enum VisionState { MONOCULAR, STEREO, OFF };
-    enum DisplayState { MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU };
+    enum class VisionState { MONOCULAR, STEREO, OFF };
+    enum class DisplayState { MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU };
+
+    enum class LEDState { OFF, SLOW, MEDIUM, FAST, SUPERFAST };
+
+    // TODO: convert this to enum class
     enum UploadState {
         ATMOSPHERIC_TEMP,
         RESERVOIR_TEMP,
@@ -22,6 +26,7 @@ class Commands {
     };
 
     VisionState visionWantedState;
+    LEDState ledWantedState;
     std::vector<DisplayState> displayWantedStates;
 
     std::vector<std::pair<UploadState, long long>> uploadWantedStates;
