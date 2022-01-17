@@ -11,6 +11,8 @@ class State {
 
     // Miscellaneous
     long initTimeS, timeS;
+    int argc;
+    char **argv;
 
     // Measurements
     float atmosphericTemp = 0;
@@ -31,6 +33,11 @@ class State {
         rejectedArucoCorners;
     std::vector<int> detectedArucoIds;
     std::vector<cv::Point2f> transform_dst;
+
+    // BlinkingLights
+    int delayLED;
+    bool ledIsOn;
+    int nextToggleTime;
 
     // Uploader
     std::vector<float *> measurementPointers;
