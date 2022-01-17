@@ -12,3 +12,6 @@ RUN apt-get install -y build-essential libcurl4-openssl-dev --no-install-recomme
 RUN cd Pangolin && mkdir build && cd build && \ 
     cmake .. && \
     cmake --build .
+RUN apt-get install build-essential
+# RUN apt-get install qtcreator
+RUN apt-get install qt5-default
