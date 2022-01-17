@@ -1,25 +1,34 @@
 #ifndef MONITOR_COMMANDS_H
 #define MONITOR_COMMANDS_H
 
+#include <config/configs.h>
 #include <vector>
 
 class Commands {
-public:
-    Commands() {};
-
+  public:
     static Commands *instance();
 
-    enum VisionState {
-        MONOCULAR, STEREO, OFF
-    };
-    enum DisplayState {
-        MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU
+    enum VisionState { MONOCULAR, STEREO, OFF };
+    enum DisplayState { MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU };
+    enum UploadState {
+        ATMOSPHERIC_TEMP,
+        RESERVOIR_TEMP,
+        LIGHT_INTENSITY,
+        SOIL_MOISTURE,
+        ELECTRICAL_CONDUCTIVITY,
+        PH,
+        DISSOLVED_OXYGEN,
+        AIR_FLOW,
     };
 
     VisionState visionWantedState;
     std::vector<DisplayState> displayWantedStates;
-private:
+
+    std::vector<std::pair<UploadState, long long>> uploadWantedStates;
+
+  private:
+    Commands(){};
     static inline Commands *pInstance = nullptr;
 };
 
-#endif //MONITOR_COMMANDS_H
+#endif // MONITOR_COMMANDS_H

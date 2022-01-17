@@ -1,15 +1,14 @@
 #ifndef MONITOR_OUTPUTS_H
 #define MONITOR_OUTPUTS_H
 
+#include <config/configs.h>
 #include <opencv2/opencv.hpp>
 #include <pangolin/gl/gl.h>
-#include <config/configs.h>
+#include <string>
 
 // TODO: organize between subsystems
 class Outputs {
-public:
-    Outputs() {};
-
+  public:
     static Outputs *instance();
 
     // TODO: put in namespace?
@@ -19,8 +18,12 @@ public:
     std::vector<Eigen::Matrix<float, 4, 1>> frustumVerts;
     float logVal;
 
-private:
+    // Uploader
+    std::string jsonMeasurementData = "";
+
+  private:
     static inline Outputs *pInstance = nullptr;
+    Outputs(){};
 };
 
-#endif //MONITOR_OUTPUTS_H
+#endif // MONITOR_OUTPUTS_H

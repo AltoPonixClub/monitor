@@ -2,12 +2,13 @@
 #define MONITOR_CONTROL_H
 
 #include <robot/commands.h>
+#include <robot/state.h>
 
 class Control {
-public:
+  public:
     static void configure(Commands *commands);
 
     static void update(Commands *commands);
 };
 
-#endif //MONITOR_CONTROL_H
+#endif // MONITOR_CONTROL_H

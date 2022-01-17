@@ -6,5 +6,3 @@ Outputs *Outputs::instance() {
     }
     return Outputs::pInstance;
 }
-
-
