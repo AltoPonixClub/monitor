@@ -1,0 +1,4 @@
+*.html linguist-detectable=false
+*.python linguist-detectable=true
+*.cpp linguist-detectable=true
+*.sh linguist-detectable=true

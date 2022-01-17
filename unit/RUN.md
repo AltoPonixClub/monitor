@@ -2,10 +2,11 @@
 
 ```
 ./BUILD.sh # to compile
-./RUN.sh # to run
+./RUN.sh # to loop
 ```
 
 # For First Time Lib Install
+
 ### Install [Pangolin](https://github.com/stevenlovegrove/Pangolin) (for 3d visualization)
 
 ```
@@ -60,6 +61,19 @@ sudo make install
 # To test if working
 
 pkg-config --modversion opencv4
+```
+## For Development 
+
+### Install clang-format
+
+```
+sudo apt install clang-format
+```
+
+
+### Install [libcurl](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html)
+```
+sudo apt install libcurl4-openssl-dev
 ```
 
 
