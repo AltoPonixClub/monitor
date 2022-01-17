@@ -5,7 +5,6 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 
-
 DAQ::DAQ(std::string port) {
     serial.setPortName(QString::fromStdString(port));
     serial.open(QIODevice::ReadWrite);

@@ -39,7 +39,7 @@ void BlinkingLights::calculate(State *state, Commands *commands,
         state->delayLED = 1;
         break;
     }
-    if ((state->timeS-state->initTimeS)/1000 >= state->nextToggleTime) {
+    if ((state->timeS - state->initTimeS) / 1000 >= state->nextToggleTime) {
         state->nextToggleTime += state->delayLED;
         if (state->ledIsOn) {
             state->ledIsOn = false;
