@@ -11,6 +11,8 @@ class State {
 
     // Miscellaneous
     long initTimeS, timeS;
+    int argc;
+    char **argv;
 
     // Measurements
     float atmosphericTemp = 0;

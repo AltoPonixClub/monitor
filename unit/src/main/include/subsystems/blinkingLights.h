@@ -27,6 +27,8 @@ class BlinkingLights : public SubsystemBase {
 
     std::string name();
 
+    bool threaded();
+
   private:
     static inline BlinkingLights *pInstance = nullptr;
 };
