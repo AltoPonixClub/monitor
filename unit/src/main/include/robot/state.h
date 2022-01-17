@@ -7,8 +7,6 @@
 
 class State {
   public:
-    State(){};
-
     static State *instance();
 
     // Miscellaneous
@@ -44,6 +42,7 @@ class State {
     std::vector<long> lastUploadTimes;
 
   private:
+    State(){};
     static inline State *pInstance = nullptr;
 };
 

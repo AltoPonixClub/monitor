@@ -17,7 +17,8 @@
 // TODO: do based on commands wants
 Display::Display(State *state, Commands *commands, Outputs *outputs) {
 
-    pangolin::CreateWindowAndBind("Main", Configs::Display::kDispSize.width,
+    pangolin::CreateWindowAndBind(Configs::Display::kWindowName,
+                                  Configs::Display::kDispSize.width,
                                   Configs::Display::kDispSize.height);
     glEnable(GL_DEPTH_TEST);
 
@@ -67,12 +68,16 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
     } else {
         this->dImg = nullptr;
     }
+
+    // unset the current context from the main thread
+    //    pangolin::GetBoundWindow()->RemoveCurrent();
     spdlog::info("Display: Successful Initialization");
 }
 
 void Display::read(State *state) {}
 
 void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
+
     Eigen::Matrix4f transformationMatrix;
     Eigen::Matrix4f reorientMatrix;
     /*
@@ -202,6 +207,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 
 void Display::write(Outputs *outputs) {
     if (!pangolin::ShouldQuit()) {
+
         glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
         glLineWidth(3);
         // TODO: why does split declaration and assignment here not work!!?
@@ -247,14 +253,19 @@ void Display::write(Outputs *outputs) {
                 }
             }
         }
+
         glEnd();
         // TODO: a lot of this shouldnt be configured here
         glPointSize(15);
         glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+
         glBegin(GL_POINTS);
+
+        // TODO: segfault around here when plain
         glVertex3f(outputs->frustumVerts.back().data()[0],
                    outputs->frustumVerts.back().data()[1],
                    outputs->frustumVerts.back().data()[2]);
+
         glEnd();
 
         for (int i = 0; i < outputs->meshLines.size(); i++) {
@@ -281,6 +292,7 @@ void Display::write(Outputs *outputs) {
         // Swap frames and Process Events
         pangolin::FinishFrame();
     }
+    //    pangolin::GetBoundWindow()->RemoveCurrent();
 }
 
 Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
@@ -290,4 +302,6 @@ Display *Display::instance(State *state, Commands *commands, Outputs *outputs) {
     return Display::pInstance;
 }
 
-std::string Display::name() { return std::string("Display"); }
+std::string Display::name() { return "display"; }
+
+bool Display::threaded() { return false; }

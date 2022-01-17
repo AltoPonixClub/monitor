@@ -303,7 +303,7 @@ void RestClient::Connection::SetProxy(const std::string &uriProxy) {
  * @brief set custom Unix socket path for connection.
  * See https://curl.haxx.se/libcurl/c/CURLOPT_UNIX_SOCKET_PATH.html
  *
- * @param unixSocketPath - path to Unix socket (ex: /var/run/docker.sock)
+ * @param unixSocketPath - path to Unix socket (ex: /var/loop/docker.sock)
  *
  */
 void RestClient::Connection::SetUnixSocketPath(

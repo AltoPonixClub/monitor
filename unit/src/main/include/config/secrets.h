@@ -8,8 +8,7 @@ class Secrets {
     static void configure();
     class Uploader {
       public:
-        static inline const std::string kMonitorPassword =
-            "";
+        static inline const std::string kMonitorPassword = "";
     };
 };
 
