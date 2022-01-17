@@ -58,6 +58,10 @@ class Configs {
         static inline const cv::Scalar kBlack{0, 0, 0};      // BGR
         static inline const std::string kWindowName = "Main";
     };
+    class DAQ {
+      public:
+        static inline const std::string kArduinoPort = "cu.usbmodem13401";
+    };
     class Uploader {
       public:
         static inline const std::string kMonitorId =

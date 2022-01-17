@@ -3,11 +3,12 @@
 
 // TODO : clean up vectors
 void Control::configure(Commands *commands) {
-    commands->visionWantedState = commands->MONOCULAR;
+    commands->visionWantedState = Commands::VisionState::MONOCULAR;
     // TODO: wtaf (what the actual fuck) Doesnt work if I dont enable camera
     // pose and display img; cannot just enable mesh
     commands->displayWantedStates = std::vector<Commands::DisplayState>{
-        commands->MESH, commands->CAMERA_POS, commands->DISPLAY_IMG};
+        Commands::DisplayState::MESH, Commands::DisplayState::CAMERA_POS,
+        Commands::DisplayState::DISPLAY_IMG};
     //    commands->displayWantedStates =
     //        std::vector<Commands::DisplayState>{commands->MESH};
     commands->uploadWantedStates =
