@@ -13,6 +13,8 @@ class Uploader : public SubsystemBase {
 
     void write(Outputs *outputs);
 
+    bool threaded();
+
     static Uploader *instance(State *state, Commands *commands,
                               Outputs *outputs);
 
