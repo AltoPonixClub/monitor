@@ -65,3 +65,5 @@ BlinkingLights *BlinkingLights::instance(State *state, Commands *commands,
 }
 
 std::string BlinkingLights::name() { return std::string("blinkingLights"); }
+
+bool BlinkingLights::threaded() { return false; }

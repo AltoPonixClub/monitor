@@ -18,21 +18,23 @@ int main(int argc, char **argv) {
     // https://github.com/stevenlovegrove/Pangolin/blob/master/examples/HelloPangolinThreads/main.cpp
     spdlog::set_default_logger(spdlog::stdout_color_mt("console"));
 
-    QCoreApplication app(argc, argv); //use QCoreApplication::instance() to access
+    QCoreApplication app(argc, argv); //use QCoreApplication::instance() to access TODO:init in subsystems
 
     spdlog::info("Starting robot");
     State *state = State::instance();
     Commands *commands = Commands::instance();
     Outputs *outputs = Outputs::instance();
+    state->argc = argc;
+    state->argv = argv;
     Configs::configure();
     Control::configure(commands);
     std::vector<SubsystemBase *> enabledSubsystems{
         Miscellaneous::instance(state),
         Vision::instance(state, commands, outputs),
         Display::instance(state, commands, outputs),
+        BlinkingLights::instance(state, commands, outputs),
         Uploader::instance(state, commands,
-                           outputs), // TODO: why cant uploader be threaded
-        BlinkingLights::instance(state, commands, outputs)
+                           outputs) // TODO: why cant uploader be threaded
     };
 
     std::vector<SubsystemBase *> threadedSubsystems, nonThreadedSubsystems;
