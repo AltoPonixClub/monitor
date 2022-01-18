@@ -24,8 +24,43 @@ cmake --build .
 
 ### Install [Eigen](https://gitlab.com/libeigen/eigen) (for matrix math)
 
+Debian
 ```
 sudo apt install libeigen3-dev
+```
+Mac
+```
+brew install eigen
+```
+Arch
+```
+sudo pacman -S eigen
+```
+
+### Install [spdlog](https://github.com/gabime/spdlog) (for logging math)
+
+Debian
+```
+sudo apt install libspdlog-dev
+```
+Mac
+```
+brew install spdlog
+```
+Arch
+```
+sudo pacman -S spdlog
+```
+
+### Install [libcurl](https://curl.se/download.html)
+
+Debian
+```
+sudo apt install libcurl4-openssl-dev
+```
+Arch
+```
+sudo pacman -S libcurl-openssl
 ```
 
 ### Install [OpenCV](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html) (for computer vision stuffs)
@@ -66,14 +101,17 @@ pkg-config --modversion opencv4
 
 ### Install clang-format
 
+Debian
 ```
 sudo apt install clang-format
 ```
-
-
-### Install [libcurl](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html)
+Mac
 ```
-sudo apt install libcurl4-openssl-dev
+brew install clang-format
+```
+Arch
+```
+sudo pacman -S clang-format
 ```
 
 

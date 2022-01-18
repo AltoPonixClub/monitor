@@ -2,10 +2,13 @@
 
 ## Parts of the Monitor
 Each one of these classes can only have one class instance.
+
 ### State
 The state class stores the current state of the monitor. For example, it might include the current temperature or the current pH of the nutrient solution.
+
 ### Commands
 The commands class stores the operations that the monitor should do in one cycle.
+
 ### Outputs
 The outputs class stores the outputs after calculation for each subsystem. These values can be used to write to state.
 
@@ -24,6 +27,7 @@ This function takes in the current State and Commands and writes to Outputs. You
 This function reads the Outputs and applies them to the physical hardware. For example, the uploader subsystem uses the write function to upload the data string to the database.
 
 ## Other things
+
 ### Control
 The control class takes in user input and generates Commands. Control is the only way to write to Commands for now.
 
