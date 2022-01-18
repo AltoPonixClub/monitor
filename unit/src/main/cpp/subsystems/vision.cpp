@@ -2,6 +2,7 @@
 #include <spdlog/spdlog.h>
 #include <subsystems/vision.h>
 #include <utils/utils.h>
+#include "utils/dummyVideoCapture.h"
 
 // TODO: specify read only write only based on annotations
 Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
@@ -17,7 +18,14 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
                                            // you dont actually need VisionState
         this->leftCap = cv::VideoCapture(Configs::Vision::kLeftCamId);
         this->leftCap.set(cv::CAP_PROP_FPS, Configs::Vision::kFps);
-        assert(this->leftCap.isOpened());
+        if (!this->leftCap.isOpened()) {
+            spdlog::error("Monocular Camera Not Found");
+            throw std::runtime_error("Monocular Camera Not Found");
+        }
+        break;
+    case Commands::VisionState::DUMMY_MONOCULAR:
+        this->leftCap = DummyVideoCapture(Configs::Vision::kBlankPath);
+        spdlog::info("Created Dummy Camera");
         break;
     }
     spdlog::info("Vision: Successful Initialization");
@@ -56,6 +64,12 @@ void Vision::read(State *state) {
     cv::Mat frame;
     leftCap >> frame;
     cv::resize(frame, frame, Configs::Vision::kImgSize);
+//    try {
+//        cv::resize(frame, frame, Configs::Vision::kImgSize);
+//    }
+//    catch(std::exception& e) {
+//        std::cout << e.what() << std::endl;
+//    }
     state->capFrame = frame;
 
     cv::aruco::detectMarkers(
@@ -141,4 +155,4 @@ Vision *Vision::instance(State *state, Commands *commands, Outputs *outputs) {
 
 std::string Vision::name() { return "vision"; }
 
-bool Vision::threaded() { return false; }
+bool Vision::threaded() { return true; }

@@ -55,6 +55,7 @@ int main(int argc, char **argv) {
     threader->start(state, commands, outputs);
     // TODO: update control in separate thread
     while (true) {
+        app.processEvents();
         Control::update(commands);
         for (SubsystemBase *subsystem : nonThreadedSubsystems) {
             subsystem->read(state);
