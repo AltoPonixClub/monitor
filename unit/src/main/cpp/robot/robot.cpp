@@ -11,6 +11,7 @@
 #include "subsystems/uploader.h"
 #include "subsystems/vision.h"
 #include "utils/daq.h"
+#include "subsystems/peristalticPump.h"
 #include <QCoreApplication>
 
 int main(int argc, char **argv) {
@@ -34,6 +35,7 @@ int main(int argc, char **argv) {
         Vision::instance(state, commands, outputs),
         Display::instance(state, commands, outputs),
         BlinkingLights::instance(state, commands, outputs),
+        PeristalticPump::instance(state, commands, outputs),
         Uploader::instance(state, commands,
                            outputs) // TODO: why cant uploader be threaded
     };

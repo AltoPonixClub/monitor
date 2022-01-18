@@ -60,7 +60,7 @@ class Configs {
     };
     class DAQ {
       public:
-        static inline const std::string kArduinoPort = "cu.usbmodem13401";
+        static inline const std::string kArduinoPort = "cu.usbmodem14201";
     };
     class Uploader {
       public:

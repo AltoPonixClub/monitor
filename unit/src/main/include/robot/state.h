@@ -39,6 +39,10 @@ class State {
     bool ledIsOn;
     int nextToggleTime;
 
+    //PeristalticPump
+    std::string buttonStateGetCommand;
+    std::string buttonState;
+
     // Uploader
     std::vector<float *> measurementPointers;
     std::vector<long> lastUploadTimes;

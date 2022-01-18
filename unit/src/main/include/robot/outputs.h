@@ -22,6 +22,9 @@ class Outputs {
     // BlinkingLED
     std::string ledCommand;
 
+    // PeristalticPump
+    std::string pumpCommand;
+
     // Uploader
     std::string jsonMeasurementData;
 
