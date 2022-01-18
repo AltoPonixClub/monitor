@@ -39,7 +39,7 @@ class State {
     bool ledIsOn;
     int nextToggleTime;
 
-    //PeristalticPump
+    // PeristalticPump
     std::string buttonStateGetCommand;
     std::string buttonState;
 

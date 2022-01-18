@@ -23,7 +23,7 @@ class PeristalticPump : public SubsystemBase {
     void write(Outputs *outputs);
 
     static PeristalticPump *instance(State *state, Commands *commands,
-                                    Outputs *outputs);
+                                     Outputs *outputs);
 
     std::string name();
 

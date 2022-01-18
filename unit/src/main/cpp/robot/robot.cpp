@@ -6,12 +6,12 @@
 #include "subsystems/blinkingLights.h"
 #include "subsystems/display.h"
 #include "subsystems/miscellaneous.h"
+#include "subsystems/peristalticPump.h"
 #include "subsystems/subsystemBase.h"
 #include "subsystems/threaderer.h"
 #include "subsystems/uploader.h"
 #include "subsystems/vision.h"
 #include "utils/daq.h"
-#include "subsystems/peristalticPump.h"
 #include <QCoreApplication>
 
 int main(int argc, char **argv) {
