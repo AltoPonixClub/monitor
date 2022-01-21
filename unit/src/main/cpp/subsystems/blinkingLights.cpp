@@ -1,6 +1,3 @@
-//
-// Created by Maxwell Zhang on 1/9/22.
-//
 
 #include "subsystems/blinkingLights.h"
 #include "utils/daq.h"

@@ -1,6 +1,3 @@
-//
-// Created by Maxwell Zhang on 1/9/22.
-//
 
 #ifndef MONITOR_BLINKINGLED_H
 #define MONITOR_BLINKINGLED_H
