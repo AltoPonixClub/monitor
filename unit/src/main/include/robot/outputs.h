@@ -23,7 +23,8 @@ class Outputs {
     std::string ledCommand;
 
     // PeristalticPump
-    std::string pumpCommand;
+    std::string pump1Command;
+    std::string pump2Command;
 
     // Uploader
     std::string jsonMeasurementData;

@@ -40,8 +40,10 @@ class State {
     int nextToggleTime;
 
     // PeristalticPump
-    std::string buttonStateGetCommand;
-    std::string buttonState;
+    std::string buttonStateGetCommandMotor1;
+    std::string buttonStateGetCommandMotor2;
+    std::string buttonStateMotor1;
+    std::string buttonStateMotor2;
 
     // Uploader
     std::vector<float *> measurementPointers;
