@@ -21,8 +21,8 @@ class Configs {
         static inline const int kLeftCamId = 0, kRightCamId = 1,
                                 kFps = 60; // switch index
         static inline const cv::Size kImgSize = cv::Size(int(640), int(480));
-        static inline const std::string kCalibPath = std::string(
-            "/Users/ashray/CLionProjects/monitor/unit/outputs.yml");
+        static inline const std::string kCalibPath =
+            std::string("/Users/ashray/CLionProjects/monitor/unit/outputs.yml");
         static inline const std::vector<std::vector<cv::Point3f>>
             kBoardArucoPts = {
                 {cv::Point3f(0, 0, 0), cv::Point3f(0, 4.6, 0),
@@ -46,39 +46,44 @@ class Configs {
                                      kArucoIds);
     };
     class CameraMovePositions {
-    public:
-        static inline const std::vector<double> corner1Vec = {Configs::Physical::kPlatformDim.width*1.5,
-                                                Configs::Physical::kPlatformDim.width*1.5,
-                                                Configs::Physical::kPlatformDim.width*1.0};
+      public:
+        static inline const std::vector<double> corner1Vec = {
+            Configs::Physical::kPlatformDim.width * 1.5,
+            Configs::Physical::kPlatformDim.width * 1.5,
+            Configs::Physical::kPlatformDim.width * 1.0};
 
-        static inline const std::vector<double> corner2Vec = {-Configs::Physical::kPlatformDim.width*0.5,
-                                                -Configs::Physical::kPlatformDim.width*0.5,
-                                                Configs::Physical::kPlatformDim.width*1.0};
+        static inline const std::vector<double> corner2Vec = {
+            -Configs::Physical::kPlatformDim.width * 0.5,
+            -Configs::Physical::kPlatformDim.width * 0.5,
+            Configs::Physical::kPlatformDim.width * 1.0};
 
-        static inline const std::vector<double> corner3Vec = {-Configs::Physical::kPlatformDim.width*0.5,
-                                                Configs::Physical::kPlatformDim.width*1.5,
-                                                Configs::Physical::kPlatformDim.width*1.0};
+        static inline const std::vector<double> corner3Vec = {
+            -Configs::Physical::kPlatformDim.width * 0.5,
+            Configs::Physical::kPlatformDim.width * 1.5,
+            Configs::Physical::kPlatformDim.width * 1.0};
 
-        static inline const std::vector<double> corner4Vec = {Configs::Physical::kPlatformDim.width*1.5,
-                                                -Configs::Physical::kPlatformDim.width*0.5,
-                                                Configs::Physical::kPlatformDim.width*1.0};
+        static inline const std::vector<double> corner4Vec = {
+            Configs::Physical::kPlatformDim.width * 1.5,
+            -Configs::Physical::kPlatformDim.width * 0.5,
+            Configs::Physical::kPlatformDim.width * 1.0};
 
-        static inline const std::vector<double> side1Vec = {Configs::Physical::kPlatformDim.width*0.5,
-                                              0,
-                                              Configs::Physical::kPlatformDim.width*1.0};
+        static inline const std::vector<double> side1Vec = {
+            Configs::Physical::kPlatformDim.width * 0.5, 0,
+            Configs::Physical::kPlatformDim.width * 1.0};
 
-        static inline const std::vector<double> side2Vec = {0,
-                                              Configs::Physical::kPlatformDim.width*0.5,
-                                              Configs::Physical::kPlatformDim.width*1.0};
+        static inline const std::vector<double> side2Vec = {
+            0, Configs::Physical::kPlatformDim.width * 0.5,
+            Configs::Physical::kPlatformDim.width * 1.0};
 
-        static inline const std::vector<double> side3Vec = {Configs::Physical::kPlatformDim.width*0.5,
-                                              Configs::Physical::kPlatformDim.width*1.5,
-                                              Configs::Physical::kPlatformDim.width*1.0};
+        static inline const std::vector<double> side3Vec = {
+            Configs::Physical::kPlatformDim.width * 0.5,
+            Configs::Physical::kPlatformDim.width * 1.5,
+            Configs::Physical::kPlatformDim.width * 1.0};
 
-        static inline const std::vector<double> side4Vec = {Configs::Physical::kPlatformDim.width*1.5,
-                                              Configs::Physical::kPlatformDim.width*0.5,
-                                              Configs::Physical::kPlatformDim.width*1.0};
-
+        static inline const std::vector<double> side4Vec = {
+            Configs::Physical::kPlatformDim.width * 1.5,
+            Configs::Physical::kPlatformDim.width * 0.5,
+            Configs::Physical::kPlatformDim.width * 1.0};
     };
     class Display {
       public:

@@ -34,7 +34,7 @@ class State {
     std::vector<int> detectedArucoIds;
     std::vector<cv::Point2f> transform_dst;
 
-    //Camera Position
+    // Camera Position
     int indexCameraMove;
 
     // BlinkingLights

@@ -31,9 +31,9 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
             Configs::Physical::kPlatformDim.width / 2,
             Configs::Physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
 
-//        pangolin::View& dCam = pangolin::CreateDisplay().SetBounds(0.0, 1.0,
-//        0.0, 1.0, -640.0f / 480.0f).SetHandler(new
-//        pangolin::Handler3D(this->sCam));
+    //        pangolin::View& dCam =
+    //        pangolin::CreateDisplay().SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f /
+    //        480.0f).SetHandler(new pangolin::Handler3D(this->sCam));
     this->dCam = pangolin::CreateDisplay()
                      .SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f / 480.0f)
                      .SetHandler(new pangolin::Handler3D(this->sCam));
@@ -171,17 +171,30 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
         outputs->logVal = state->camTvec[0];
     }
 
+    // Camera move
+    double sigmoidDD =
+        100 * -(std::cos(3.1415926535 * (state->indexCameraMove / 100.0)) - 1) /
+        2;
 
-    //Camera move
-    double sigmoidDD = 100 * -(std::cos(3.1415926535 * (state->indexCameraMove/100.0)) - 1)/2;
+    //    std::cout << outputs->positionCamera[0] << std::endl;
+    //    std::cout << outputs->targetCameraPosition[0] << std::endl;
+    //    std::cout << outputs->previousCameraPosition[0] << std::endl;
 
-//    std::cout << outputs->positionCamera[0] << std::endl;
-//    std::cout << outputs->targetCameraPosition[0] << std::endl;
-//    std::cout << outputs->previousCameraPosition[0] << std::endl;
-
-    outputs->positionCamera[0] = (((outputs->targetCameraPosition[0] - outputs->previousCameraPosition[0]) / 100.0) * sigmoidDD) + outputs->previousCameraPosition[0];
-    outputs->positionCamera[1] = (((outputs->targetCameraPosition[1] - outputs->previousCameraPosition[1]) / 100.0) * sigmoidDD) + outputs->previousCameraPosition[1];
-    outputs->positionCamera[2] = (((outputs->targetCameraPosition[2] - outputs->previousCameraPosition[2]) / 100.0) * sigmoidDD) + outputs->previousCameraPosition[2];
+    outputs->positionCamera[0] = (((outputs->targetCameraPosition[0] -
+                                    outputs->previousCameraPosition[0]) /
+                                   100.0) *
+                                  sigmoidDD) +
+                                 outputs->previousCameraPosition[0];
+    outputs->positionCamera[1] = (((outputs->targetCameraPosition[1] -
+                                    outputs->previousCameraPosition[1]) /
+                                   100.0) *
+                                  sigmoidDD) +
+                                 outputs->previousCameraPosition[1];
+    outputs->positionCamera[2] = (((outputs->targetCameraPosition[2] -
+                                    outputs->previousCameraPosition[2]) /
+                                   100.0) *
+                                  sigmoidDD) +
+                                 outputs->previousCameraPosition[2];
 
     state->indexCameraMove++;
 
@@ -229,16 +242,21 @@ void Display::write(Outputs *outputs) {
     if (!pangolin::ShouldQuit()) {
 
         this->sCam = pangolin::OpenGlRenderState(
-                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
-                pangolin::ModelViewLookAt(outputs->positionCamera[0], outputs->positionCamera[1], outputs->positionCamera[2],
-                                          Configs::Physical::kPlatformDim.width / 2,
-                                          Configs::Physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+            pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
+            pangolin::ModelViewLookAt(
+                outputs->positionCamera[0], outputs->positionCamera[1],
+                outputs->positionCamera[2],
+                Configs::Physical::kPlatformDim.width / 2,
+                Configs::Physical::kPlatformDim.height / 2, 0,
+                pangolin::AxisZ));
 
-//        this->sCam = pangolin::OpenGlRenderState(
-//                pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 1000),
-//                pangolin::ModelViewLookAt(0, 0, 0,
-//                                          Configs::Physical::kPlatformDim.width / 2,
-//                                          Configs::Physical::kPlatformDim.height / 2, 0, pangolin::AxisZ));
+        //        this->sCam = pangolin::OpenGlRenderState(
+        //                pangolin::ProjectionMatrix(640, 480, 420, 420, 320,
+        //                240, 0.2, 1000), pangolin::ModelViewLookAt(0, 0, 0,
+        //                                          Configs::Physical::kPlatformDim.width
+        //                                          / 2,
+        //                                          Configs::Physical::kPlatformDim.height
+        //                                          / 2, 0, pangolin::AxisZ));
 
         glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
         glLineWidth(3);
