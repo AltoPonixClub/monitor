@@ -1,10 +1,9 @@
 
 #include "subsystems/blinkingLights.h"
+#include "config/configs.h"
+#include "spdlog/spdlog.h"
+#include "subsystems/vision.h"
 #include "utils/daq.h"
-#include <config/configs.h>
-#include <spdlog/spdlog.h>
-#include <subsystems/vision.h>
-#include <utils/utils.h>
 
 BlinkingLights::BlinkingLights(State *state, Commands *commands,
                                Outputs *outputs) {

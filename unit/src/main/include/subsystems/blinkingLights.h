@@ -2,12 +2,12 @@
 #ifndef MONITOR_BLINKINGLED_H
 #define MONITOR_BLINKINGLED_H
 
+#include "subsystems/subsystemBase.h"
 #include <config/configs.h>
 #include <iostream>
 #include <opencv2/aruco.hpp>
 #include <opencv2/aruco/dictionary.hpp>
 #include <opencv2/opencv.hpp>
-#include <subsystems/subsystemBase.h>
 
 class BlinkingLights : public SubsystemBase {
   public:

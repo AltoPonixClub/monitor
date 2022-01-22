@@ -14,9 +14,6 @@
 #include <QCoreApplication>
 
 int main(int argc, char **argv) {
-    // TODO: read
-    // https://github.com/stevenlovegrove/Pangolin/blob/master/examples/HelloPangolinThreads/main.cpp
-    // TODO: change all <> to "" for files in this project
     spdlog::set_default_logger(spdlog::stdout_color_mt("console"));
 
     QCoreApplication app(argc, argv); // use QCoreApplication::instance() to

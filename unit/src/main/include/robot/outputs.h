@@ -1,11 +1,11 @@
 #ifndef MONITOR_OUTPUTS_H
 #define MONITOR_OUTPUTS_H
 
-#include <config/configs.h>
+#include "config/configs.h"
+#include "utils/json.h"
 #include <opencv2/opencv.hpp>
 #include <pangolin/gl/gl.h>
 #include <string>
-#include <utils/json.h>
 
 // TODO: organize between subsystems
 class Outputs {
