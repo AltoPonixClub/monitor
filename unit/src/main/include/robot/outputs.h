@@ -22,6 +22,11 @@ class Outputs {
     // BlinkingLED
     std::string ledCommand;
 
+    //Camera Movement
+    std::vector<double> positionCamera;
+    std::vector<double> targetCameraPosition;
+    std::vector<double> previousCameraPosition;
+
     // Uploader
     std::string jsonMeasurementData;
 
