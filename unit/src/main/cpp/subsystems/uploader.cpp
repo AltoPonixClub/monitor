@@ -39,7 +39,7 @@ Uploader::Uploader(State *state, Commands *commands, Outputs *outputs) {
     }
 }
 
-void Uploader::read(State *state) {}
+void Uploader::read(State *state, Commands *commands) {}
 
 void Uploader::calculate(State *state, Commands *commands, Outputs *outputs) {
     if (state->authToken == "")

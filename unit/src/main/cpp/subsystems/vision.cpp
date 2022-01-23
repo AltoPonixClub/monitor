@@ -52,7 +52,8 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
         std::vector<float>(Configs::Vision::kImgSize.width, 0));
 }
 
-void Vision::read(State *state) {
+void Vision::read(State *state, Commands *commands) {
+//    if (commands->visionWantedState == Commands::VisionState::OFF) return;
     cv::Mat frame;
     leftCap >> frame;
     cv::resize(frame, frame, Configs::Vision::kImgSize);
@@ -117,6 +118,7 @@ void Vision::read(State *state) {
 }
 
 void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
+//    if (commands->visionWantedState == Commands::VisionState::OFF) return;
     outputs->editedCapFrame = state->capFrame.clone();
     for (const auto &corner : state->detectedArucoCorners) {
         for (auto pt : corner) {

@@ -13,7 +13,7 @@ class BlinkingLights : public SubsystemBase {
   public:
     BlinkingLights(State *state, Commands *commands, Outputs *outputs);
 
-    void read(State *state);
+    void read(State *state, Commands *commands);
 
     void calculate(State *state, Commands *commands, Outputs *outputs);
 

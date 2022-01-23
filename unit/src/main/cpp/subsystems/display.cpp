@@ -73,7 +73,7 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
     spdlog::info("Display: Successful Initialization");
 }
 
-void Display::read(State *state) {}
+void Display::read(State *state, Commands *commands) {}
 
 void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 

@@ -6,7 +6,7 @@ Miscellaneous::Miscellaneous(State *state) {
     state->initTimeS = Utils::getUnixTimestamp();
 }
 
-void Miscellaneous::read(State *state) {
+void Miscellaneous::read(State *state, Commands *commands) {
     state->timeS = Utils::getUnixTimestamp();
 }
 

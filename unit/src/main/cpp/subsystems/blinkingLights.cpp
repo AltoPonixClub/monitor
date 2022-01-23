@@ -14,7 +14,7 @@ BlinkingLights::BlinkingLights(State *state, Commands *commands,
     spdlog::info("Blinking LEDs: Successful Initialization");
 }
 
-void BlinkingLights::read(State *state) {}
+void BlinkingLights::read(State *state, Commands *commands) {}
 
 void BlinkingLights::calculate(State *state, Commands *commands,
                                Outputs *outputs) {
