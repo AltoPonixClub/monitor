@@ -151,7 +151,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     if (std::count(commands->displayWantedStates.begin(),
                    commands->displayWantedStates.end(),
                    Commands::DisplayState::DISPLAY_IMG)) {
-        cv::vconcat(outputs->editedCapFrame, state->undistortedFrame,
+        cv::vconcat(outputs->editedCapFrame, state->leftUndistortFrame,
                     outputs->displayFrame);
         cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
         cv::resize(outputs->displayFrame, outputs->displayFrame,
@@ -171,7 +171,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
                    commands->displayWantedStates.end(),
                    Commands::DisplayState::MESH)) {
         cv::Mat tmp; // TODO: clean up
-        cv::resize(state->undistortedFrame, tmp,
+        cv::resize(state->leftUndistortFrame, tmp,
                    cv::Size(Configs::Display::kMeshDensity,
                             Configs::Display::kMeshDensity));
         for (int i = 0; i < Configs::Display::kMeshDensity - 1; i++) {

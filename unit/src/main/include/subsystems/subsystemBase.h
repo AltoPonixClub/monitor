@@ -8,7 +8,7 @@
 
 class SubsystemBase {
   public:
-    virtual void read(State *state, Commands* commands) = 0;
+    virtual void read(State *state, Commands *commands) = 0;
 
     virtual void calculate(State *state, Commands *commands,
                            Outputs *outputs) = 0;

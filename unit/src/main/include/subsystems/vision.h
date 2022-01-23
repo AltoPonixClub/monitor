@@ -29,9 +29,6 @@ class Vision : public SubsystemBase {
     cv::VideoCapture leftCap, rightCap;
 
     // TODO: constants remove
-    cv::FileStorage calibFile;
-    cv::Mat cameraMatrix; // extrinsics
-    cv::Mat distCoeffs;   // intrinsics
     std::vector<cv::Point2f> transform_src;
 
     static inline Vision *pInstance = nullptr;

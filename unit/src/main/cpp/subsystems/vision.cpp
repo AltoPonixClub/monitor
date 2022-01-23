@@ -22,14 +22,6 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
     }
     spdlog::info("Vision: Successful Initialization");
 
-    // Load Single Cam Calibration (move this to Configs)
-    calibFile =
-        cv::FileStorage(Configs::Vision::kCalibPath, cv::FileStorage::READ);
-    assert(calibFile.isOpened());
-    cameraMatrix = calibFile.operator[]("K").mat(); // extrinsics
-    distCoeffs = calibFile.operator[]("D").mat();   // intrinsics
-    calibFile.~FileStorage();
-
     // TODO:  Mark constexpr to precalculate these value things ?? how this work
     for (const auto &i : Configs::Vision::kBoardArucoPts) {
         for (auto c : i) {
@@ -42,9 +34,11 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
         }
     }
 
-    state->capFrame = state->undistortedFrame = cv::Mat(
-        Configs::Vision::kImgSize.height, Configs::Vision::kImgSize.width,
-        CV_8UC3, Configs::Display::kGrey);
+    state->leftCapFrame = state->leftUndistortFrame = state->rightCapFrame =
+        state->rightRecFrame = state->leftRecFrame =
+            cv::Mat(Configs::Vision::kImgSize.height,
+                    Configs::Vision::kImgSize.width, CV_8UC3,
+                    Configs::Display::kGrey);
     state->camRotMat = cv::Mat(3, 3, CV_8UC1);
     state->camRvec, state->camTvec = cv::Vec3d(0, 0, 0);
     state->depthMap = std::vector<std::vector<float>>(
@@ -53,27 +47,36 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
 }
 
 void Vision::read(State *state, Commands *commands) {
-//    if (commands->visionWantedState == Commands::VisionState::OFF) return;
-    cv::Mat frame;
-    leftCap >> frame;
-    cv::resize(frame, frame, Configs::Vision::kImgSize);
-    state->capFrame = frame;
+    //    if (commands->visionWantedState == Commands::VisionState::OFF) return;
+    if (commands->visionWantedState == Commands::VisionState::MONOCULAR or
+        commands->visionWantedState == Commands::VisionState::STEREO) {
+        leftCap >> state->leftCapFrame;
+        cv::resize(state->leftCapFrame, state->leftCapFrame,
+                   Configs::Vision::kImgSize);
+        if (commands->visionWantedState == Commands::VisionState::STEREO) {
+            rightCap >> state->rightCapFrame;
+            cv::resize(state->rightCapFrame, state->rightCapFrame,
+                       Configs::Vision::kImgSize);
+            cv::Mat mapX, mapY = cv::Mat(state->rightCapFrame.rows, state->rightCapFrame.cols, CV_32FC1);
+            // TODO: finish stereo
+        }
+    }
 
     cv::aruco::detectMarkers(
-        frame, Configs::Vision::kArucoDictionary, state->detectedArucoCorners,
-        state->detectedArucoIds, Configs::Vision::kArucoParams,
-        state->rejectedArucoCorners);
+        state->leftCapFrame, Configs::Vision::kArucoDictionary,
+        state->detectedArucoCorners, state->detectedArucoIds,
+        Configs::Vision::kArucoParams, state->rejectedArucoCorners);
     cv::aruco::refineDetectedMarkers(
-        frame, Configs::Vision::kBoard, state->detectedArucoCorners,
-        state->detectedArucoIds, state->rejectedArucoCorners, cameraMatrix,
-        distCoeffs);
+        state->leftCapFrame, Configs::Vision::kBoard,
+        state->detectedArucoCorners, state->detectedArucoIds,
+        state->rejectedArucoCorners, Configs::Vision::StereoCalib::K1, Configs::Vision::StereoCalib::D1);
 
     state->transform_dst.clear();
     if (state->detectedArucoIds.size() > 1) {
         std::vector<std::pair<int, std::vector<cv::Point2f>>> tmp_corners;
         cv::aruco::estimatePoseBoard(
             state->detectedArucoCorners, state->detectedArucoIds,
-            Configs::Vision::kBoard, cameraMatrix, distCoeffs, state->camRvec,
+            Configs::Vision::kBoard, Configs::Vision::StereoCalib::K1, Configs::Vision::StereoCalib::D1, state->camRvec,
             state->camTvec);
         cv::Rodrigues(state->camRvec, state->camRotMat);
         state->camRotMat = state->camRotMat; // TODO: figure out inverse or not
@@ -96,10 +99,10 @@ void Vision::read(State *state, Commands *commands) {
             cv::Mat H = cv::findHomography(transform_src, state->transform_dst,
                                            cv::RANSAC, 5);
             // Apply perspective transformation to original image
-            cv::warpPerspective(state->capFrame, state->undistortedFrame,
+            cv::warpPerspective(state->leftCapFrame, state->leftUndistortFrame,
                                 H.inv(), Configs::Display::kImgDispSize,
                                 cv::INTER_LINEAR);
-            state->undistortedFrame = state->undistortedFrame(
+            state->leftUndistortFrame = state->leftUndistortFrame(
                 cv::Rect(0, 0, Configs::Vision::kImgSize.width,
                          Configs::Vision::kImgSize.height));
         } catch (...) {
@@ -118,8 +121,8 @@ void Vision::read(State *state, Commands *commands) {
 }
 
 void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
-//    if (commands->visionWantedState == Commands::VisionState::OFF) return;
-    outputs->editedCapFrame = state->capFrame.clone();
+    //    if (commands->visionWantedState == Commands::VisionState::OFF) return;
+    outputs->editedCapFrame = state->leftCapFrame.clone();
     for (const auto &corner : state->detectedArucoCorners) {
         for (auto pt : corner) {
             cv::circle(outputs->editedCapFrame, pt,

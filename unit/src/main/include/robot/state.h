@@ -25,7 +25,8 @@ class State {
     float airFlow = 0;
 
     // Vision
-    cv::Mat capFrame, undistortedFrame;
+    cv::Mat leftCapFrame, rightCapFrame, leftUndistortFrame, leftRecFrame,
+        rightRecFrame, dispFrame;
     cv::Vec3d camRvec, camTvec;
     cv::Mat camRotMat;
     std::vector<std::vector<float>> depthMap;
