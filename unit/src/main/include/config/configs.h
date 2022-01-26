@@ -44,6 +44,7 @@ class Configs {
         static inline const cv::Ptr<cv::aruco::Board> kBoard =
             cv::aruco::Board::create(kBoardArucoPts, kArucoDictionary,
                                      kArucoIds);
+        static inline std::string kBlankPath = std::string("/home/aoberai/programming/altoponix/monitor/unit/assets/blank.png");
     };
     class Display {
       public:

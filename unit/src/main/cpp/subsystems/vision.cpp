@@ -2,6 +2,7 @@
 #include "config/configs.h"
 #include "spdlog/spdlog.h"
 #include "utils/utils.h"
+#include "utils/dummyVideoCapture.h"
 
 // TODO: specify read only write only based on annotations
 Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
@@ -10,14 +11,21 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
     case Commands::VisionState::OFF:
         break;
     case Commands::VisionState::STEREO:
-        this->rightCap = cv::VideoCapture(Configs::Vision::kRightCamId);
-        this->rightCap.set(cv::CAP_PROP_FPS, Configs::Vision::kFps);
-        assert(this->rightCap.isOpened());
+        this->rightCap = new cv::VideoCapture(Configs::Vision::kRightCamId);
+        this->rightCap->set(cv::CAP_PROP_FPS, Configs::Vision::kFps);
+        assert(this->rightCap->isOpened());
     case Commands::VisionState::MONOCULAR: // TODO: how to enforce this because
                                            // you dont actually need VisionState
-        this->leftCap = cv::VideoCapture(Configs::Vision::kLeftCamId);
-        this->leftCap.set(cv::CAP_PROP_FPS, Configs::Vision::kFps);
-        assert(this->leftCap.isOpened());
+        this->leftCap = new cv::VideoCapture(Configs::Vision::kLeftCamId);
+        this->leftCap->set(cv::CAP_PROP_FPS, Configs::Vision::kFps);
+        if (!this->leftCap->isOpened()) {
+            spdlog::error("Monocular Camera Not Found");
+            throw std::runtime_error("Monocular Camera Not Found");
+        }
+        break;
+    case Commands::VisionState::DUMMY_MONOCULAR:
+        this->leftCap = new DummyVideoCapture(Configs::Vision::kBlankPath);
+        spdlog::info("Created Dummy Camera");
         break;
     }
     spdlog::info("Vision: Successful Initialization");
@@ -55,8 +63,14 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
 void Vision::read(State *state, Commands *commands) {
 //    if (commands->visionWantedState == Commands::VisionState::OFF) return;
     cv::Mat frame;
-    leftCap >> frame;
+    *leftCap >> frame;
     cv::resize(frame, frame, Configs::Vision::kImgSize);
+//    try {
+//        cv::resize(frame, frame, Configs::Vision::kImgSize);
+//    }
+//    catch(std::exception& e) {
+//        std::cout << e.what() << std::endl;
+//    }
     state->capFrame = frame;
 
     cv::aruco::detectMarkers(

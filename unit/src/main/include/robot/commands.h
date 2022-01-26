@@ -8,7 +8,7 @@ class Commands {
   public:
     static Commands *instance();
 
-    enum class VisionState { MONOCULAR, STEREO, OFF };
+    enum class VisionState { MONOCULAR, STEREO, DUMMY_MONOCULAR, OFF };
     enum class DisplayState { MESH, DISPLAY_IMG, PLOTTER, CAMERA_POS, MENU };
 
     enum class LEDState { OFF, SLOW, MEDIUM, FAST, SUPERFAST };

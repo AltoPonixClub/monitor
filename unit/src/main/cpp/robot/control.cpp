@@ -3,7 +3,7 @@
 
 // TODO : clean up vectors
 void Control::configure(Commands *commands) {
-    commands->visionWantedState = Commands::VisionState::MONOCULAR;
+    commands->visionWantedState = Commands::VisionState::DUMMY_MONOCULAR;
     // TODO: Doesnt work if I dont enable camera
     // pose and display img; cannot just enable mesh
     commands->displayWantedStates = std::vector<Commands::DisplayState>{

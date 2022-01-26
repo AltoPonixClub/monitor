@@ -11,14 +11,15 @@
 #include "subsystems/uploader.h"
 #include "subsystems/vision.h"
 #include "utils/daq.h"
+#include "utils/dummyVideoCapture.h"
 #include <QCoreApplication>
 
 int main(int argc, char **argv) {
     spdlog::set_default_logger(spdlog::stdout_color_mt("console"));
 
     QCoreApplication app(argc, argv); // use QCoreApplication::instance() to
-                                      // access TODO:init in subsystems
-
+                                      // access
+                                      // TODO:init in subsystems
     spdlog::info("Starting robot");
     State *state = State::instance();
     Commands *commands = Commands::instance();
@@ -53,6 +54,7 @@ int main(int argc, char **argv) {
     threader->start(state, commands, outputs);
     // TODO: update control in separate thread
     while (true) {
+        app.processEvents();
         Control::update(commands);
         for (SubsystemBase *subsystem : nonThreadedSubsystems) {
             subsystem->read(state, commands);
