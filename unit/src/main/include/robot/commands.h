@@ -1,7 +1,7 @@
 #ifndef MONITOR_COMMANDS_H
 #define MONITOR_COMMANDS_H
 
-#include <config/configs.h>
+#include "config/configs.h"
 #include <vector>
 
 class Commands {

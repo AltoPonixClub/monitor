@@ -1,13 +1,9 @@
-//
-// Created by Maxwell Zhang on 1/9/22.
-//
 
 #include "subsystems/blinkingLights.h"
+#include "config/configs.h"
+#include "spdlog/spdlog.h"
+#include "subsystems/vision.h"
 #include "utils/daq.h"
-#include <config/configs.h>
-#include <spdlog/spdlog.h>
-#include <subsystems/vision.h>
-#include <utils/utils.h>
 
 BlinkingLights::BlinkingLights(State *state, Commands *commands,
                                Outputs *outputs) {
@@ -18,7 +14,7 @@ BlinkingLights::BlinkingLights(State *state, Commands *commands,
     spdlog::info("Blinking LEDs: Successful Initialization");
 }
 
-void BlinkingLights::read(State *state) {}
+void BlinkingLights::read(State *state, Commands *commands) {}
 
 void BlinkingLights::calculate(State *state, Commands *commands,
                                Outputs *outputs) {

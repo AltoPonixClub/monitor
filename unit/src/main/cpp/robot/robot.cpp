@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
         app.processEvents();
         Control::update(commands);
         for (SubsystemBase *subsystem : nonThreadedSubsystems) {
-            subsystem->read(state);
+            subsystem->read(state, commands);
             subsystem->calculate(state, commands, outputs);
             subsystem->write(outputs);
         }

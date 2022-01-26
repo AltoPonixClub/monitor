@@ -11,7 +11,7 @@ class Display : public SubsystemBase {
   public:
     Display(State *state, Commands *commands, Outputs *outputs);
 
-    void read(State *state);
+    void read(State *state, Commands *commands);
 
     void calculate(State *state, Commands *commands, Outputs *outputs);
 

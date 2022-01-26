@@ -1,18 +1,17 @@
+#include "subsystems/display.h"
+#include "config/configs.h"
+#include "opencv2/core/eigen.hpp"
+#include "utils/utils.h"
 #include <Eigen/Core>
-#include <config/configs.h>
-#include <opencv2/core/eigen.hpp>
-#include <subsystems/display.h>
-#include <utils/utils.h>
 
-#include <pangolin/display/display.h>
-#include <pangolin/display/view.h>
-#include <pangolin/gl/gl.h>
-#include <pangolin/gl/gldraw.h>
-#include <pangolin/gl/glinclude.h>
-#include <pangolin/handler/handler.h>
-#include <pangolin/plot/plotter.h>
-#include <pangolin/var/var.h>
-#include <spdlog/spdlog.h>
+#include "pangolin/display/display.h"
+#include "pangolin/display/view.h"
+#include "pangolin/gl/gl.h"
+#include "pangolin/gl/gldraw.h"
+#include "pangolin/gl/glinclude.h"
+#include "pangolin/handler/handler.h"
+#include "pangolin/plot/plotter.h"
+#include "spdlog/spdlog.h"
 
 // TODO: do based on commands wants
 Display::Display(State *state, Commands *commands, Outputs *outputs) {
@@ -74,7 +73,7 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
     spdlog::info("Display: Successful Initialization");
 }
 
-void Display::read(State *state) {}
+void Display::read(State *state, Commands *commands) {}
 
 void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
 

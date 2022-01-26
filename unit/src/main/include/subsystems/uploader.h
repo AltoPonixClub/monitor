@@ -1,13 +1,13 @@
 #ifndef MONITOR_UPLOADER_H
 #define MONITOR_UPLOADER_H
 
-#include <subsystems/subsystemBase.h>
+#include "subsystems/subsystemBase.h"
 
 class Uploader : public SubsystemBase {
   public:
     Uploader(State *state, Commands *commands, Outputs *outputs);
 
-    void read(State *state);
+    void read(State *state, Commands *commands);
 
     void calculate(State *state, Commands *commands, Outputs *outputs);
 
