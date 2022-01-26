@@ -11,16 +11,15 @@
 #include "subsystems/uploader.h"
 #include "subsystems/vision.h"
 #include "utils/daq.h"
+#include "utils/dummyVideoCapture.h"
 #include <QCoreApplication>
 
 int main(int argc, char **argv) {
-    // TODO: read
-    // https://github.com/stevenlovegrove/Pangolin/blob/master/examples/HelloPangolinThreads/main.cpp
     spdlog::set_default_logger(spdlog::stdout_color_mt("console"));
 
     QCoreApplication app(argc, argv); // use QCoreApplication::instance() to
-                                      // access TODO:init in subsystems
-
+                                      // access
+                                      // TODO:init in subsystems
     spdlog::info("Starting robot");
     State *state = State::instance();
     Commands *commands = Commands::instance();

@@ -9,8 +9,7 @@ private:
 public:
     DummyVideoCapture();
     DummyVideoCapture(std::string filename);
-    //    bool open(const cv::String &filename, int apiPreference = cv::CAP_ANY) override;
-    DummyVideoCapture& operator >> (CV_OUT cv::Mat& image) override;
+    DummyVideoCapture& operator >> (cv::Mat& image) override;
 };
 
 #endif //MONITOR_DUMMYVIDEOCAPTURE_H
