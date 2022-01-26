@@ -73,9 +73,9 @@ Display::Display(State *state, Commands *commands, Outputs *outputs) {
     spdlog::info("Display: Successful Initialization");
 }
 
-void Display::read(State *state, Commands *commands) {}
+void Display::read(State *state, Commands commands) {}
 
-void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
+void Display::calculate(State state, Commands commands, Outputs *outputs) {
 
     Eigen::Matrix4f transformationMatrix;
     Eigen::Matrix4f reorientMatrix;
@@ -118,15 +118,15 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     //            state->camRotMat.at<float>(2, 1),
     //            state->camRotMat.at<float>(2, 2), state->camTvec[2], 0, 0, 0,
     //            1;
-    transformationMatrix << state->camRotMat.at<double>(0, 0),
-        state->camRotMat.at<double>(0, 1), state->camRotMat.at<double>(0, 2),
-        state->camTvec[0] +
+    transformationMatrix << state.camRotMat.at<double>(0, 0),
+        state.camRotMat.at<double>(0, 1), state.camRotMat.at<double>(0, 2),
+        state.camTvec[0] +
             Configs::Physical::kPlatformDim.height / 2, // TODO: no divide by 2
-        state->camRotMat.at<double>(1, 0), state->camRotMat.at<double>(1, 1),
-        state->camRotMat.at<double>(1, 2),
-        state->camTvec[1] + Configs::Physical::kPlatformDim.width / 2,
-        state->camRotMat.at<double>(2, 0), state->camRotMat.at<double>(2, 1),
-        state->camRotMat.at<double>(2, 2), state->camTvec[2], 0, 0, 0, 1;
+        state.camRotMat.at<double>(1, 0), state.camRotMat.at<double>(1, 1),
+        state.camRotMat.at<double>(1, 2),
+        state.camTvec[1] + Configs::Physical::kPlatformDim.width / 2,
+        state.camRotMat.at<double>(2, 0), state.camRotMat.at<double>(2, 1),
+        state.camRotMat.at<double>(2, 2), state.camTvec[2], 0, 0, 0, 1;
 
     reorientMatrix << 1, 0, 0, 0, 0, cos(Utils::deg2rad(180)),
         -sin(Utils::deg2rad(180)), 0, 0, sin(Utils::deg2rad(180)),
@@ -137,8 +137,8 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     //            0, 0, 1, 0,
     //            0, 0, 0, 1;
 
-    if (std::count(commands->displayWantedStates.begin(),
-                   commands->displayWantedStates.end(),
+    if (std::count(commands.displayWantedStates.begin(),
+                   commands.displayWantedStates.end(),
                    Commands::DisplayState::CAMERA_POS)) {
         outputs->frustumVerts = Utils::getFrustumVertices(
             -0.5, -0.5, 1, 1, 1, 1,
@@ -148,30 +148,30 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
         }
     }
 
-    if (std::count(commands->displayWantedStates.begin(),
-                   commands->displayWantedStates.end(),
+    if (std::count(commands.displayWantedStates.begin(),
+                   commands.displayWantedStates.end(),
                    Commands::DisplayState::DISPLAY_IMG)) {
-        cv::vconcat(outputs->editedCapFrame, state->undistortedFrame,
+        cv::vconcat(outputs->editedCapFrame, state.undistortedFrame,
                     outputs->displayFrame);
         cv::flip(outputs->displayFrame, outputs->displayFrame, 0);
         cv::resize(outputs->displayFrame, outputs->displayFrame,
                    Configs::Display::kImgDispSize);
     }
 
-    if (std::count(commands->displayWantedStates.begin(),
-                   commands->displayWantedStates.end(),
+    if (std::count(commands.displayWantedStates.begin(),
+                   commands.displayWantedStates.end(),
                    Commands::DisplayState::PLOTTER)) {
-        outputs->logVal = state->camTvec[0];
+        outputs->logVal = state.camTvec[0];
     }
 
     // Mesh Creation
     outputs->meshColor.clear();
     outputs->meshLines.clear();
-    if (std::count(commands->displayWantedStates.begin(),
-                   commands->displayWantedStates.end(),
+    if (std::count(commands.displayWantedStates.begin(),
+                   commands.displayWantedStates.end(),
                    Commands::DisplayState::MESH)) {
         cv::Mat tmp; // TODO: clean up
-        cv::resize(state->undistortedFrame, tmp,
+        cv::resize(state.undistortedFrame, tmp,
                    cv::Size(Configs::Display::kMeshDensity,
                             Configs::Display::kMeshDensity));
         for (int i = 0; i < Configs::Display::kMeshDensity - 1; i++) {
@@ -183,18 +183,18 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
                                 Configs::Display::kMeshDensity,
                      Configs::Physical::kPlatformDim.height * j /
                          Configs::Display::kMeshDensity,
-                     state->depthMap[int(state->depthMap.size() *
+                     state.depthMap[int(state.depthMap.size() *
                                          (i / Configs::Display::kMeshDensity))]
-                                    [int(state->depthMap[0].size() *
+                                    [int(state.depthMap[0].size() *
                                          (j / Configs::Display::kMeshDensity))],
                      Configs::Physical::kPlatformDim.width * (i + 1) /
                          Configs::Display::kMeshDensity,
                      Configs::Physical::kPlatformDim.height * (j + 1) /
                          Configs::Display::kMeshDensity,
-                     state->depthMap
-                         [int(state->depthMap.size() *
+                     state.depthMap
+                         [int(state.depthMap.size() *
                               ((i + 1) / Configs::Display::kMeshDensity))]
-                         [int(state->depthMap[0].size() *
+                         [int(state.depthMap[0].size() *
                               ((j + 1) / Configs::Display::kMeshDensity))])
                         .finished());
                 outputs->meshColor.emplace_back(
@@ -204,7 +204,7 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
     }
 }
 
-void Display::write(Outputs *outputs) {
+void Display::write(Outputs outputs) {
     if (!pangolin::ShouldQuit()) {
 
         glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
@@ -235,20 +235,20 @@ void Display::write(Outputs *outputs) {
         // Draws Camera Frustum
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
         glBegin(GL_QUADS);
-        for (int i = 0; i < outputs->frustumVerts.size(); i++) {
-            for (int j = i + 1; j < outputs->frustumVerts.size(); j++) {
-                for (int c = j + 1; c < outputs->frustumVerts.size(); c++) {
-                    glVertex3f(outputs->frustumVerts[i].data()[0],
-                               outputs->frustumVerts[i].data()[1],
-                               outputs->frustumVerts[i].data()[2]);
+        for (int i = 0; i < outputs.frustumVerts.size(); i++) {
+            for (int j = i + 1; j < outputs.frustumVerts.size(); j++) {
+                for (int c = j + 1; c < outputs.frustumVerts.size(); c++) {
+                    glVertex3f(outputs.frustumVerts[i].data()[0],
+                               outputs.frustumVerts[i].data()[1],
+                               outputs.frustumVerts[i].data()[2]);
 
-                    glVertex3f(outputs->frustumVerts[j].data()[0],
-                               outputs->frustumVerts[j].data()[1],
-                               outputs->frustumVerts[j].data()[2]);
+                    glVertex3f(outputs.frustumVerts[j].data()[0],
+                               outputs.frustumVerts[j].data()[1],
+                               outputs.frustumVerts[j].data()[2]);
 
-                    glVertex3f(outputs->frustumVerts[c].data()[0],
-                               outputs->frustumVerts[c].data()[1],
-                               outputs->frustumVerts[c].data()[2]);
+                    glVertex3f(outputs.frustumVerts[c].data()[0],
+                               outputs.frustumVerts[c].data()[1],
+                               outputs.frustumVerts[c].data()[2]);
                 }
             }
         }
@@ -261,32 +261,32 @@ void Display::write(Outputs *outputs) {
         glBegin(GL_POINTS);
 
         // TODO: segfault around here when plain
-        glVertex3f(outputs->frustumVerts.back().data()[0],
-                   outputs->frustumVerts.back().data()[1],
-                   outputs->frustumVerts.back().data()[2]);
+        glVertex3f(outputs.frustumVerts.back().data()[0],
+                   outputs.frustumVerts.back().data()[1],
+                   outputs.frustumVerts.back().data()[2]);
 
         glEnd();
 
-        for (int i = 0; i < outputs->meshLines.size(); i++) {
-            glColor3ub(outputs->meshColor[i][2], outputs->meshColor[i][1],
-                       outputs->meshColor[i][0]);
+        for (int i = 0; i < outputs.meshLines.size(); i++) {
+            glColor3ub(outputs.meshColor[i][2], outputs.meshColor[i][1],
+                       outputs.meshColor[i][0]);
             pangolin::glDrawLine(
-                outputs->meshLines[i][0], outputs->meshLines[i][1],
-                outputs->meshLines[i][2], outputs->meshLines[i][3],
-                outputs->meshLines[i][4], outputs->meshLines[i][5]);
+                outputs.meshLines[i][0], outputs.meshLines[i][1],
+                outputs.meshLines[i][2], outputs.meshLines[i][3],
+                outputs.meshLines[i][4], outputs.meshLines[i][5]);
         }
 
         glColor3f(1, 1, 1);
 
         if (this->dImg != nullptr) {
-            imgTex.Upload(outputs->displayFrame.data, GL_BGR, GL_UNSIGNED_BYTE);
+            imgTex.Upload(outputs.displayFrame.data, GL_BGR, GL_UNSIGNED_BYTE);
             this->dImg->Activate();
             imgTex.RenderToViewport();
         }
 
         // Plotter log
         log.Log(
-            outputs->logVal); // TODO: outputs since tvec is an output to show
+            outputs.logVal); // TODO: outputs since tvec is an output to show
 
         // Swap frames and Process Events
         pangolin::FinishFrame();

@@ -14,41 +14,43 @@ BlinkingLights::BlinkingLights(State *state, Commands *commands,
     spdlog::info("Blinking LEDs: Successful Initialization");
 }
 
-void BlinkingLights::read(State *state, Commands *commands) {}
+void BlinkingLights::read(State *state, Commands commands) {}
 
-void BlinkingLights::calculate(State *state, Commands *commands,
+void BlinkingLights::calculate(State state, Commands commands,
                                Outputs *outputs) {
-    switch (commands->ledWantedState) {
+
+    // TODO: this no longer works since cannot edit state here, perhaps these should be local variables
+    switch (commands.ledWantedState) {
     case Commands::LEDState::OFF:
-        state->delayLED = 100;
+        state.delayLED = 100;
         break;
     case Commands::LEDState::SLOW:
-        state->delayLED = 20;
+        state.delayLED = 20;
         break;
     case Commands::LEDState::MEDIUM:
-        state->delayLED = 10;
+        state.delayLED = 10;
         break;
     case Commands::LEDState::FAST:
-        state->delayLED = 5;
+        state.delayLED = 5;
         break;
     case Commands::LEDState::SUPERFAST:
-        state->delayLED = 1;
+        state.delayLED = 1;
         break;
     }
-    if ((state->timeS - state->initTimeS) / 1000 >= state->nextToggleTime) {
-        state->nextToggleTime += state->delayLED;
-        if (state->ledIsOn) {
-            state->ledIsOn = false;
+    if ((state.timeS - state.initTimeS) / 1000 >= state.nextToggleTime) {
+        state.nextToggleTime += state.delayLED;
+        if (state.ledIsOn) {
+            state.ledIsOn = false;
             outputs->ledCommand = "/post?pin(A0,0)";
         } else {
-            state->ledIsOn = true;
+            state.ledIsOn = true;
             outputs->ledCommand = "/post?pin(A0,255)";
         }
     }
 }
 
-void BlinkingLights::write(Outputs *outputs) {
-    DAQ::instance(Configs::DAQ::kArduinoPort)->request(outputs->ledCommand);
+void BlinkingLights::write(Outputs outputs) {
+    DAQ::instance(Configs::DAQ::kArduinoPort)->request(outputs.ledCommand);
 }
 
 BlinkingLights *BlinkingLights::instance(State *state, Commands *commands,

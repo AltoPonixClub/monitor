@@ -7,11 +7,11 @@ class Uploader : public SubsystemBase {
   public:
     Uploader(State *state, Commands *commands, Outputs *outputs);
 
-    void read(State *state, Commands *commands);
+    void read(State *state, Commands commands);
 
-    void calculate(State *state, Commands *commands, Outputs *outputs);
+    void calculate(State state, Commands commands, Outputs *outputs);
 
-    void write(Outputs *outputs);
+    void write(Outputs outputs);
 
     bool threaded();
 

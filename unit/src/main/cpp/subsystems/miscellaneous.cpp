@@ -6,14 +6,14 @@ Miscellaneous::Miscellaneous(State *state) {
     state->initTimeS = Utils::getUnixTimestamp();
 }
 
-void Miscellaneous::read(State *state, Commands *commands) {
+void Miscellaneous::read(State *state, Commands commands) {
     state->timeS = Utils::getUnixTimestamp();
 }
 
-void Miscellaneous::calculate(State *state, Commands *commands,
+void Miscellaneous::calculate(State state, Commands commands,
                               Outputs *outputs) {}
 
-void Miscellaneous::write(Outputs *outputs) {}
+void Miscellaneous::write(Outputs outputs) {}
 
 Miscellaneous *Miscellaneous::instance(State *state) {
     if (Miscellaneous::pInstance == nullptr) {

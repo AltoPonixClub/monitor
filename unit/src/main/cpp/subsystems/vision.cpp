@@ -60,7 +60,7 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
         std::vector<float>(Configs::Vision::kImgSize.width, 0));
 }
 
-void Vision::read(State *state, Commands *commands) {
+void Vision::read(State *state, Commands commands) {
 //    if (commands->visionWantedState == Commands::VisionState::OFF) return;
     cv::Mat frame;
     *leftCap >> frame;
@@ -131,10 +131,10 @@ void Vision::read(State *state, Commands *commands) {
     }
 }
 
-void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
+void Vision::calculate(State state, Commands commands, Outputs *outputs) {
 //    if (commands->visionWantedState == Commands::VisionState::OFF) return;
-    outputs->editedCapFrame = state->capFrame.clone();
-    for (const auto &corner : state->detectedArucoCorners) {
+    outputs->editedCapFrame = state.capFrame.clone();
+    for (const auto &corner : state.detectedArucoCorners) {
         for (auto pt : corner) {
             cv::circle(outputs->editedCapFrame, pt,
                        Configs::Display::kArucoCircRadius,
@@ -143,7 +143,7 @@ void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
     }
 }
 
-void Vision::write(Outputs *outputs) {
+void Vision::write(Outputs outputs) {
     //    cv::imshow("hello", outputs->editedCapFrame);
     //    cv::waitKey(1);
 }

@@ -39,25 +39,25 @@ Uploader::Uploader(State *state, Commands *commands, Outputs *outputs) {
     }
 }
 
-void Uploader::read(State *state, Commands *commands) {}
+void Uploader::read(State *state, Commands commands) {}
 
-void Uploader::calculate(State *state, Commands *commands, Outputs *outputs) {
-    if (state->authToken == "")
+void Uploader::calculate(State state, Commands commands, Outputs *outputs) {
+    if (state.authToken == "")
         return;
 
     outputs->jsonMeasurementData =
         R"({"monitor_id": ")" + Configs::Uploader::kMonitorId +
-        R"(", "token": ")" + state->authToken + R"(", )";
+        R"(", "token": ")" + state.authToken + R"(", )";
     int valuesUploaded = 0;
-    for (auto wantedState : commands->uploadWantedStates) {
-        if (state->timeS - state->lastUploadTimes[wantedState.first] >
+    for (auto wantedState : commands.uploadWantedStates) {
+        if (state.timeS - state.lastUploadTimes[wantedState.first] >
             wantedState.second) {
-            state->lastUploadTimes[wantedState.first] = state->timeS;
+            state.lastUploadTimes[wantedState.first] = state.timeS;
             valuesUploaded++;
             outputs->jsonMeasurementData +=
                 "\"" + Configs::Uploader::kMeasurementNames[wantedState.first] +
                 "\": " +
-                std::to_string(*state->measurementPointers[wantedState.first]) +
+                std::to_string(*state.measurementPointers[wantedState.first]) +
                 ",";
         }
     }
@@ -69,12 +69,12 @@ void Uploader::calculate(State *state, Commands *commands, Outputs *outputs) {
         outputs->jsonMeasurementData = "";
 }
 
-void Uploader::write(Outputs *outputs) {
-    if (outputs->jsonMeasurementData != "") {
-        spdlog::info("Uploader: Uploading " + outputs->jsonMeasurementData);
+void Uploader::write(Outputs outputs) {
+    if (outputs.jsonMeasurementData != "") {
+        spdlog::info("Uploader: Uploading " + outputs.jsonMeasurementData);
         RestClient::Response r = RestClient::post(
             Configs::Uploader::kEndpoint + Configs::Uploader::kUploadMethod,
-            "application/json", outputs->jsonMeasurementData);
+            "application/json", outputs.jsonMeasurementData);
         if (r.code != 200) {
             spdlog::error("Uploader: Upload to database failed with code " +
                           std::to_string(r.code) + "!");
@@ -102,6 +102,6 @@ Uploader *Uploader::instance(State *state, Commands *commands,
     return Uploader::pInstance;
 }
 
-std::string Uploader::name() { return std::string("uploader"); }
+std::string Uploader::name() { return "uploader"; }
 
 bool Uploader::threaded() { return true; }
