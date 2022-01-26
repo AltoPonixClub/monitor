@@ -3,13 +3,14 @@
 
 #include <opencv2/videoio.hpp>
 
-class DummyVideoCapture: public cv::VideoCapture {
-private:
+class DummyVideoCapture : public cv::VideoCapture {
+  private:
     cv::Mat img;
-public:
+
+  public:
     DummyVideoCapture();
     DummyVideoCapture(std::string filename);
-    DummyVideoCapture& operator >> (cv::Mat& image) override;
+    DummyVideoCapture &operator>>(cv::Mat &image) override;
 };
 
-#endif //MONITOR_DUMMYVIDEOCAPTURE_H
+#endif // MONITOR_DUMMYVIDEOCAPTURE_H

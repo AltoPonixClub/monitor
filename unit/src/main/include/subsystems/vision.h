@@ -13,11 +13,11 @@ class Vision : public SubsystemBase {
   public:
     Vision(State *state, Commands *commands, Outputs *outputs);
 
-    void read(State *state, Commands *commands);
+    void read(State *state, Commands commands);
 
-    void calculate(State *state, Commands *commands, Outputs *outputs);
+    void calculate(State state, Commands commands, Outputs *outputs);
 
-    void write(Outputs *outputs);
+    void write(Outputs outputs);
 
     bool threaded();
 
@@ -26,8 +26,8 @@ class Vision : public SubsystemBase {
     std::string name();
 
   private:
-    cv::VideoCapture* leftCap;
-    cv::VideoCapture* rightCap;
+    cv::VideoCapture *leftCap;
+    cv::VideoCapture *rightCap;
 
     // TODO: constants remove
     cv::FileStorage calibFile;

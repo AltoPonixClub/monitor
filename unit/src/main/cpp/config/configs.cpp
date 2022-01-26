@@ -1,5 +1,4 @@
 
 #include "config/configs.h"
 
-void Configs::configure() {
-}
+void Configs::configure() {}

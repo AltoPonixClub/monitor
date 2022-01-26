@@ -12,11 +12,11 @@ class Miscellaneous : public SubsystemBase {
   public:
     Miscellaneous(State *state);
 
-    void read(State *state, Commands *commands);
+    void read(State *state, Commands commands);
 
-    void calculate(State *state, Commands *commands, Outputs *outputs);
+    void calculate(State state, Commands commands, Outputs *outputs);
 
-    void write(Outputs *outputs);
+    void write(Outputs outputs);
 
     bool threaded();
 

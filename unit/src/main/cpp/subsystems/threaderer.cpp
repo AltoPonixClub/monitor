@@ -12,9 +12,9 @@ void Threader::loop(SubsystemBase *subsystem, State *state, Commands *commands,
                     Outputs *outputs) {
     while (true) {
         try {
-            subsystem->read(state, commands);
-            subsystem->calculate(state, commands, outputs);
-            subsystem->write(outputs);
+            subsystem->read(state, *commands);
+            subsystem->calculate(*state, *commands, outputs);
+            subsystem->write(*outputs);
         } catch (const std::exception &e) {
             spdlog::error(e.what());
         }
