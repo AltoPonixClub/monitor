@@ -9,7 +9,7 @@ void Control::configure(Commands *commands) {
     commands->displayWantedStates = std::vector<Commands::DisplayState>{
         Commands::DisplayState::MESH, Commands::DisplayState::CAMERA_POS,
         Commands::DisplayState::DISPLAY_IMG};
-//    commands->displayWantedStates = std::vector<Commands::DisplayState>{};
+    //    commands->displayWantedStates = std::vector<Commands::DisplayState>{};
     //    commands->displayWantedStates =
     //        std::vector<Commands::DisplayState>{commands->MESH};
     commands->uploadWantedStates =

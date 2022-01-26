@@ -26,8 +26,8 @@ class Vision : public SubsystemBase {
     std::string name();
 
   private:
-    cv::VideoCapture* leftCap;
-    cv::VideoCapture* rightCap;
+    cv::VideoCapture *leftCap;
+    cv::VideoCapture *rightCap;
 
     // TODO: constants remove
     cv::FileStorage calibFile;

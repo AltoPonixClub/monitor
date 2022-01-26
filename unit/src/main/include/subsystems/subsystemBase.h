@@ -17,7 +17,8 @@ class SubsystemBase {
 
     virtual bool threaded() = 0;
 
-    static SubsystemBase *instance(State *state, Commands *commands, Outputs *outputs);
+    static SubsystemBase *instance(State *state, Commands *commands,
+                                   Outputs *outputs);
 
     virtual std::string name() = 0;
 };

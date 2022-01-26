@@ -31,8 +31,8 @@ int main(int argc, char **argv) {
     std::vector<SubsystemBase *> enabledSubsystems{
         Miscellaneous::instance(state),
         Vision::instance(state, commands, outputs),
-        Display::instance(state, commands, outputs),
-        BlinkingLights::instance(state, commands, outputs),
+        //        Display::instance(state, commands, outputs),
+        //        BlinkingLights::instance(state, commands, outputs),
         Uploader::instance(state, commands,
                            outputs) // TODO: why cant uploader be threaded
     };

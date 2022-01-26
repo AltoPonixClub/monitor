@@ -184,9 +184,9 @@ void Display::calculate(State state, Commands commands, Outputs *outputs) {
                      Configs::Physical::kPlatformDim.height * j /
                          Configs::Display::kMeshDensity,
                      state.depthMap[int(state.depthMap.size() *
-                                         (i / Configs::Display::kMeshDensity))]
-                                    [int(state.depthMap[0].size() *
-                                         (j / Configs::Display::kMeshDensity))],
+                                        (i / Configs::Display::kMeshDensity))]
+                                   [int(state.depthMap[0].size() *
+                                        (j / Configs::Display::kMeshDensity))],
                      Configs::Physical::kPlatformDim.width * (i + 1) /
                          Configs::Display::kMeshDensity,
                      Configs::Physical::kPlatformDim.height * (j + 1) /

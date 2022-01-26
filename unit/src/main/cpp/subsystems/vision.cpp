@@ -1,8 +1,8 @@
 #include "subsystems/vision.h"
 #include "config/configs.h"
 #include "spdlog/spdlog.h"
-#include "utils/utils.h"
 #include "utils/dummyVideoCapture.h"
+#include "utils/utils.h"
 
 // TODO: specify read only write only based on annotations
 Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
@@ -61,16 +61,11 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
 }
 
 void Vision::read(State *state, Commands commands) {
-//    if (commands->visionWantedState == Commands::VisionState::OFF) return;
+    //    if (commands->visionWantedState == Commands::VisionState::OFF) return;
     cv::Mat frame;
     *leftCap >> frame;
     cv::resize(frame, frame, Configs::Vision::kImgSize);
-//    try {
-//        cv::resize(frame, frame, Configs::Vision::kImgSize);
-//    }
-//    catch(std::exception& e) {
-//        std::cout << e.what() << std::endl;
-//    }
+
     state->capFrame = frame;
 
     cv::aruco::detectMarkers(
@@ -119,7 +114,6 @@ void Vision::read(State *state, Commands commands) {
         } catch (...) {
             spdlog::error("Vision: Could not find homography");
         }
-        // TODO: use rodrigues on rvec and tvec to turn into projection matrix
     }
     // TODO: stereo pointcloud
     for (int i = 0; i < state->depthMap.size(); i++) {
@@ -132,7 +126,7 @@ void Vision::read(State *state, Commands commands) {
 }
 
 void Vision::calculate(State state, Commands commands, Outputs *outputs) {
-//    if (commands->visionWantedState == Commands::VisionState::OFF) return;
+    //    if (commands->visionWantedState == Commands::VisionState::OFF) return;
     outputs->editedCapFrame = state.capFrame.clone();
     for (const auto &corner : state.detectedArucoCorners) {
         for (auto pt : corner) {
@@ -143,10 +137,7 @@ void Vision::calculate(State state, Commands commands, Outputs *outputs) {
     }
 }
 
-void Vision::write(Outputs outputs) {
-    //    cv::imshow("hello", outputs->editedCapFrame);
-    //    cv::waitKey(1);
-}
+void Vision::write(Outputs outputs) {}
 
 Vision *Vision::instance(State *state, Commands *commands, Outputs *outputs) {
     if (Vision::pInstance == nullptr) {

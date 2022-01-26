@@ -19,7 +19,8 @@ void BlinkingLights::read(State *state, Commands commands) {}
 void BlinkingLights::calculate(State state, Commands commands,
                                Outputs *outputs) {
 
-    // TODO: this no longer works since cannot edit state here, perhaps these should be local variables
+    // TODO: this no longer works since cannot edit state here, perhaps these
+    // should be local variables
     switch (commands.ledWantedState) {
     case Commands::LEDState::OFF:
         state.delayLED = 100;
