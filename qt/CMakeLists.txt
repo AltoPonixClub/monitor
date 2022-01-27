@@ -12,13 +12,33 @@ find_package(Qt6 COMPONENTS
         Gui
         Widgets
         Charts
+        OpenGL
         REQUIRED)
 
-add_executable(qt main.cpp)
+add_executable(qt main.cpp geometryengine.cpp geometryengine.h openglwidget.cpp openglwidget.h shaders.qrc textures.qrc)
 target_link_libraries(qt
         Qt::Core
         Qt::Gui
         Qt::Widgets
         Qt::Charts
+        Qt::OpenGL
         )
 
+# Resources:
+set(shaders_resource_files
+        "fshader.glsl"
+        "vshader.glsl"
+        )
+
+qt6_add_resources(cube "shaders"
+        FILES
+        ${shaders_resource_files}
+        )
+set(textures_resource_files
+        "cube.png"
+        )
+
+qt6_add_resources(cube "textures"
+        FILES
+        ${textures_resource_files}
+        )

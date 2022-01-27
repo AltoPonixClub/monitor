@@ -3,6 +3,8 @@
 #include <QtWidgets/qmainwindow.h>
 #include <QChartView>
 #include <QLineSeries>
+#include <QtOpenGLWidgets/qopenglwidget.h>
+#include "openglwidget.h"
 
 QChartView *createChartView() {
     QChartView *chartView = new QChartView();
@@ -28,7 +30,14 @@ int main(int argc, char *argv[]) {
     QMainWindow window;
     QTabWidget *tabWidget = new QTabWidget();
 
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    QSurfaceFormat::setDefaultFormat(format);
+    OpenGLWidget *widget = new OpenGLWidget();
+
+    tabWidget->addTab(widget, "OpenGL");
     tabWidget->addTab(createChartView(), "Charts");
+
     window.setCentralWidget(tabWidget);
     window.resize(900, 900);
     window.show();
