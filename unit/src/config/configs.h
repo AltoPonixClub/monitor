@@ -65,10 +65,14 @@ class Configs {
             static inline cv::Mat P2 = cv::Mat();
             static inline cv::Mat Q = cv::Mat();
         };
-
-        static inline std::string kBlankPath =
+        static inline float kStereoWlsLambda = 12000;
+        static inline float kStereoWlsSigma = 2.5;
+        static inline std::string kLeftDummyImgPath =
             std::string("/home/aoberai/programming/altoponix/monitor/unit/"
-                        "assets/blank.png");
+                        "assets/rectified_1.png");
+        static inline std::string kRightDummyImgPath =
+            std::string("/home/aoberai/programming/altoponix/monitor/unit/"
+                        "assets/rectified_2.png");
     };
 
     class Display {

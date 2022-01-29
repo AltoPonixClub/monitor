@@ -1,8 +1,9 @@
 #include "vision.h"
 #include "config/configs.h"
-#include "spdlog/spdlog.h"
 #include "utils/dummyVideoCapture.h"
 #include "utils/utils.h"
+#include <opencv2/ximgproc.hpp>
+#include <spdlog/spdlog.h>
 
 // TODO: specify read only write only based on annotations
 Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
@@ -13,6 +14,9 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
     case Commands::VisionState::STEREO:
         this->rightCap = new cv::VideoCapture(Configs::Vision::kRightCamId);
         this->rightCap->set(cv::CAP_PROP_FPS, Configs::Vision::kFps);
+        this->leftMatcher = cv::StereoSGBM::create(
+            0, 10 * 16, 11, 8 * 3 * 11 * 11, 32 * 3 * 11 * 11, -1, 0, 10, 200,
+            3, cv::StereoSGBM::MODE_SGBM_3WAY);
         assert(this->rightCap->isOpened());
     case Commands::VisionState::MONOCULAR: // TODO: how to enforce this because
         // you dont actually need VisionState
@@ -24,9 +28,21 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
         }
         break;
     case Commands::VisionState::DUMMMY_STEREO:
-        this->rightCap = new DummyVideoCapture(Configs::Vision::kBlankPath);
+        this->rightCap =
+            new DummyVideoCapture(Configs::Vision::kRightDummyImgPath);
+        this->leftMatcher = cv::StereoSGBM::create(
+            0, 10 * 16, 11, 8 * 3 * 11 * 11, 32 * 3 * 11 * 11, -1, 0, 10, 200,
+            3, cv::StereoSGBM::MODE_SGBM_3WAY);
+        this->rightMatcher =
+            cv::ximgproc::createRightMatcher(this->leftMatcher);
+        this->wlsFilter =
+            cv::ximgproc::createDisparityWLSFilter(this->leftMatcher);
+        this->wlsFilter->setLambda(Configs::Vision::kStereoWlsLambda);
+        this->wlsFilter->setSigmaColor(Configs::Vision::kStereoWlsSigma);
+
     case Commands::VisionState::DUMMY_MONOCULAR:
-        this->leftCap = new DummyVideoCapture(Configs::Vision::kBlankPath);
+        this->leftCap =
+            new DummyVideoCapture(Configs::Vision::kLeftDummyImgPath);
         spdlog::info("Created Dummy Camera");
         break;
     }
@@ -63,20 +79,55 @@ void Vision::read(State *state, Commands *commands) {
         commands->visionWantedState == Commands::VisionState::DUMMY_MONOCULAR or
         commands->visionWantedState == Commands::VisionState::DUMMMY_STEREO) {
         *leftCap >> state->leftCapFrame;
-        cv::resize(state->leftCapFrame, state->leftCapFrame,
-                   Configs::Vision::kImgSize);
+        //        cv::resize(state->leftCapFrame, state->leftCapFrame,
+        //                   Configs::Vision::kImgSize);
         if (commands->visionWantedState == Commands::VisionState::STEREO or
             commands->visionWantedState ==
                 Commands::VisionState::DUMMMY_STEREO) {
             *rightCap >> state->rightCapFrame;
-            cv::resize(state->rightCapFrame, state->rightCapFrame,
-                       Configs::Vision::kImgSize);
+            //            cv::resize(state->rightCapFrame, state->rightCapFrame,
+            //                       Configs::Vision::kImgSize);
+
+            // Stereo Rectification
             cv::Mat mapX, mapY = cv::Mat(state->rightCapFrame.rows,
                                          state->rightCapFrame.cols, CV_32FC1);
-            // TODO: finish stereo
+            cv::initUndistortRectifyMap(Configs::Vision::StereoCalib::K1,
+                                        Configs::Vision::StereoCalib::D1,
+                                        Configs::Vision::StereoCalib::R1,
+                                        Configs::Vision::StereoCalib::P1,
+                                        state->leftCapFrame.size(), CV_32FC1,
+                                        mapX, mapY);
+            cv::remap(state->leftCapFrame, state->leftUndistortFrame, mapX,
+                      mapY, cv::BORDER_CONSTANT);
+            cv::initUndistortRectifyMap(Configs::Vision::StereoCalib::K2,
+                                        Configs::Vision::StereoCalib::D2,
+                                        Configs::Vision::StereoCalib::R2,
+                                        Configs::Vision::StereoCalib::P2,
+                                        state->rightCapFrame.size(), CV_32FC1,
+                                        mapX, mapY);
+            cv::remap(state->rightCapFrame, state->rightUndistortFrame, mapX,
+                      mapY, cv::BORDER_CONSTANT);
+
+            // Find Disparity
+            this->leftMatcher->compute(state->leftCapFrame,
+                                       state->rightCapFrame,
+                                       state->leftDispFrame);
+            this->rightMatcher->compute(state->rightCapFrame,
+                                        state->leftCapFrame,
+                                        state->rightDispFrame);
+            this->wlsFilter->filter(state->leftDispFrame, state->leftCapFrame,
+                                    state->leftDispFrame,
+                                    state->rightDispFrame);
+            cv::normalize(state->leftDispFrame, state->normalizedDispFrame, 255,
+                          0, cv::NORM_MINMAX, CV_8U);
+            cv::reprojectImageTo3D(state->leftDispFrame, state->depthMap,
+                                   Configs::Vision::StereoCalib::Q);
         }
     }
-
+    cv::resize(state->leftCapFrame, state->leftCapFrame,
+               Configs::Vision::kImgSize);
+    cv::resize(state->rightCapFrame, state->rightCapFrame,
+               Configs::Vision::kImgSize);
     cv::aruco::detectMarkers(
         state->leftCapFrame, Configs::Vision::kArucoDictionary,
         state->detectedArucoCorners, state->detectedArucoIds,
@@ -124,12 +175,11 @@ void Vision::read(State *state, Commands *commands) {
         } catch (...) {
             spdlog::error("Vision: Could not find homography");
         }
-        // TODO: use rodrigues on rvec and tvec to turn into projection matrix
     }
     // TODO: stereo pointcloud
-    for (int i = 0; i < state->depthMap.size(); i++) {
-        for (int j = 0; j < state->depthMap[0].size(); j++) {
-            state->depthMap[i][j] =
+    for (int i = 0; i < state->depthMap.rows; i++) {
+        for (int j = 0; j < state->depthMap.cols; j++) {
+            state->depthMap.at<double>(i, j) =
                 sin(i / 10 + 100 * (state->timeS - state->initTimeS)) -
                 cos(j / 10 - 100 * (state->timeS - state->initTimeS)) / 3 + 3;
         }

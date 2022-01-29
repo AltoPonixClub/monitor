@@ -25,11 +25,12 @@ class State {
     float airFlow = 0;
 
     // Vision
-    cv::Mat leftCapFrame, rightCapFrame, leftUndistortFrame, leftRecFrame,
-        rightRecFrame, dispFrame;
+    cv::Mat leftCapFrame, rightCapFrame, leftUndistortFrame,
+        rightUndistortFrame, leftRecFrame, rightRecFrame, leftDispFrame,
+        rightDispFrame, normalizedDispFrame;
     cv::Vec3d camRvec, camTvec;
     cv::Mat camRotMat;
-    std::vector<std::vector<float>> depthMap;
+    cv::Mat depthMap;
     std::vector<std::vector<cv::Point2f>> detectedArucoCorners,
         rejectedArucoCorners;
     std::vector<int> detectedArucoIds;
