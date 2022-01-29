@@ -25,14 +25,19 @@ cmake --build .
 ### Install [Eigen](https://gitlab.com/libeigen/eigen) (for matrix math)
 
 Debian
+
 ```
 sudo apt install libeigen3-dev
 ```
+
 Mac
+
 ```
 brew install eigen
 ```
+
 Arch
+
 ```
 sudo pacman -S eigen
 ```
@@ -40,14 +45,19 @@ sudo pacman -S eigen
 ### Install [spdlog](https://github.com/gabime/spdlog) (for logging math)
 
 Debian
+
 ```
 sudo apt install libspdlog-dev
 ```
+
 Mac
+
 ```
 brew install spdlog
 ```
+
 Arch
+
 ```
 sudo pacman -S spdlog
 ```
@@ -55,10 +65,13 @@ sudo pacman -S spdlog
 ### Install [libcurl](https://curl.se/download.html)
 
 Debian
+
 ```
 sudo apt install libcurl4-openssl-dev
 ```
+
 Arch
+
 ```
 sudo pacman -S libcurl-openssl
 ```
@@ -97,19 +110,25 @@ sudo make install
 
 pkg-config --modversion opencv4
 ```
-## For Development 
+
+## For Development
 
 ### Install clang-format
 
 Debian
+
 ```
 sudo apt install clang-format
 ```
+
 Mac
+
 ```
 brew install clang-format
 ```
+
 Arch
+
 ```
 sudo pacman -S clang-format
 ```
