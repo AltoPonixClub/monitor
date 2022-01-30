@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>noop.vert</file>
+        <file>noop.frag</file>
+    </qresource>
+</RCC>

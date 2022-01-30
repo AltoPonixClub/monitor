@@ -1,63 +1,53 @@
-#include "openglwidget.h"
+#include "views/openglView.h"
+#include "util/geometryengine.h"
 #include <QMouseEvent>
 
-OpenGLWidget::~OpenGLWidget()
+OpenGLView::~OpenGLView()
 {
-    // Make sure the context is current when deleting the texture
-    // and the buffers.
     makeCurrent();
     delete texture;
     delete geometries;
     doneCurrent();
 }
 
-//! [0]
-void OpenGLWidget::mousePressEvent(QMouseEvent *e)
+OpenGLView::OpenGLView(QString name) {
+    this->name = name;
+}
+
+QWidget *OpenGLView::createView() {
+    return this;
+}
+
+void OpenGLView::mousePressEvent(QMouseEvent *e)
 {
-    // Save mouse press position
     mousePressPosition = QVector2D(e->position());
 }
 
-void OpenGLWidget::mouseReleaseEvent(QMouseEvent *e)
+void OpenGLView::mouseReleaseEvent(QMouseEvent *e)
 {
-    // Mouse release position - mouse press position
     QVector2D diff = QVector2D(e->position()) - mousePressPosition;
-
-    // Rotation axis is perpendicular to the mouse position difference
-    // vector
     QVector3D n = QVector3D(diff.y(), diff.x(), 0.0).normalized();
-
-    // Accelerate angular speed relative to the length of the mouse sweep
     qreal acc = diff.length() / 100.0;
 
-    // Calculate new rotation axis as weighted sum
     rotationAxis = (rotationAxis * angularSpeed + n * acc).normalized();
 
-    // Increase angular speed
     angularSpeed += acc;
 }
-//! [0]
 
-//! [1]
-void OpenGLWidget::timerEvent(QTimerEvent *)
+void OpenGLView::timerEvent(QTimerEvent *)
 {
-    // Decrease angular speed (friction)
     angularSpeed *= 0.99;
 
-    // Stop rotation when speed goes below threshold
     if (angularSpeed < 0.01) {
         angularSpeed = 0.0;
     } else {
-        // Update rotation
         rotation = QQuaternion::fromAxisAndAngle(rotationAxis, angularSpeed) * rotation;
 
-        // Request an update
         update();
     }
 }
-//! [1]
 
-void OpenGLWidget::initializeGL()
+void OpenGLView::initializeGL()
 {
     initializeOpenGLFunctions();
 
@@ -66,13 +56,11 @@ void OpenGLWidget::initializeGL()
     initShaders();
     initTextures();
 
-//! [2]
     // Enable depth buffer
     glEnable(GL_DEPTH_TEST);
 
     // Enable back face culling
     glEnable(GL_CULL_FACE);
-//! [2]
 
     geometries = new GeometryEngine;
 
@@ -80,15 +68,14 @@ void OpenGLWidget::initializeGL()
     timer.start(12, this);
 }
 
-//! [3]
-void OpenGLWidget::initShaders()
+void OpenGLView::initShaders()
 {
     // Compile vertex shader
-    if (!program.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vshader.glsl"))
+    if (!program.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/noop.vert"))
         close();
 
     // Compile fragment shader
-    if (!program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fshader.glsl"))
+    if (!program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/noop.frag"))
         close();
 
     // Link shader pipeline
@@ -99,10 +86,8 @@ void OpenGLWidget::initShaders()
     if (!program.bind())
         close();
 }
-//! [3]
 
-//! [4]
-void OpenGLWidget::initTextures()
+void OpenGLView::initTextures()
 {
     // Load cube.png image
     texture = new QOpenGLTexture(QImage(":/cube.png").mirrored());
@@ -117,10 +102,8 @@ void OpenGLWidget::initTextures()
     // f.ex. texture coordinate (1.1, 1.2) is same as (0.1, 0.2)
     texture->setWrapMode(QOpenGLTexture::Repeat);
 }
-//! [4]
 
-//! [5]
-void OpenGLWidget::resizeGL(int w, int h)
+void OpenGLView::resizeGL(int w, int h)
 {
     // Calculate aspect ratio
     qreal aspect = qreal(w) / qreal(h ? h : 1);
@@ -134,16 +117,14 @@ void OpenGLWidget::resizeGL(int w, int h)
     // Set perspective projection
     projection.perspective(fov, aspect, zNear, zFar);
 }
-//! [5]
 
-void OpenGLWidget::paintGL()
+void OpenGLView::paintGL()
 {
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     texture->bind();
 
-//! [6]
     // Calculate model view transformation
     QMatrix4x4 matrix;
     matrix.translate(0.0, 0.0, -5.0);
@@ -151,7 +132,6 @@ void OpenGLWidget::paintGL()
 
     // Set modelview-projection matrix
     program.setUniformValue("mvp_matrix", projection * matrix);
-//! [6]
 
     // Use texture unit 0 which contains cube.png
     program.setUniformValue("texture", 0);

@@ -1,7 +1,8 @@
-#ifndef OPENGLWIDGET_H
-#define OPENGLWIDGET_H
+#ifndef OPENGLVIEW_H
+#define OPENGLVIEW_H
 
-#include "geometryengine.h"
+#include "util/geometryengine.h"
+#include "views/viewBase.h"
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -11,16 +12,21 @@
 #include <QBasicTimer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
+#include <QString>
 
 class GeometryEngine;
 
-class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
+class OpenGLView : public QOpenGLWidget, protected QOpenGLFunctions, public ViewBase
 {
 Q_OBJECT
 
 public:
     using QOpenGLWidget::QOpenGLWidget;
-    ~OpenGLWidget();
+    ~OpenGLView();
+
+    OpenGLView(QString name);
+
+    QWidget *createView();
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;
@@ -35,6 +41,7 @@ protected:
     void initTextures();
 
 private:
+
     QBasicTimer timer;
     QOpenGLShaderProgram program;
     GeometryEngine *geometries = nullptr;
@@ -47,6 +54,7 @@ private:
     QVector3D rotationAxis;
     qreal angularSpeed = 0;
     QQuaternion rotation;
+
 };
 
-#endif // OPENGLWIDGET_H
+#endif // OPENGLVIEW_H
