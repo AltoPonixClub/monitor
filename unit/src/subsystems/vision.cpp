@@ -1,8 +1,9 @@
 #include "vision.h"
 #include "config/configs.h"
-#include "spdlog/spdlog.h"
 #include "utils/dummyVideoCapture.h"
 #include "utils/utils.h"
+#include <opencv2/ximgproc.hpp>
+#include <spdlog/spdlog.h>
 
 // TODO: specify read only write only based on annotations
 Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
@@ -13,6 +14,9 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
     case Commands::VisionState::STEREO:
         this->rightCap = new cv::VideoCapture(Configs::Vision::kRightCamId);
         this->rightCap->set(cv::CAP_PROP_FPS, Configs::Vision::kFps);
+        this->leftMatcher = cv::StereoSGBM::create(
+            0, 10 * 16, 11, 8 * 3 * 11 * 11, 32 * 3 * 11 * 11, -1, 0, 10, 200,
+            3, cv::StereoSGBM::MODE_SGBM_3WAY);
         assert(this->rightCap->isOpened());
     case Commands::VisionState::MONOCULAR: // TODO: how to enforce this because
         // you dont actually need VisionState
@@ -23,20 +27,26 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
             throw std::runtime_error("Monocular Camera Not Found");
         }
         break;
+    case Commands::VisionState::DUMMMY_STEREO:
+        this->rightCap =
+            new DummyVideoCapture(Configs::Vision::kRightDummyImgPath);
+        this->leftMatcher = cv::StereoSGBM::create(
+            0, 10 * 16, 11, 8 * 3 * 11 * 11, 32 * 3 * 11 * 11, -1, 0, 10, 200,
+            3, cv::StereoSGBM::MODE_SGBM_3WAY);
+        this->rightMatcher =
+            cv::ximgproc::createRightMatcher(this->leftMatcher);
+        this->wlsFilter =
+            cv::ximgproc::createDisparityWLSFilter(this->leftMatcher);
+        this->wlsFilter->setLambda(Configs::Vision::kStereoWlsLambda);
+        this->wlsFilter->setSigmaColor(Configs::Vision::kStereoWlsSigma);
+
     case Commands::VisionState::DUMMY_MONOCULAR:
-        this->leftCap = new DummyVideoCapture(Configs::Vision::kBlankPath);
+        this->leftCap =
+            new DummyVideoCapture(Configs::Vision::kLeftDummyImgPath);
         spdlog::info("Created Dummy Camera");
         break;
     }
     spdlog::info("Vision: Successful Initialization");
-
-    // Load Single Cam Calibration (move this to Configs)
-    calibFile =
-        cv::FileStorage(Configs::Vision::kCalibPath, cv::FileStorage::READ);
-    assert(calibFile.isOpened());
-    cameraMatrix = calibFile.operator[]("K").mat(); // extrinsics
-    distCoeffs = calibFile.operator[]("D").mat();   // intrinsics
-    calibFile.~FileStorage();
 
     // TODO:  Mark constexpr to precalculate these value things ?? how this work
     for (const auto &i : Configs::Vision::kBoardArucoPts) {
@@ -50,45 +60,94 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
         }
     }
 
-    state->capFrame = state->undistortedFrame = cv::Mat(
-        Configs::Vision::kImgSize.height, Configs::Vision::kImgSize.width,
-        CV_8UC3, Configs::Display::kGrey);
+    state->leftCapFrame = state->leftUndistortFrame = state->rightCapFrame =
+        state->rightRecFrame = state->leftRecFrame =
+            cv::Mat(Configs::Vision::kImgSize.height,
+                    Configs::Vision::kImgSize.width, CV_8UC3,
+                    Configs::Display::kGrey);
     state->camRotMat = cv::Mat(3, 3, CV_8UC1);
     state->camRvec, state->camTvec = cv::Vec3d(0, 0, 0);
-    state->depthMap = std::vector<std::vector<float>>(
-        Configs::Vision::kImgSize.height,
-        std::vector<float>(Configs::Vision::kImgSize.width, 0));
+    state->depthMap = cv::Mat(Configs::Vision::kImgSize, CV_8UC3);
+//            std::vector<std::vector<float>>(
+//        Configs::Vision::kImgSize.height,
+//        std::vector<float>(Configs::Vision::kImgSize.width, 0));
 }
 
 void Vision::read(State *state, Commands *commands) {
     //    if (commands->visionWantedState == Commands::VisionState::OFF) return;
-    cv::Mat frame;
-    *leftCap >> frame;
-    cv::resize(frame, frame, Configs::Vision::kImgSize);
-    //    try {
-    //        cv::resize(frame, frame, Configs::Vision::kImgSize);
-    //    }
-    //    catch(std::exception& e) {
-    //        std::cout << e.what() << std::endl;
-    //    }
-    state->capFrame = frame;
+    if (commands->visionWantedState == Commands::VisionState::MONOCULAR or
+        commands->visionWantedState == Commands::VisionState::STEREO or
+        commands->visionWantedState == Commands::VisionState::DUMMY_MONOCULAR or
+        commands->visionWantedState == Commands::VisionState::DUMMMY_STEREO) {
+        *leftCap >> state->leftCapFrame;
+        //        cv::resize(state->leftCapFrame, state->leftCapFrame,
+        //                   Configs::Vision::kImgSize);
+        if (commands->visionWantedState == Commands::VisionState::STEREO or
+            commands->visionWantedState ==
+                Commands::VisionState::DUMMMY_STEREO) {
+            *rightCap >> state->rightCapFrame;
+            //            cv::resize(state->rightCapFrame, state->rightCapFrame,
+            //                       Configs::Vision::kImgSize);
 
+            // Stereo Rectification
+            cv::Mat mapX, mapY = cv::Mat(state->rightCapFrame.rows,
+                                         state->rightCapFrame.cols, CV_32FC1);
+            cv::initUndistortRectifyMap(Configs::Vision::StereoCalib::K1,
+                                        Configs::Vision::StereoCalib::D1,
+                                        Configs::Vision::StereoCalib::R1,
+                                        Configs::Vision::StereoCalib::P1,
+                                        state->leftCapFrame.size(), CV_32FC1,
+                                        mapX, mapY);
+            cv::remap(state->leftCapFrame, state->leftUndistortFrame, mapX,
+                      mapY, cv::BORDER_CONSTANT);
+            cv::initUndistortRectifyMap(Configs::Vision::StereoCalib::K2,
+                                        Configs::Vision::StereoCalib::D2,
+                                        Configs::Vision::StereoCalib::R2,
+                                        Configs::Vision::StereoCalib::P2,
+                                        state->rightCapFrame.size(), CV_32FC1,
+                                        mapX, mapY);
+            cv::remap(state->rightCapFrame, state->rightUndistortFrame, mapX,
+                      mapY, cv::BORDER_CONSTANT);
+
+            // Find Disparity
+            this->leftMatcher->compute(state->leftCapFrame,
+                                       state->rightCapFrame,
+                                       state->leftDispFrame);
+            this->rightMatcher->compute(state->rightCapFrame,
+                                        state->leftCapFrame,
+                                        state->rightDispFrame);
+            this->wlsFilter->filter(state->leftDispFrame, state->leftCapFrame,
+                                    state->leftDispFrame,
+                                    state->rightDispFrame);
+            cv::normalize(state->leftDispFrame, state->normalizedDispFrame, 255,
+                          0, cv::NORM_MINMAX, CV_8U);
+            cv::reprojectImageTo3D(state->leftDispFrame, state->depthMap,
+                                   Configs::Vision::StereoCalib::Q);
+//            std::cout << state->depthMap << std::endl << std::endl;
+//            cv::resize(state->depthMap, state->depthMap, Con
+        }
+    }
+    cv::resize(state->leftCapFrame, state->leftCapFrame,
+               Configs::Vision::kImgSize);
+    cv::resize(state->rightCapFrame, state->rightCapFrame,
+               Configs::Vision::kImgSize);
     cv::aruco::detectMarkers(
-        frame, Configs::Vision::kArucoDictionary, state->detectedArucoCorners,
-        state->detectedArucoIds, Configs::Vision::kArucoParams,
-        state->rejectedArucoCorners);
+        state->leftCapFrame, Configs::Vision::kArucoDictionary,
+        state->detectedArucoCorners, state->detectedArucoIds,
+        Configs::Vision::kArucoParams, state->rejectedArucoCorners);
     cv::aruco::refineDetectedMarkers(
-        frame, Configs::Vision::kBoard, state->detectedArucoCorners,
-        state->detectedArucoIds, state->rejectedArucoCorners, cameraMatrix,
-        distCoeffs);
+        state->leftCapFrame, Configs::Vision::kBoard,
+        state->detectedArucoCorners, state->detectedArucoIds,
+        state->rejectedArucoCorners, Configs::Vision::StereoCalib::K1,
+        Configs::Vision::StereoCalib::D1);
 
     state->transform_dst.clear();
     if (state->detectedArucoIds.size() > 1) {
         std::vector<std::pair<int, std::vector<cv::Point2f>>> tmp_corners;
         cv::aruco::estimatePoseBoard(
             state->detectedArucoCorners, state->detectedArucoIds,
-            Configs::Vision::kBoard, cameraMatrix, distCoeffs, state->camRvec,
-            state->camTvec);
+            Configs::Vision::kBoard, Configs::Vision::StereoCalib::K1,
+            Configs::Vision::StereoCalib::D1, state->camRvec, state->camTvec);
         cv::Rodrigues(state->camRvec, state->camRotMat);
         state->camRotMat = state->camRotMat; // TODO: figure out inverse or not
         spdlog::info("Vision: Rvec: {}, Tvec: {} {} {}", *state->camRvec.val,
@@ -110,21 +169,20 @@ void Vision::read(State *state, Commands *commands) {
             cv::Mat H = cv::findHomography(transform_src, state->transform_dst,
                                            cv::RANSAC, 5);
             // Apply perspective transformation to original image
-            cv::warpPerspective(state->capFrame, state->undistortedFrame,
+            cv::warpPerspective(state->leftCapFrame, state->leftUndistortFrame,
                                 H.inv(), Configs::Display::kImgDispSize,
                                 cv::INTER_LINEAR);
-            state->undistortedFrame = state->undistortedFrame(
+            state->leftUndistortFrame = state->leftUndistortFrame(
                 cv::Rect(0, 0, Configs::Vision::kImgSize.width,
                          Configs::Vision::kImgSize.height));
         } catch (...) {
             spdlog::error("Vision: Could not find homography");
         }
-        // TODO: use rodrigues on rvec and tvec to turn into projection matrix
     }
     // TODO: stereo pointcloud
-    for (int i = 0; i < state->depthMap.size(); i++) {
-        for (int j = 0; j < state->depthMap[0].size(); j++) {
-            state->depthMap[i][j] =
+    for (int i = 0; i < state->depthMap.rows; i++) {
+        for (int j = 0; j < state->depthMap.cols; j++) {
+            state->depthMap.at<double>(i, j) =
                 sin(i / 10 + 100 * (state->timeS - state->initTimeS)) -
                 cos(j / 10 - 100 * (state->timeS - state->initTimeS)) / 3 + 3;
         }
@@ -133,7 +191,7 @@ void Vision::read(State *state, Commands *commands) {
 
 void Vision::calculate(State *state, Commands *commands, Outputs *outputs) {
     //    if (commands->visionWantedState == Commands::VisionState::OFF) return;
-    outputs->editedCapFrame = state->capFrame.clone();
+    outputs->editedCapFrame = state->leftCapFrame.clone();
     for (const auto &corner : state->detectedArucoCorners) {
         for (auto pt : corner) {
             cv::circle(outputs->editedCapFrame, pt,
