@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.18)
 project(qt)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -6,6 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+set(CMAKE_PREFIX_PATH "/home/aoberai/programming/cpp/Qt/6.2.2/gcc_64/lib/cmake")
 
 find_package(Qt6 COMPONENTS
         Core
@@ -36,7 +37,7 @@ qt6_add_resources(cube "shaders"
         )
 set(textures_resource_files
         "cube.png"
-        )
+)
 
 qt6_add_resources(cube "textures"
         FILES
