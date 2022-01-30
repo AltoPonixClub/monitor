@@ -67,9 +67,10 @@ Vision::Vision(State *state, Commands *commands, Outputs *outputs) {
                     Configs::Display::kGrey);
     state->camRotMat = cv::Mat(3, 3, CV_8UC1);
     state->camRvec, state->camTvec = cv::Vec3d(0, 0, 0);
-    state->depthMap = std::vector<std::vector<float>>(
-        Configs::Vision::kImgSize.height,
-        std::vector<float>(Configs::Vision::kImgSize.width, 0));
+    state->depthMap = cv::Mat(Configs::Vision::kImgSize, CV_8UC3);
+//            std::vector<std::vector<float>>(
+//        Configs::Vision::kImgSize.height,
+//        std::vector<float>(Configs::Vision::kImgSize.width, 0));
 }
 
 void Vision::read(State *state, Commands *commands) {
@@ -122,6 +123,8 @@ void Vision::read(State *state, Commands *commands) {
                           0, cv::NORM_MINMAX, CV_8U);
             cv::reprojectImageTo3D(state->leftDispFrame, state->depthMap,
                                    Configs::Vision::StereoCalib::Q);
+//            std::cout << state->depthMap << std::endl << std::endl;
+//            cv::resize(state->depthMap, state->depthMap, Con
         }
     }
     cv::resize(state->leftCapFrame, state->leftCapFrame,

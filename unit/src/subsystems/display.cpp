@@ -177,28 +177,28 @@ void Display::calculate(State *state, Commands *commands, Outputs *outputs) {
         for (int i = 0; i < Configs::Display::kMeshDensity - 1; i++) {
             for (int j = 0; j < Configs::Display::kMeshDensity - 1;
                  j++) { // TODO: this wrong
-                /*
-                outputs->meshLines.push_back(
-                    (Eigen::Matrix<float, 6, 1>()
-                         << Configs::Physical::kPlatformDim.width * i /
-                                Configs::Display::kMeshDensity,
-                     Configs::Physical::kPlatformDim.height * j /
-                         Configs::Display::kMeshDensity,
-                     state->depthMap[int(state->depthMap.size() *
-                                         (i / Configs::Display::kMeshDensity))]
-                                    [int(state->depthMap[0].size() *
-                                         (j / Configs::Display::kMeshDensity))],
-                     Configs::Physical::kPlatformDim.width * (i + 1) /
-                         Configs::Display::kMeshDensity,
-                     Configs::Physical::kPlatformDim.height * (j + 1) /
-                         Configs::Display::kMeshDensity,
-                     state->depthMap
-                         [int(state->depthMap.size() *
-                              ((i + 1) / Configs::Display::kMeshDensity))]
-                         [int(state->depthMap[0].size() *
-                              ((j + 1) / Configs::Display::kMeshDensity))])
-                        .finished());
-                */
+//                /*
+//                outputs->meshLines.push_back(
+//                    (Eigen::Matrix<float, 6, 1>()
+//                         << Configs::Physical::kPlatformDim.width * i /
+//                                Configs::Display::kMeshDensity,
+//                     Configs::Physical::kPlatformDim.height * j /
+//                         Configs::Display::kMeshDensity,
+//                     state->depthMap[int(state->depthMap.size().height *
+//                                         (i / Configs::Display::kMeshDensity))]
+//                                    [int(state->depthMap.size().width *
+//                                         (j / Configs::Display::kMeshDensity))],
+//                     Configs::Physical::kPlatformDim.width * (i + 1) /
+//                         Configs::Display::kMeshDensity,
+//                     Configs::Physical::kPlatformDim.height * (j + 1) /
+//                         Configs::Display::kMeshDensity,
+//                     state->depthMap
+//                         [int(state->depthMap.size().height *
+//                              ((i + 1) / Configs::Display::kMeshDensity))]
+//                         [int(state->depthMap.size().width *
+//                              ((j + 1) / Configs::Display::kMeshDensity))])
+//                        .finished());
+//                */
                 outputs->meshColor.emplace_back(
                     tmp.at<cv::Vec3b>(cv::Point(i, j)));
             }
