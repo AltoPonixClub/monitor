@@ -1,4 +1,4 @@
-name: format-checker
+name: format-check 
 on: [push, pull_request]
 jobs:
   formatting-check:

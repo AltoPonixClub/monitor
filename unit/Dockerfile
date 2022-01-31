@@ -1,14 +1,18 @@
-FROM ubuntu
+FROM archlinux
 
-ENV TZ=America/Los_Angeles
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN apt-get update
-RUN apt-get install libeigen3-dev git libopencv-dev libspdlog-dev --no-install-recommends -y
-
-RUN apt-get --no-install-recommends install -y ca-certificates
-RUN git clone --recursive https://github.com/stevenlovegrove/Pangolin.git
-RUN apt-get install -y libgl1-mesa-dev libwayland-dev libxkbcommon-dev wayland-protocols libegl1-mesa-dev libc++-dev libglew-dev libeigen3-dev cmake libjpeg-dev libpng-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libavdevice-dev --no-install-recommends
-RUN apt-get install -y build-essential libcurl4-openssl-dev --no-install-recommends
-RUN cd Pangolin && mkdir build && cd build && \ 
-    cmake .. && \
-    cmake --build .
+RUN pacman -Syu --noconfirm
+RUN pacman -S --noconfirm reflector
+RUN reflector --sort rate --connection-timeout 1 --save /etc/pacman.d/mirrorlist --score 5
+RUN pacman -S --noconfirm eigen
+RUN pacman -S --noconfirm git
+RUN pacman -S --noconfirm base-devel
+RUN pacman -S --noconfirm opencv
+RUN pacman -S --noconfirm spdlog
+RUN pacman -S --noconfirm qt6-base
+RUN pacman -S --noconfirm sudo
+RUN pacman -S --noconfirm libxkbcommon
+RUN pacman -S --noconfirm libx11
+RUN cd /opt && git clone --recursive https://github.com/stevenlovegrove/Pangolin
+RUN pacman -S --noconfirm cmake glew eigen libjpeg libpng openexr libtiff ffmpeg lz4 zstd catch2 libdc1394
+RUN pacman -S --noconfirm wayland-protocols
+RUN cd /opt/Pangolin && mkdir build && cd build && cmake .. && cmake --build .
