@@ -1,15 +1,14 @@
 #ifndef VIEWBASE_H
 #define VIEWBASE_H
 
-#include <QWidget>
 #include <QString>
+#include <QWidget>
 
-class ViewBase
-{
+class ViewBase {
 public:
-    virtual QWidget *createView() = 0;
+  virtual QWidget *createView() = 0;
 
-    QString name;
+  QString name;
 };
 
 #endif // VIEWBASE_H

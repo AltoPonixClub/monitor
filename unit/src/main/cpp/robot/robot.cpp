@@ -1,8 +1,10 @@
+#include <QCoreApplication>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
+
 #include "config/configs.h"
 #include "robot/control.h"
 #include "robot/state.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/spdlog.h"
 #include "subsystems/blinkingLights.h"
 #include "subsystems/display.h"
 #include "subsystems/miscellaneous.h"
@@ -11,7 +13,6 @@
 #include "subsystems/uploader.h"
 #include "subsystems/vision.h"
 #include "utils/daq.h"
-#include <QCoreApplication>
 
 int main(int argc, char **argv) {
     spdlog::set_default_logger(spdlog::stdout_color_mt("console"));

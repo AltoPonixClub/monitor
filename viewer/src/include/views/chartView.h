@@ -7,16 +7,13 @@
 
 #include "viewBase.h"
 
-class ChartView : public ViewBase
-{
+class ChartView : public ViewBase {
 public:
+  ChartView(QString name);
 
-    ChartView(QString name);
-
-    QWidget *createView();
+  QWidget *createView();
 
 private:
-
 };
 
 #endif // CHARTVIEW_H

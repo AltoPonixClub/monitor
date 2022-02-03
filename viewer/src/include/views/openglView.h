@@ -4,57 +4,62 @@
 #include "util/geometryengine.h"
 #include "views/viewBase.h"
 
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions>
-#include <QMatrix4x4>
-#include <QQuaternion>
-#include <QVector2D>
 #include <QBasicTimer>
+#include <QMatrix4x4>
+#include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
+#include <QOpenGLWidget>
+#include <QQuaternion>
 #include <QString>
+#include <QVector2D>
 
 class GeometryEngine;
 
-class OpenGLView : public QOpenGLWidget, protected QOpenGLFunctions, public ViewBase
-{
-Q_OBJECT
+class OpenGLView : public QOpenGLWidget,
+                   protected QOpenGLFunctions,
+                   public ViewBase {
+  Q_OBJECT
 
 public:
-    using QOpenGLWidget::QOpenGLWidget;
-    ~OpenGLView();
+  using QOpenGLWidget::QOpenGLWidget;
+  ~OpenGLView();
 
-    OpenGLView(QString name);
+  OpenGLView(QString name);
 
-    QWidget *createView();
+  QWidget *createView();
 
 protected:
-    void mousePressEvent(QMouseEvent *e) override;
-    void mouseReleaseEvent(QMouseEvent *e) override;
-    void timerEvent(QTimerEvent *e) override;
+  void mousePressEvent(QMouseEvent *e) override;
+  void mouseReleaseEvent(QMouseEvent *e) override;
+  void timerEvent(QTimerEvent *e) override;
+  //    void keyReleaseEvent(QKeyEvent *event) override;
+  void keyPressEvent(QKeyEvent *event) override;
 
-    void initializeGL() override;
-    void resizeGL(int w, int h) override;
-    void paintGL() override;
+  void initializeGL() override;
+  void resizeGL(int w, int h) override;
+  void paintGL() override;
 
-    void initShaders();
-    void initTextures();
+  void initShaders();
+  void initTextures();
 
 private:
+  QBasicTimer timer;
+  QOpenGLShaderProgram program;
+  GeometryEngine *geometries = nullptr;
 
-    QBasicTimer timer;
-    QOpenGLShaderProgram program;
-    GeometryEngine *geometries = nullptr;
+  QOpenGLTexture *texture = nullptr;
 
-    QOpenGLTexture *texture = nullptr;
+  QMatrix4x4 projection;
 
-    QMatrix4x4 projection;
+  QVector2D mousePressPosition;
+  QVector3D rotationAxis;
+  qreal angularSpeed = 0;
+  QQuaternion rotation;
 
-    QVector2D mousePressPosition;
-    QVector3D rotationAxis;
-    qreal angularSpeed = 0;
-    QQuaternion rotation;
+  double posX, posY, posZ;
 
+  double getCamZ(double posX, double posY);
 };
 
 #endif // OPENGLVIEW_H

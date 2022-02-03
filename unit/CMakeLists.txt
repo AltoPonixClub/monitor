@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.21)
 project(monitor)
 
 set(CMAKE_CXX_STANDARD 14)
 
+#set(CMAKE_PREFIX_PATH  "/home/aoberai/programming/cpp/Qt/6.2.2/gcc_64/lib/cmake")
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Pangolin 0.4 REQUIRED)
