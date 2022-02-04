@@ -116,25 +116,33 @@ void OpenGLView::paintGL() {
     QMatrix4x4 matrix;
 
     for (auto i : keys) {
-        if (i == Qt::Key_W) {
-            std::cout << "w" << std::endl;
-            posY += 0.07;
-        }
-        if (i == Qt::Key_A) {
-            std::cout << "a" << std::endl;
-            posX -= 0.07;
-        }
-        if (i == Qt::Key_S) {
-            std::cout << "s" << std::endl;
-            posY -= 0.07;
-        }
-        if (i == Qt::Key_D) {
-            std::cout << "d" << std::endl;
-            posX += 0.07;
+        // TODO: switch
+        switch (i) {
+            case Qt::Key_W:
+                std::cout << "w" << std::endl;
+                if (rad >= sqrt(pow(posX, 2) + pow(posY+0.7, 2)) or abs(posY+0.07) < abs(posY))
+                    posY += 0.07;
+                break;
+            case Qt::Key_S:
+                std::cout << "s" << std::endl;
+                if (rad >= sqrt(pow(posX, 2) + pow(posY-0.7, 2)) or abs(posY-0.07) < abs(posY))
+                    posY -= 0.07;
+                break;
+            case Qt::Key_A:
+                std::cout << "a" << std::endl;
+                if (rad >= sqrt(pow(posX-0.7, 2) + pow(posY, 2)) or abs(posX-0.07) < abs(posX))
+                    posX -= 0.07;
+                break;
+            case Qt::Key_D:
+                std::cout << "d" << std::endl;
+                if (rad >= sqrt(pow(posX+0.7, 2) + pow(posY, 2)) or abs(posX+0.07) < abs(posX))
+                    posX += 0.07;
+                break;
         }
     }
-
-    matrix.lookAt(QVector3D(posX, posY, getCamZ(posX, posY)), kLookAt, kUpAxis);
+    float posZ = getCamZ(posX, posY);
+    matrix.lookAt(QVector3D(posX, posY, posZ), kLookAt, kUpAxis);
+    std::cout << "X: " << posX << " Y: " << posY << " Z: " << posZ << std::endl;
 
     // Set modelview-projection matrix
     program.setUniformValue("mvp_matrix", projection * matrix);

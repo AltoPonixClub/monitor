@@ -53,6 +53,7 @@ private:
 
   std::unordered_set<int> keys;
 
+  QMatrix4x4 matrix; // View Matrix
   QVector2D mousePressPosition;
   QVector3D rotationAxis;
   qreal angularSpeed = 0;
