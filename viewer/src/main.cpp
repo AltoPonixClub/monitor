@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
   QMainWindow window;
   QTabWidget *tabWidget = new QTabWidget();
+  tabWidget->setFocusPolicy(Qt::WheelFocus);
 
   QSurfaceFormat format;
   format.setDepthBufferSize(24);
@@ -20,7 +21,7 @@ int main(int argc, char *argv[]) {
 
   std::vector<ViewBase *> views{
       new ChartView("Chart"),
-      new OpenGLView("OpenGL"),
+      new OpenGLView("OpenGL")
   };
 
   for (ViewBase *view : views) {

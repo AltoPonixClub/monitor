@@ -14,7 +14,7 @@ find_package(Qt6 COMPONENTS
         Charts
         OpenGL
         REQUIRED)
-include_directories(src)
+include_directories(src/)
 
 set(RESOURCE_FILES assets/shaders/shaders.qrc assets/textures/textures.qrc assets/textures/cube.png)
 #add_executable(qt src/main.cpp src/cpp/utils/geometryengine.cpp src/utils/geometryengine.h src/cpp/widgets/openglwidget.cpp src/include/widgets/openglwidget.h assets/resources/shaders.qrc assets/resources/textures.qrc)

@@ -28,7 +28,6 @@ class Commands {
     VisionState visionWantedState;
     LEDState ledWantedState;
     std::vector<DisplayState> displayWantedStates;
-
     std::vector<std::pair<UploadState, long long>> uploadWantedStates;
 
   private:

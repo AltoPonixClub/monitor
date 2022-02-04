@@ -10,6 +10,7 @@
 #include <QQuaternion>
 #include <QString>
 #include <QVector2D>
+#include <QVector3D>
 #include "viewBase.h"
 #include "utils/geometryEngine.h"
 
@@ -30,7 +31,7 @@ protected:
   void mousePressEvent(QMouseEvent *e) override;
   void mouseReleaseEvent(QMouseEvent *e) override;
   void timerEvent(QTimerEvent *e) override;
-  //    void keyReleaseEvent(QKeyEvent *event) override;
+//void keyReleaseEvent(QKeyEvent *event) override;
   void keyPressEvent(QKeyEvent *event) override;
 
   void initializeGL() override;
@@ -54,9 +55,12 @@ private:
   qreal angularSpeed = 0;
   QQuaternion rotation;
 
-  double posX, posY, posZ;
+  QVector3D kLookAt;
+  QVector3D kUpAxis;
 
-  double getCamZ(double posX, double posY);
+  float posX, posY, rad;
+
+  float getCamZ(float posX, float posY);
 };
 
 #endif // OPENGLVIEW_H
