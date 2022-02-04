@@ -8,9 +8,19 @@
 #include <QPushButton>
 #include <QtOpenGLWidgets/qopenglwidget.h>
 #include <QtWidgets/qmainwindow.h>
+#include <QStyleFactory>
 
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
+  QApplication::setStyle(QStyleFactory::create("Fusion"));
+  QPalette p;
+  p = qApp->palette();
+  p.setColor(QPalette::Window, QColor(53,53,53));
+  p.setColor(QPalette::Button, QColor(53,53,53));
+  p.setColor(QPalette::Highlight, QColor(142,45,197));
+  p.setColor(QPalette::ButtonText, QColor(255,255,255));
+  p.setColor(QPalette::Text, QColor(255,255,255));
+  qApp->setPalette(p);
   QMainWindow window;
   QTabWidget *tabWidget = new QTabWidget();
   tabWidget->setFocusPolicy(Qt::WheelFocus);
@@ -20,8 +30,8 @@ int main(int argc, char *argv[]) {
   QSurfaceFormat::setDefaultFormat(format);
 
   std::vector<ViewBase *> views{
-      new ChartView("Chart"),
-      new OpenGLView("OpenGL")
+      new ChartView("Live Charts"),
+      new OpenGLView("3d Mesh")
   };
 
   for (ViewBase *view : views) {

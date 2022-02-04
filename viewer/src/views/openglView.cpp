@@ -23,23 +23,10 @@ OpenGLView::~OpenGLView() {
 QWidget *OpenGLView::createView() { return this; }
 
 void OpenGLView::mousePressEvent(QMouseEvent *e) {
-//  mousePressPosition = QVector2D(e->position());
-//    std::cout << "endted";
 }
 
 void OpenGLView::keyPressEvent(QKeyEvent *event) {
-//    keyPresses[event->key()] = std::chrono::system_clock::now().time_since_epoch()/std::chrono::milliseconds(1);
-//    std::cout << "X: " << posX << " Y: " << posY << " Z: " << getCamZ(posX, posY) << std::endl;
-//    std::cout << event->key() << std::endl;
     keys.emplace(event->key());
-//    if (event->key() == Qt::Key_Space) {
-//        std::cout << "spe" << std::endl;
-//        rad += 0.1;
-//    }
-//    if (event->key() == Qt::Key_Backspace) {
-//        std::cout << "del" << std::endl;
-//        rad -= 0.1;
-//    }
 }
 
 void OpenGLView::keyReleaseEvent(QKeyEvent *event) {
@@ -47,37 +34,20 @@ void OpenGLView::keyReleaseEvent(QKeyEvent *event) {
 }
 
 void OpenGLView::mouseReleaseEvent(QMouseEvent *e) {
-//  QVector2D diff = QVector2D(e->position()) - mousePressPosition;
-//  QVector3D n = QVector3D(diff.y(), diff.x(), 0.0).normalized();
-//  qreal acc = diff.length() / 100.0;
-//
-//  rotationAxis = (rotationAxis * angularSpeed + n * acc).normalized();
-//
-//  angularSpeed += acc;
 }
 
 void OpenGLView::timerEvent(QTimerEvent *) {
-//  angularSpeed *= 0.99;
-//
-//  if (angularSpeed < 0.01) {
-//    angularSpeed = 0.0;
-//  } else {
-//    rotation =
-//        QQuaternion::fromAxisAndAngle(rotationAxis, angularSpeed) * rotation;
-//
     update();
-//  }
 }
 
 void OpenGLView::initializeGL() {
     initializeOpenGLFunctions();
 
-    glClearColor(0, 0, 0, 1);
-
     initShaders();
-    initTextures();
+//    initTextures();
     // Enable depth buffer
     glEnable(GL_DEPTH_TEST);
+
 
     // Enable back face culling
     glEnable(GL_CULL_FACE);
@@ -138,47 +108,45 @@ void OpenGLView::resizeGL(int w, int h) {
 void OpenGLView::paintGL() {
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    texture->bind();
+
+//    glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
+//    texture->bind();
 
     // Calculate model view transformation; https://learnopengl.com/Getting-started/Camera
     QMatrix4x4 matrix;
-//  matrix.lookAt(QVector3D(0, 0, 1), QVector3D(0, 0, 0), QVector3D(0, 0, 1));
-//    matrix.lookAt(QVector3D(0, 0, 5), QVector3D(0, 0, 0), QVector3D(0, -1, 0));
-//    for (int i = keyPresses.size() - 1; i >= 0; i--) {
-for (auto i : keys) {
-    if (i == Qt::Key_W) {
-        std::cout << "w" << std::endl;
-        posY += 0.07;
-    }
-    if (i == Qt::Key_A) {
-        std::cout << "a" << std::endl;
-        posX -= 0.07;
-    }
-    if (i == Qt::Key_S) {
-        std::cout << "s" << std::endl;
-        posY -= 0.07;
-    }
-    if (i == Qt::Key_D) {
-        std::cout << "d" << std::endl;
-        posX += 0.07;
-    }
-}
-//        }
-//    }
-    matrix.lookAt(QVector3D(posX, posY, getCamZ(posX, posY)), kLookAt, kUpAxis);
-//    matrix.lookAt(QVector3D(0, 0, -5), QVector3D(0, 0, 0), QVector3D(0, 0, 1));
-//  matrix.translate(0, 0, -5);
-//  matrix.rotate(rotation);
 
+    for (auto i : keys) {
+        if (i == Qt::Key_W) {
+            std::cout << "w" << std::endl;
+            posY += 0.07;
+        }
+        if (i == Qt::Key_A) {
+            std::cout << "a" << std::endl;
+            posX -= 0.07;
+        }
+        if (i == Qt::Key_S) {
+            std::cout << "s" << std::endl;
+            posY -= 0.07;
+        }
+        if (i == Qt::Key_D) {
+            std::cout << "d" << std::endl;
+            posX += 0.07;
+        }
+    }
+
+    matrix.lookAt(QVector3D(posX, posY, getCamZ(posX, posY)), kLookAt, kUpAxis);
 
     // Set modelview-projection matrix
     program.setUniformValue("mvp_matrix", projection * matrix);
 
     // Use texture unit 0 which contains cube.png
-    program.setUniformValue("texture", 0);
+//    program.setUniformValue("texture", 0);
 
+    glClearColor(0.5, 0.5, 0.5, 0);
     // Draw cube geometry
     geometries->drawCubeGeometry(&program);
+
+    glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
 }
 
 float OpenGLView::getCamZ(float posX, float posY) {
