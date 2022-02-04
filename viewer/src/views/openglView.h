@@ -50,6 +50,8 @@ private:
 
   QMatrix4x4 projection;
 
+  std::unordered_map<int, long> keyPresses;
+
   QVector2D mousePressPosition;
   QVector3D rotationAxis;
   qreal angularSpeed = 0;
