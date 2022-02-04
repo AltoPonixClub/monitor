@@ -11,6 +11,7 @@
 #include <QString>
 #include <QVector2D>
 #include <QVector3D>
+#include <unordered_set>
 #include "viewBase.h"
 #include "utils/geometryEngine.h"
 
@@ -31,7 +32,7 @@ protected:
   void mousePressEvent(QMouseEvent *e) override;
   void mouseReleaseEvent(QMouseEvent *e) override;
   void timerEvent(QTimerEvent *e) override;
-//void keyReleaseEvent(QKeyEvent *event) override;
+  void keyReleaseEvent(QKeyEvent *event) override;
   void keyPressEvent(QKeyEvent *event) override;
 
   void initializeGL() override;
@@ -50,7 +51,7 @@ private:
 
   QMatrix4x4 projection;
 
-  std::unordered_map<int, long> keyPresses;
+  std::unordered_set<int> keys;
 
   QVector2D mousePressPosition;
   QVector3D rotationAxis;
