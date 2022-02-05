@@ -7,9 +7,9 @@
 
 #include "viewBase.h"
 
-class ChartView : public ViewBase {
+class LiveGraph : public ViewBase {
 public:
-  ChartView(QString name);
+  LiveGraph(QString name);
 
   QWidget *createView();
 

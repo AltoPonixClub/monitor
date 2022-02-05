@@ -16,13 +16,13 @@ find_package(Qt6 COMPONENTS
         REQUIRED)
 include_directories(src/)
 
-set(RESOURCE_FILES assets/shaders/shaders.qrc assets/textures/textures.qrc assets/textures/cube.png src/utils/utils.h src/utils/utils.cpp)
+set(RESOURCE_FILES assets/shaders/shaders.qrc assets/textures/textures.qrc assets/textures/cube.png src/utils/utils.h src/utils/utils.cpp src/views/camStreams.h src/views/camStreams.cpp)
 #add_executable(qt src/main.cpp src/cpp/utils/geometryengine.cpp src/utils/geometryengine.h src/cpp/widgets/openglwidget.cpp src/include/widgets/openglwidget.h assets/resources/shaders.qrc assets/resources/textures.qrc)
 add_executable(qt
         src/main.cpp
         src/views/viewBase.h src/views/viewBase.cpp
-        src/views/chartView.h src/views/chartView.cpp
-        src/views/openglView.h src/views/openglView.cpp
+        src/views/liveGraph.h src/views/liveGraph.cpp
+        src/views/pointCloud.h src/views/pointCloud.cpp
         src/utils/geometryEngine.h src/utils/geometryEngine.cpp
         ${RESOURCE_FILES}
         )

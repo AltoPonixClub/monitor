@@ -15,16 +15,16 @@
 #include "viewBase.h"
 #include "utils/geometryEngine.h"
 
-class OpenGLView : public QOpenGLWidget,
+class PointCloud : public QOpenGLWidget,
                    protected QOpenGLFunctions,
                    public ViewBase {
   Q_OBJECT
 
 public:
   using QOpenGLWidget::QOpenGLWidget;
-  ~OpenGLView();
+  ~PointCloud();
 
-  OpenGLView(QString name);
+  PointCloud(QString name);
 
   QWidget *createView();
 
@@ -34,7 +34,6 @@ protected:
   void timerEvent(QTimerEvent *e) override;
   void keyReleaseEvent(QKeyEvent *event) override;
   void keyPressEvent(QKeyEvent *event) override;
-
   void initializeGL() override;
   void resizeGL(int w, int h) override;
   void paintGL() override;

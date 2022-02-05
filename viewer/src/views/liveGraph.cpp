@@ -6,11 +6,11 @@
 #include <QtOpenGLWidgets/qopenglwidget.h>
 #include <QtWidgets/qmainwindow.h>
 
-#include "chartView.h"
+#include "liveGraph.h"
 
-ChartView::ChartView(QString name) { this->name = name; }
+LiveGraph::LiveGraph(QString name) { this->name = name; }
 
-QWidget *ChartView::createView() {
+QWidget *LiveGraph::createView() {
   QChartView *chartView = new QChartView();
   QChart *chart = new QChart();
   QLineSeries *series = new QLineSeries();

@@ -1,10 +1,10 @@
 #include <QMouseEvent>
 #include <iostream>
-#include "openglView.h"
+#include "pointCloud.h"
 
 using namespace std::chrono;
 
-OpenGLView::OpenGLView(QString name) {
+PointCloud::PointCloud(QString name) {
     this->name = name;
     kLookAt = QVector3D(0, 0, 0);
     kUpAxis = QVector3D(0, 1, 0);
@@ -13,34 +13,34 @@ OpenGLView::OpenGLView(QString name) {
     keys = std::unordered_set<int>();
 }
 
-OpenGLView::~OpenGLView() {
+PointCloud::~PointCloud() {
     makeCurrent();
     delete texture;
     delete geometries;
     doneCurrent();
 }
 
-QWidget *OpenGLView::createView() { return this; }
+QWidget *PointCloud::createView() { return this; }
 
-void OpenGLView::mousePressEvent(QMouseEvent *e) {
+void PointCloud::mousePressEvent(QMouseEvent *e) {
 }
 
-void OpenGLView::keyPressEvent(QKeyEvent *event) {
+void PointCloud::keyPressEvent(QKeyEvent *event) {
     keys.emplace(event->key());
 }
 
-void OpenGLView::keyReleaseEvent(QKeyEvent *event) {
+void PointCloud::keyReleaseEvent(QKeyEvent *event) {
     keys.erase(event->key());
 }
 
-void OpenGLView::mouseReleaseEvent(QMouseEvent *e) {
+void PointCloud::mouseReleaseEvent(QMouseEvent *e) {
 }
 
-void OpenGLView::timerEvent(QTimerEvent *) {
+void PointCloud::timerEvent(QTimerEvent *) {
     update();
 }
 
-void OpenGLView::initializeGL() {
+void PointCloud::initializeGL() {
     initializeOpenGLFunctions();
 
     initShaders();
@@ -58,7 +58,7 @@ void OpenGLView::initializeGL() {
     timer.start(12, this);
 }
 
-void OpenGLView::initShaders() {
+void PointCloud::initShaders() {
     // Compile vertex shader
     if (!program.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/noop.vert"))
         close();
@@ -76,7 +76,7 @@ void OpenGLView::initShaders() {
         close();
 }
 
-void OpenGLView::initTextures() {
+void PointCloud::initTextures() {
     // Load cube.png image
     texture = new QOpenGLTexture(QImage(":/cube.png").mirrored());
 
@@ -91,7 +91,7 @@ void OpenGLView::initTextures() {
     texture->setWrapMode(QOpenGLTexture::Repeat);
 }
 
-void OpenGLView::resizeGL(int w, int h) {
+void PointCloud::resizeGL(int w, int h) {
     // Calculate aspect ratio
     qreal aspect = qreal(w) / qreal(h ? h : 1);
 
@@ -105,7 +105,7 @@ void OpenGLView::resizeGL(int w, int h) {
     projection.perspective(fov, aspect, zNear, zFar);
 }
 
-void OpenGLView::paintGL() {
+void PointCloud::paintGL() {
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -157,6 +157,6 @@ void OpenGLView::paintGL() {
     glClearColor(0.5, 0.7, 0.7, 0.0f); // Background Color
 }
 
-float OpenGLView::getCamZ(float posX, float posY) {
+float PointCloud::getCamZ(float posX, float posY) {
     return sqrt(- posX * posX - posY * posY + rad * rad);
 }
