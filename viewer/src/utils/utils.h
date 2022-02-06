@@ -3,7 +3,7 @@
 
 class Utils {
 public:
-    long getTimeMs();
+    static long getTimeMs();
 };
 
 

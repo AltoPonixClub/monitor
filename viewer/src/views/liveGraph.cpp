@@ -2,29 +2,66 @@
 #include <QApplication>
 #include <QChartView>
 #include <QLineSeries>
-#include <QPushButton>
 #include <QtOpenGLWidgets/qopenglwidget.h>
 #include <QtWidgets/qmainwindow.h>
+#include <QGridLayout>
 
 #include "liveGraph.h"
+#include "utils/utils.h"
 
 LiveGraph::LiveGraph(QString name) { this->name = name; }
 
 QWidget *LiveGraph::createView() {
-  QChartView *chartView = new QChartView();
-  QChart *chart = new QChart();
-  QLineSeries *series = new QLineSeries();
+  QWidget *widget = new QWidget();
 
-  series->append(0, 5);
-  series->append(1, 10);
-  series->append(2, 30);
+  for (std::pair<const std::string, Chart> chart : charts) {
+      layout->addWidget(chart.second.getChartView(), row, col);
+      if (++row > rowMax) {
+          row = 0;
+          col++;
+      }
+  }
+  widget->setLayout(layout);
+  return widget;
+}
 
-  chart->legend()->hide();
-  chart->addSeries(series);
-  chart->createDefaultAxes();
-  chart->setTitle("Line Chart");
+void LiveGraph::initChart(std::string key, QString name, std::pair<int, int> scale, int history) {
+    charts[key] = Chart(name, scale, history);
+    layout->addWidget(charts[key].getChartView(), row, col);
+    if (++row > rowMax) {
+        row = 0;
+        col++;
+    }
+}
 
-  chartView->setChart(chart);
+void LiveGraph::updateChart(std::string key, double value) {
+    charts[key].addPoint(value);
+}
 
-  return chartView;
+Chart::Chart(QString name, std::pair<int, int> scale, int history) {
+    chartView = new QChartView();
+    chart = new QChart();
+    chart->setTitle(name);
+    mHistory = history; //TODO: add history via circular buffer or find Qt way
+    chart->legend()->hide();
+    chart->createDefaultAxes();
+    chart->axes(Qt::Horizontal).first()->setRange(0, scale.first);
+    chart->axes(Qt::Vertical).first()->setRange(0, scale.second);
+
+    series = new QLineSeries();
+    for (std::pair<int, int> point : mPoints) {
+        series->append(point.first, point.second);
+    }
+    chart->addSeries(series);
+
+    chartView->setChart(chart);
+}
+
+void Chart::addPoint(double value) {
+    mPoints.emplace_back(Utils::getTimeMs(), value);
+    series->append(Utils::getTimeMs(), value);
+}
+
+QChartView *Chart::getChartView() {
+    return chartView;
 }
