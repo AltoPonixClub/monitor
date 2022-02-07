@@ -9,24 +9,9 @@
 #include <QChartView>
 #include <QLineSeries>
 #include <QGridLayout>
+#include <QValueAxis>
 
 #include "viewBase.h"
-
-class Chart {
-public:
-    Chart(QString name, std::pair<int, int> scale, int history);
-
-    void addPoint(double value);
-    QChartView *getChartView();
-
-private:
-    std::vector<std::pair<double, double>> mPoints;
-    int mHistory;
-
-    QChart *chart;
-    QChartView *chartView;
-    QLineSeries *series;
-};
 
 class LiveGraph : public ViewBase {
 public:
@@ -37,10 +22,20 @@ public:
   void updateChart(std::string key, double value);
 
 private:
+    class Chart {
+    public:
+        QChartView *mChartView;
+        QChart *mChart;
+        QLineSeries *mSeries;
+        int mNumPoints;
+        int mHistory;
+        QValueAxis *axisX;
+        QValueAxis *axisY;
+    };
     std::unordered_map<std::string, Chart> charts;
     QGridLayout *layout;
     int row, col;
-    int rowMax = 3;
+    int rowMax = 2; //starts at 0
 };
 
 #endif // CHARTVIEW_H
