@@ -3,8 +3,7 @@
 
 class Utils {
 public:
-    long getTimeMs();
+  long getTimeMs();
 };
 
-
-#endif //QT_UTILS_H
+#endif // QT_UTILS_H

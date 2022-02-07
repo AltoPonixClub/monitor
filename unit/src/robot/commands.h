@@ -13,6 +13,8 @@ class Commands {
 
     enum class LEDState { OFF, SLOW, MEDIUM, FAST, SUPERFAST };
 
+    enum class TCPState { OFF, ON };
+
     // TODO: convert this to enum class
     enum UploadState {
         ATMOSPHERIC_TEMP,
@@ -27,6 +29,7 @@ class Commands {
 
     VisionState visionWantedState;
     LEDState ledWantedState;
+    TCPState tcpWantedState;
     std::vector<DisplayState> displayWantedStates;
     std::vector<std::pair<UploadState, long long>> uploadWantedStates;
 

@@ -7,6 +7,7 @@
 #include "subsystems/display.h"
 #include "subsystems/miscellaneous.h"
 #include "subsystems/subsystemBase.h"
+#include "subsystems/tcp.h"
 #include "subsystems/threaderer.h"
 #include "subsystems/uploader.h"
 #include "subsystems/vision.h"
@@ -34,8 +35,8 @@ int main(int argc, char **argv) {
         Display::instance(state, commands, outputs),
         BlinkingLights::instance(state, commands, outputs),
         Uploader::instance(state, commands,
-                           outputs) // TODO: why cant uploader be threaded
-    };
+                           outputs), // TODO: why cant uploader be threaded
+        TCP::instance(state, commands, outputs)};
 
     std::vector<SubsystemBase *> threadedSubsystems, nonThreadedSubsystems;
     for (SubsystemBase *subsystem : enabledSubsystems) {

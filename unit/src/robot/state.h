@@ -44,6 +44,9 @@ class State {
     std::vector<long> lastUploadTimes;
     std::string authToken;
 
+    // TCP
+    long lastTCPTime;
+
   private:
     State(){};
     static inline State *pInstance = nullptr;

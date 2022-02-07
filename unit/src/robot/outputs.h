@@ -25,6 +25,9 @@ class Outputs {
     // Uploader
     std::string jsonMeasurementData;
 
+    // Uploader
+    std::string tcpData;
+
   private:
     static inline Outputs *pInstance = nullptr;
 

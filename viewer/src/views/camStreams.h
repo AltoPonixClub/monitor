@@ -4,9 +4,9 @@
 #include "viewBase.h"
 
 class CamStreams : public ViewBase {
-    CamStreams(QString name);
+  CamStreams(QString name);
 
-    QWidget *createView();
+  QWidget *createView();
 };
 
-#endif //QT_CAMSTREAMS_H
+#endif // QT_CAMSTREAMS_H

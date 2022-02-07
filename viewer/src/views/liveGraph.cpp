@@ -1,10 +1,10 @@
-#include <string>
 #include <QApplication>
 #include <QChartView>
 #include <QLineSeries>
 #include <QPushButton>
 #include <QtOpenGLWidgets/qopenglwidget.h>
 #include <QtWidgets/qmainwindow.h>
+#include <string>
 
 #include "liveGraph.h"
 

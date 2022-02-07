@@ -1,6 +1,8 @@
 #ifndef OPENGLVIEW_H
 #define OPENGLVIEW_H
 
+#include "utils/geometryEngine.h"
+#include "viewBase.h"
 #include <QBasicTimer>
 #include <QMatrix4x4>
 #include <QOpenGLFunctions>
@@ -12,8 +14,6 @@
 #include <QVector2D>
 #include <QVector3D>
 #include <unordered_set>
-#include "viewBase.h"
-#include "utils/geometryEngine.h"
 
 class PointCloud : public QOpenGLWidget,
                    protected QOpenGLFunctions,

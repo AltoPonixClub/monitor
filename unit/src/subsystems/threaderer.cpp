@@ -12,6 +12,7 @@ void Threader::loop(SubsystemBase *subsystem, State *state, Commands *commands,
                     Outputs *outputs) {
     while (true) {
         try {
+            //            spdlog::info("running" + subsystem->name());
             subsystem->read(state, commands);
             subsystem->calculate(state, commands, outputs);
             subsystem->write(outputs);

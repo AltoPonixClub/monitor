@@ -83,6 +83,11 @@ class Configs {
             "electrical_conductivity", "ph",
             "dissolved_oxygen",        "air_flow"};
     };
+
+    class TCP {
+      public:
+        static inline const int kUploadFrequency = 1000;
+    };
 };
 
 #endif // MONITOR_CONFIGS_H

@@ -111,6 +111,25 @@ sudo make install
 pkg-config --modversion opencv4
 ```
 
+### Install [ZeroMQ](https://github.com/zeromq/cppzmq)
+```
+  1.  Build  [libzmq](https://github.com/zeromq/libzmq)  via cmake. This does an out of source build and installs the build files
+    
+    -   download and unzip the lib, cd to directory
+    -   mkdir build
+    -   cd build
+    -   cmake ..
+    -   sudo make -j4 install
+2.  Build cppzmq via cmake. This does an out of source build and installs the build files
+    
+    -   download and unzip the lib, cd to directory
+    -   mkdir build
+    -   cd build
+    -   cmake ..
+    -   sudo make -j4 install
+```
+
+
 ## For Development
 
 ### Install clang-format
