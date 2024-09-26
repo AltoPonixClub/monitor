@@ -22,8 +22,12 @@ class Configs {
         static inline const int kLeftCamId = -1, kRightCamId = 1,
                                 kFps = 60; // switch index
         static inline const cv::Size kImgSize = cv::Size(int(640), int(480));
-        static inline const std::string kCalibPath = std::string(
-            "/home/aoberai/programming/altoponix/monitor/unit/outputs.yml");
+        static inline const std::string kLeftCalibPath = std::string(
+            "/home/aoberai/programming/altoponix/monitor/unit/left_cam.yml");
+        static inline const std::string kRightCalibPath = std::string(
+            "/home/aoberai/programming/altoponix/monitor/unit/right_cam.yml");
+        static inline const std::string kStereoCalibPath = std::string(
+            "/home/aoberai/programming/altoponix/monitor/unit/stereo_cam.yml");
         static inline const std::vector<std::vector<cv::Point3f>>
             kBoardArucoPts = {
                 {cv::Point3f(0, 0, 0), cv::Point3f(0, 4.6, 0),
@@ -45,9 +49,30 @@ class Configs {
         static inline const cv::Ptr<cv::aruco::Board> kBoard =
             cv::aruco::Board::create(kBoardArucoPts, kArucoDictionary,
                                      kArucoIds);
-        static inline std::string kBlankPath =
+        class StereoCalib {
+          public:
+            static inline cv::Mat K1 = cv::Mat();
+            static inline cv::Mat D1 = cv::Mat();
+            static inline cv::Mat K2 = cv::Mat();
+            static inline cv::Mat D2 = cv::Mat();
+            static inline cv::Mat R = cv::Mat();
+            static inline cv::Mat T = cv::Mat();
+            static inline cv::Mat E = cv::Mat();
+            static inline cv::Mat F = cv::Mat();
+            static inline cv::Mat R1 = cv::Mat();
+            static inline cv::Mat R2 = cv::Mat();
+            static inline cv::Mat P1 = cv::Mat();
+            static inline cv::Mat P2 = cv::Mat();
+            static inline cv::Mat Q = cv::Mat();
+        };
+        static inline float kStereoWlsLambda = 12000;
+        static inline float kStereoWlsSigma = 2.5;
+        static inline std::string kLeftDummyImgPath =
             std::string("/home/aoberai/programming/altoponix/monitor/unit/"
-                        "assets/blank.png");
+                        "assets/rectified_1.png");
+        static inline std::string kRightDummyImgPath =
+            std::string("/home/aoberai/programming/altoponix/monitor/unit/"
+                        "assets/rectified_2.png");
     };
 
     class Display {

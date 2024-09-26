@@ -8,7 +8,7 @@ DummyVideoCapture::DummyVideoCapture(std::string filename) {
 }
 
 DummyVideoCapture::DummyVideoCapture() {
-    cv::resize(cv::imread(Configs::Vision::kBlankPath), img,
+    cv::resize(cv::imread(Configs::Vision::kLeftDummyImgPath), img,
                Configs::Vision::kImgSize);
 }
 
